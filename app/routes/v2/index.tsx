@@ -51,6 +51,8 @@ type LoaderData = { comics: Array<Comic>; hasMore: boolean };
 export const loader: LoaderFunction = async () => {
   doEnvVarTestLogs();
 
+  console.log("about to fetch from:", DDI_API_ENDPOINTS["getComics"]);
+
   const res = await fetch(DDI_API_ENDPOINTS["getComics"]);
 
   const data = await res.json();
@@ -63,6 +65,8 @@ export default function IndexRoute() {
   useEffect(() => doEnvVarTestLogs(), []);
 
   const data = useLoaderData<LoaderData>();
+
+  console.log("loader data", data);
 
   return (
     <Box>
