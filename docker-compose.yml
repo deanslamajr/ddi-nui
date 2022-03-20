@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  proxy:
+    image: nginx:alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./default.conf.template:/etc/nginx/templates/default.conf.template
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
