@@ -3,6 +3,8 @@ import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 import styled from "styled-components";
 
+import { DDI_API_ENDPOINTS, getCellImageUrl } from "~/utils/urls";
+
 import stylesUrl from "~/styles/index.css";
 
 export const links: LinksFunction = () => {
@@ -24,19 +26,34 @@ const doEnvVarTestLogs = () => {
   // console.log("3. props.cellImagesUrl", cellImagesUrl);
 };
 
+// remove this, this is just to verify styled-components work
 const Box = styled("div")`
   font-family: system-ui, sans-serif;
   line-height: 1.4;
   color: red;
 `;
 
-type LoaderData = { tacos: string[] };
+type Comic = {
+  cellsCount: number;
+  initialCell: {
+    caption: string;
+    imageUrl: string;
+    order: number | null;
+    schemaVersion: number;
+    urlId: string;
+  };
+  updatedAt: string;
+  urlId: string;
+};
+
+type LoaderData = { comics: Array<Comic>; hasMore: boolean };
 
 export const loader: LoaderFunction = async () => {
   doEnvVarTestLogs();
 
-  const { data } = await Promise.resolve({ data: {} }); // fetch.get(DDI_API_ENDPOINTS['getComics']);
+  const res = await fetch(DDI_API_ENDPOINTS["getComics"]);
 
+  const data = await res.json();
   console.log("data", data);
 
   return json(data);
@@ -49,7 +66,12 @@ export default function IndexRoute() {
 
   return (
     <Box>
-      {JSON.stringify(data)}
+      <div>{JSON.stringify(data)}</div>
+      {data.comics.map(({ initialCell }) => (
+        <img
+          src={getCellImageUrl(initialCell.imageUrl, initialCell.schemaVersion)}
+        />
+      ))}
       {/* <ComicsContainer>
         {comics.map(({ cellsCount, initialCell, urlId }) => (
           // <Link key={urlId} href={`/comic/${urlId}`} passHref>

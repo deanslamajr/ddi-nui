@@ -1,15 +1,19 @@
 import {
+  json,
   Links,
   LinksFunction,
   LiveReload,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "remix";
 
 import globalStylesUrl from "~/styles/global.css";
 import largeGlobalStylesUrl from "~/styles/global-large.css";
 import mediumGlobalStylesUrl from "~/styles/global-medium.css";
+
+import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
 export const links: LinksFunction = () => {
   return [
@@ -27,7 +31,18 @@ export const links: LinksFunction = () => {
   ];
 };
 
+export async function loader() {
+  const ENV: ClientEnvironmentVariables = {
+    CELL_IMAGES_URL: process.env.CELL_IMAGES_URL,
+  };
+
+  return json({
+    ENV,
+  });
+}
+
 export default function App() {
+  const data = useLoaderData();
   return (
     <html lang="en">
       <head>
@@ -39,6 +54,11 @@ export default function App() {
       <body>
         <Outlet />
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+          }}
+        />
         {/* Commented out bc it was causing an issue with the process reference in the logs of index.tsx */}
         {/* <Scripts /> */}
         <LiveReload />
