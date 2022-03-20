@@ -34,3 +34,19 @@ npm run dev
 ```
 
 - View app at `localhost`
+
+## Test Image
+
+- (if image to test wasn't the most recently built image) `npm run image:build`
+- make sure `image-test.env` exists and has valid values for the container
+  - e.g. references to PORT and localhost will be different (e.g. LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL)
+- `npm run image:start`
+- app should be accessible at `localhost:1234`
+  - the port number is the first number in the package.json command `image:start`, e.g. `docker run -p 1234:8080/tcp`
+
+### to start a command line on running container
+
+- follow the instructions in `Test Image` section to get the app container running
+- `npm run image:bash`
+
+- `npm run image:bash`

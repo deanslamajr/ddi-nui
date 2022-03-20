@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  proxy:
+    image: nginx:alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./image-test.conf.template:/etc/nginx/templates/default.conf.template
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  ddi-client:
+    image: ${CLIENT_APP_IMAGE_NAME}
+    ports:
+      - 1234:8080
+    env_file:
+      - image-test.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # needed for interactive shells
+    stdin_open: true
+    # needed for interactive shells
+    tty: true
