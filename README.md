@@ -32,3 +32,5 @@ docker-compose up
 nvm use
 npm run dev
 ```
+
+- View app at `localhost`
