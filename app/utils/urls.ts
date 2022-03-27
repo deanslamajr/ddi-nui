@@ -1,4 +1,3 @@
-import { Window } from "~/interfaces/environment-variables";
 import { getClientVariable } from "~/utils/environment-variables";
 
 export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
@@ -11,9 +10,10 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
-  getComics: `${getClientVariable(
-    "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-  )}/api/comics`,
+  getComics: (offset?: string) =>
+    `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics${
+      offset ? "?offset=" + offset : ""
+    }`,
 };
 
 export const DDI_APP_PAGES = {

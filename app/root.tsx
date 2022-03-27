@@ -8,12 +8,29 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "remix";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 
 import globalStylesUrl from "~/styles/global.css";
 import largeGlobalStylesUrl from "~/styles/global-large.css";
 import mediumGlobalStylesUrl from "~/styles/global-medium.css";
 
+import { theme } from "~/utils/stylesTheme";
+import { phoneMax } from "~/components/breakpoints";
+
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${theme.colors.lightGray};
+    margin: 0;
+    color: ${theme.colors.black};
+    font-family: ${theme.fonts};
+
+    ${phoneMax`
+      overflow-x: hidden;
+    `}
+  }
+`;
 
 export const links: LinksFunction = () => {
   return [
@@ -52,7 +69,10 @@ export default function App() {
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <body>
-        <Outlet />
+        <GlobalStyle />
+        <ThemeProvider theme={theme}>
+          <Outlet />
+        </ThemeProvider>
         <ScrollRestoration />
         <script
           dangerouslySetInnerHTML={{
