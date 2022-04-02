@@ -1,6 +1,6 @@
 export type ClientEnvironmentVariables = {
-  CELL_IMAGES_URL?: string;
-  LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL?: string;
+  CELL_IMAGES_URL: string;
+  LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: string;
 };
 
 export type ServerEnvironmentVariables = {};

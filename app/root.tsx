@@ -3,54 +3,33 @@ import {
   Links,
   LinksFunction,
   LiveReload,
+  Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "remix";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 
 import globalStylesUrl from "~/styles/global.css";
-import largeGlobalStylesUrl from "~/styles/global-large.css";
-import mediumGlobalStylesUrl from "~/styles/global-medium.css";
+import cssTheme from "~/styles/variables.css";
 
 import { theme } from "~/utils/stylesTheme";
-import { phoneMax } from "~/components/breakpoints";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${theme.colors.lightGray};
-    margin: 0;
-    color: ${theme.colors.black};
-    font-family: ${theme.fonts};
-
-    ${phoneMax`
-      overflow-x: hidden;
-    `}
-  }
-`;
-
 export const links: LinksFunction = () => {
   return [
+    { rel: "stylesheet", href: cssTheme },
     { rel: "stylesheet", href: globalStylesUrl },
-    {
-      rel: "stylesheet",
-      href: largeGlobalStylesUrl,
-      media: "screen and (min-width: 1024px)",
-    },
-    {
-      rel: "stylesheet",
-      href: mediumGlobalStylesUrl,
-      media: "print, (min-width: 640px)",
-    },
   ];
 };
 
 export async function loader() {
   const ENV: ClientEnvironmentVariables = {
-    CELL_IMAGES_URL: process.env.CELL_IMAGES_URL,
+    CELL_IMAGES_URL: process.env.CELL_IMAGES_URL || "",
+    LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL:
+      process.env.LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL || "",
   };
 
   return json({
@@ -63,13 +42,17 @@ export default function App() {
   return (
     <html lang="en">
       <head>
+        <Meta />
         <meta charSet="utf-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1"
+        />
         <title>draw draw ink</title>
         <Links />
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <body>
-        <GlobalStyle />
         <ThemeProvider theme={theme}>
           <Outlet />
         </ThemeProvider>
@@ -79,8 +62,7 @@ export default function App() {
             __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
           }}
         />
-        {/* Commented out bc it was causing an issue with the process reference in the logs of index.tsx */}
-        {/* <Scripts /> */}
+        <Scripts />
         <LiveReload />
       </body>
     </html>

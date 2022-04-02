@@ -1,37 +1,14 @@
+import { LinksFunction } from "remix";
 import { FC } from "react";
-import styled from "styled-components";
 
 import { getCellImageUrl } from "~/utils/urls";
-import Cell from "~/components/Cell";
+// import Cell from "~/components/Cell";
 
-const CellsCount = styled.div`
-  z-index: 999;
-  position: absolute;
-  top: 0.1rem;
-  left: 0.1rem;
-  width: 25px;
-  height: 25px;
-  opacity: 0.75;
-  background-color: ${(props) => props.theme.colors.pink};
-  color: ${(props) => props.theme.colors.white};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  cursor: pointer;
-`;
+import stylesUrl from "./cells-thumb.css";
 
-const BaseCellImage = styled.img`
-  cursor: pointer;
-
-  width: 100%;
-
-  vertical-align: bottom;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: stylesUrl }];
+};
 
 const ThumbSchema1: FC<{
   cellsCount: number;
@@ -39,36 +16,32 @@ const ThumbSchema1: FC<{
 }> = ({ cellsCount, imageUrl }) => {
   return (
     <>
-      {cellsCount > 1 && <CellsCount>{cellsCount}</CellsCount>}
-      <BaseCellImage src={imageUrl} />
+      {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
+      <img className="base-cell-image" src={imageUrl} />
     </>
   );
 };
 
-const CellImage = styled(BaseCellImage)`
-  background-color: ${(props) => props.theme.colors.white};
-`;
-
-const ThumbLaterSchemas: FC<{
-  caption: string;
-  cellsCount: number;
-  schemaVersion: number;
-  imageUrl: string;
-}> = ({ caption, cellsCount, schemaVersion, imageUrl }) => {
-  return (
-    <>
-      {cellsCount > 1 && <CellsCount>{cellsCount}</CellsCount>}
-      <Cell
-        clickable
-        removeBorders
-        imageUrl={imageUrl}
-        isImageUrlAbsolute={schemaVersion > 1}
-        schemaVersion={schemaVersion}
-        caption={caption}
-      />
-    </>
-  );
-};
+// const ThumbEarlierSchemas: FC<{
+//   caption: string;
+//   cellsCount: number;
+//   schemaVersion: number;
+//   imageUrl: string;
+// }> = ({ caption, cellsCount, schemaVersion, imageUrl }) => {
+//   return (
+//     <>
+//       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
+//       <Cell
+//         clickable
+//         removeBorders
+//         imageUrl={imageUrl}
+//         isImageUrlAbsolute={schemaVersion > 1}
+//         schemaVersion={schemaVersion}
+//         caption={caption}
+//       />
+//     </>
+//   );
+// };
 
 type Cell = {
   caption: string;
@@ -76,7 +49,7 @@ type Cell = {
   schemaVersion: number;
 };
 
-export const CellsThumb: FC<{
+const CellsThumb: FC<{
   cell?: Cell;
   cellsCount: number;
 }> = ({ cell, cellsCount }) => {
@@ -88,7 +61,7 @@ export const CellsThumb: FC<{
         cellsCount={cellsCount}
         imageUrl={getCellImageUrl(cell.imageUrl, cell.schemaVersion)}
       />
-      // <ThumbLaterSchemas
+      // <ThumbEarlierSchemas
       //   cellsCount={cellsCount}
       //   imageUrl={getCellUrl(cell.imageUrl, cell.schemaVersion)}
       //   schemaVersion={cell.schemaVersion}
@@ -99,3 +72,5 @@ export const CellsThumb: FC<{
 
   return null;
 };
+
+export default CellsThumb;

@@ -1,0 +1,36 @@
+.cells-count {
+  z-index: var(--top);
+  position: absolute;
+  top: 0.1rem;
+  left: 0.1rem;
+  width: 25px;
+  height: 25px;
+  opacity: 0.75;
+  background-color: var(--pink);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+@media (max-width: 599px) {
+  .cells-count {
+    width: 25%;
+    height: 25%;
+    font-size: 2.5rem;
+  }
+}
+
+.base-cell-image {
+  cursor: pointer;
+
+  width: 100%;
+
+  vertical-align: bottom;
+}
+
+.base-cell-image:hover {
+  opacity: 0.8;
+}

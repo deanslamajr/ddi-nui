@@ -1,0 +1,74 @@
+body {
+  background-color: var(--lightGray);
+  margin: 0;
+  color: var(--black);
+  font-family: var(--fonts);
+}
+
+@media (max-width: 599px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
+.nav-button {
+  border: 1px solid var(--white);
+  background-color: var(--white);
+  color: var(--black);
+
+  cursor: pointer;
+  z-index: 9999;
+  border-radius: 5rem;
+  width: var(--buttonDiameter);
+  height: var(--buttonDiameter);
+  font-size: 0.9rem;
+  text-align: center;
+  user-select: none;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem;
+}
+
+@media (max-width: 599px) {
+  .nav-button {
+    margin: 3px;
+  }
+}
+
+.nav-button button {
+  all: unset;
+  width: var(--buttonDiameter);
+}
+
+.nav-button:hover {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.nav-button.accented {
+  background-color: var(--pink);
+  color: var(--white);
+}
+
+.nav-button.accented:hover {
+  color: var(--pink);
+}
+
+.nav-button.bottom-center {
+  margin: 0.5rem auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@media (max-width: 599px) {
+  .nav-button.bottom-center {
+    margin: 3px auto;
+  }
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}

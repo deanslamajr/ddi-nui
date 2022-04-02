@@ -1,21 +1,21 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { json, Link, useLoaderData } from "remix";
+import { json, useLoaderData } from "remix";
 
-import ShowMore from "~/components/ShowMore";
-import { ComicsContainer } from "~/components/ComicsContainer";
-import { CellsThumb } from "~/components/CellsThumb";
-import UnstyledLink from "~/components/UnstyledLink";
+import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
+import CellsThumb, {
+  links as cellsThumbStylesUrl,
+} from "~/components/CellsThumb";
 
-import {
-  DDI_API_ENDPOINTS,
-  DDI_APP_PAGES,
-  getCellImageUrl,
-} from "~/utils/urls";
+import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 
-import stylesUrl from "~/styles/index.css";
+import stylesUrl from "~/styles/gallery.css";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...showMoreStylesUrls(),
+    ...cellsThumbStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 type Comic = {
@@ -41,14 +41,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const offset = url.searchParams.getAll("o");
 
-  console.log("offset", offset);
-
   const res = await fetch(
     DDI_API_ENDPOINTS["getComics"](offset.length > 0 ? offset[0] : undefined)
   );
 
   const data = await res.json();
-  console.log("data", data);
 
   return json({
     ...data,
@@ -61,19 +58,17 @@ export default function IndexRoute() {
 
   return (
     <div>
-      {/* <div>{JSON.stringify(data)}</div>
-      {data.comics.map(({ initialCell }) => (
-        <img
-          src={getCellImageUrl(initialCell.imageUrl, initialCell.schemaVersion)}
-        />
-      ))} */}
-      <ComicsContainer>
+      <div className="comics-container">
         {data.comics.map(({ cellsCount, initialCell, urlId }) => (
-          <UnstyledLink key={urlId} href={DDI_APP_PAGES.getComicPageUrl(urlId)}>
+          <a
+            className="unstyled-link"
+            key={urlId}
+            href={DDI_APP_PAGES.getComicPageUrl(urlId)}
+          >
             <CellsThumb cell={initialCell} cellsCount={cellsCount} />
-          </UnstyledLink>
+          </a>
         ))}
-      </ComicsContainer>
+      </div>
 
       {/* {newerComicsExist && (
         <NavButton

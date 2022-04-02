@@ -1,14 +1,11 @@
-import styled, {
+import {
   css,
-  createGlobalStyle,
   CSSObject,
   DefaultTheme,
   Interpolation,
   InterpolationFunction,
   SimpleInterpolation,
-  ThemeProps,
   ThemedStyledProps,
-  FlattenInterpolation,
 } from "styled-components";
 
 export const tabletMax = <T extends {}>(

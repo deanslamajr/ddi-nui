@@ -1,0 +1,16 @@
+:root {
+  --fonts: "Nunito", sans-serif;
+
+  /* Colors */
+  --white: #fffaf9;
+  --pink: #ff4c7f;
+  --darkGray: #cececf;
+  --lightGray: #e7e7e7;
+  --black: #464655;
+
+  /* Lengths */
+  --buttonDiameter: 60px;
+
+  /* Heights */
+  --top: 999;
+}
