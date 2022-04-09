@@ -14,12 +14,14 @@ nvm use
 
 ```bash
 cd ./path/to/ddi-v1>
-docker-compose up
 nvm use
 npm run dev
 ```
 
-- Next, start the nginx reverse proxy (this helps avoid CORS issues between the v1 & v2 apps):
+- Next, start the docker-compose which starts:
+  - nginx reverse proxy (this helps avoid CORS issues between the v1 & v2 apps)
+  - postgreSQL DB
+  - database client (for direct access to DB)
 
 ```bash
 cd ./path/to/ddi-v2>
