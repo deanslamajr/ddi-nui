@@ -12,7 +12,7 @@ body {
 }
 
 .nav-button {
-  border: 1px solid var(--white);
+  border: 1px solid var(--lightGray);
   background-color: var(--white);
   color: var(--black);
 
@@ -49,11 +49,13 @@ body {
 
 .nav-button.accented {
   background-color: var(--pink);
+  border: 1px solid var(--pink);
   color: var(--white);
 }
 
 .nav-button.accented:hover {
   background-color: var(--black);
+  border-color: var(--black);
   color: var(--pink);
 }
 
