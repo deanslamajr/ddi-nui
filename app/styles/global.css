@@ -53,6 +53,7 @@ body {
 }
 
 .nav-button.accented:hover {
+  background-color: var(--black);
   color: var(--pink);
 }
 
@@ -60,6 +61,11 @@ body {
   margin: 0.5rem auto;
   bottom: 0;
   left: 0;
+  right: 0;
+}
+
+.nav-button.bottom-right {
+  bottom: 0;
   right: 0;
 }
 

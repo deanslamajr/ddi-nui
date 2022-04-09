@@ -11,6 +11,8 @@
     "start": "cross-env NODE_ENV=production remix-serve build",
     "typecheck": "tsc --noEmit --pretty",
     "typecheck:watch": "npm run typecheck -- --watch --preserveWatchOutput",
+    "clean": "rm -rf node_modules",
+    "clean:dev": "npm run clean && npm i && npm run dev",
     "dev": "concurrently -k -p \"-{index}_{name} \" npm:typecheck:watch npm:remix:dev",
     "image:build": "docker build -f ../deployment/remix-test/Dockerfile -t us-central1-docker.pkg.dev/development-262721/draw-draw-ink-client/ddi-client:\"$(git describe)\" .",
     "image:promote": "docker push us-central1-docker.pkg.dev/development-262721/draw-draw-ink-client/ddi-client:\"$(git describe)\"",

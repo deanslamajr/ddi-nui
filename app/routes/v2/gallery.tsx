@@ -2,9 +2,15 @@ import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 
 import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
+import CreateNavButton, {
+  links as createNavButtonStylesUrl,
+} from "~/components/CreateNavButton";
 import CellsThumb, {
   links as cellsThumbStylesUrl,
 } from "~/components/CellsThumb";
+import UnstyledLink, {
+  links as unstyledLinkStylesUrl,
+} from "~/components/UnstyledLink";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 
@@ -14,6 +20,8 @@ export const links: LinksFunction = () => {
   return [
     ...showMoreStylesUrls(),
     ...cellsThumbStylesUrl(),
+    ...createNavButtonStylesUrl(),
+    ...unstyledLinkStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -60,13 +68,9 @@ export default function IndexRoute() {
     <div>
       <div className="comics-container">
         {data.comics.map(({ cellsCount, initialCell, urlId }) => (
-          <a
-            className="unstyled-link"
-            key={urlId}
-            href={DDI_APP_PAGES.getComicPageUrl(urlId)}
-          >
+          <UnstyledLink key={urlId} href={DDI_APP_PAGES.getComicPageUrl(urlId)}>
             <CellsThumb cell={initialCell} cellsCount={cellsCount} />
-          </a>
+          </UnstyledLink>
         ))}
       </div>
 
@@ -93,6 +97,7 @@ export default function IndexRoute() {
         position={BOTTOM_RIGHT}
       /> */}
       <ShowMore offset={data.cursor} />
+      <CreateNavButton />
     </div>
   );
 }

@@ -22,4 +22,9 @@ export const DDI_APP_PAGES = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/comic/${comidUrlId}`;
   },
+  getDraftsPageUrl: () => {
+    return `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/me/drafts`;
+  },
 };
