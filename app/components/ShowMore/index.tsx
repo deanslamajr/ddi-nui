@@ -8,13 +8,13 @@ export const links: LinksFunction = () => {
 
 type Props = {
   offset: string | null;
+  isNewer?: boolean;
 };
 
-export default function ShowMore({ offset }: Props) {
-  console.log("offset", offset);
+export default function ShowMore({ isNewer, offset }: Props) {
   return typeof offset === "string" ? (
     <div className="nav-button bottom-center show-more">
-      <Form method="get">
+      <Form replace>
         <input
           type="checkbox"
           id="showmore"
@@ -23,7 +23,17 @@ export default function ShowMore({ offset }: Props) {
           defaultChecked
           hidden
         />
-        <button type="submit">↓</button>
+        {isNewer && (
+          <input
+            type="checkbox"
+            id="showmore"
+            name="isNewer"
+            value="true"
+            defaultChecked
+            hidden
+          />
+        )}
+        <button type="submit">{isNewer ? "↑" : "↓"}</button>
       </Form>
     </div>
   ) : null;

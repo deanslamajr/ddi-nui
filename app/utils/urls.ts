@@ -14,6 +14,10 @@ export const DDI_API_ENDPOINTS = {
     `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics${
       offset ? "?offset=" + offset : ""
     }`,
+  getPreviousComics: (offset: string) =>
+    `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/api/comics/latest?latestUpdatedAt=${offset}`,
 };
 
 export const DDI_APP_PAGES = {
