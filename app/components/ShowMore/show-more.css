@@ -5,3 +5,8 @@
 .nav-button button {
   font-size: 3rem;
 }
+
+.nav-button.disabled {
+  opacity: 0;
+  cursor: inherit;
+}

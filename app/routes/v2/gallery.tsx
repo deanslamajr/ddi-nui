@@ -2,7 +2,11 @@ import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 import { useEffect, useState } from "react";
 
-import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
+import ShowMore, {
+  links as showMoreStylesUrls,
+  OLDER_OFFSET_QUERYSTRING,
+  NEWER_OFFSET_QUERYSTRING,
+} from "~/components/ShowMore";
 import CreateNavButton, {
   links as createNavButtonStylesUrl,
 } from "~/components/CreateNavButton";
@@ -42,38 +46,49 @@ type Comic = {
 
 type ComicsPagination = {
   cursor: string | null;
-  comics: Array<Comic>;
+  comics?: Array<Comic>;
   hasMore: boolean;
 };
 
 type LoaderData = {
-  older?: ComicsPagination;
-  newer?: ComicsPagination;
+  older: ComicsPagination;
+  newer: ComicsPagination;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
 
-  const offset = url.searchParams.getAll("o")[0];
-  const isNewer = url.searchParams.getAll("isNewer")[0] === "true";
+  const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
+  const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
 
   // This data request is asking for
-  if (isNewer) {
+  if (newerOffset) {
     const getNewerComicsResponse = await fetch(
-      DDI_API_ENDPOINTS["getPreviousComics"](offset)
+      DDI_API_ENDPOINTS["getPreviousComics"](newerOffset)
     ).then((res) => res.json());
+
+    const comics: Comic[] = getNewerComicsResponse.comics || [];
+    const hasComics = comics.length > 0;
 
     return json({
       newer: {
-        comics: getNewerComicsResponse.comics,
+        comics: comics,
         hasMore: getNewerComicsResponse.hasMore,
-        cursor: getNewerComicsResponse.comics[0].updatedAt,
+        cursor: hasComics ? comics[0].updatedAt : null,
+      },
+      // will only use this data on page load requests
+      // to initialize the component state
+      older: {
+        // assume there are older comics so that the showmore button is rendered
+        // on hardrefreshes that include the NEWER_OFFSET_QUERYSTRING
+        hasMore: true,
+        cursor: hasComics ? comics[comics.length - 1].updatedAt : null,
       },
     });
   }
 
   const getComicsResponse = await fetch(
-    DDI_API_ENDPOINTS["getComics"](offset)
+    DDI_API_ENDPOINTS["getComics"](olderOffset)
   ).then((res) => res.json());
 
   let earliestComicUpdatedAt;
@@ -91,7 +106,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     // will only use this data on page load requests
     // to initialize the component state
     newer: {
-      comics: [], //getPreviousComicsResponse.comics,
       cursor: earliestComicUpdatedAt,
       hasMore: getComicsResponse.hasMorePrevious,
     },
@@ -112,14 +126,16 @@ export default function IndexRoute() {
   const [hasMoreNewerComics, setHasMoreNewerComics] = useState<boolean>(
     data.newer?.hasMore || false
   );
-  const [comics, setComics] = useState<ComicsPagination["comics"]>(
-    data.older?.comics || []
+  const [comics, setComics] = useState<Comic[]>(
+    data.older?.comics || data.newer?.comics || []
   );
 
   useEffect(() => {
+    const olderComics = data.older?.comics;
+    const newerComics = data.newer?.comics;
+
     // Handle older comics
-    if (data.older) {
-      const olderComics = data.older.comics;
+    if (olderComics) {
       const latestOlderCursor = data.older.cursor;
 
       if (latestOlderCursor !== olderCursor && olderComics.length) {
@@ -130,24 +146,29 @@ export default function IndexRoute() {
       }
     } else {
       // Handle newer comics
-      if (data.newer) {
-        const newerComics = data.newer.comics;
-        const latestNewerCursor = data.newer.cursor;
+      const latestNewerCursor = data.newer.cursor;
 
-        if (latestNewerCursor !== newerCursor && newerComics.length) {
-          const allComics = [...newerComics, ...comics];
-          setNewerCursor(latestNewerCursor);
-          setHasMoreNewerComics(data.newer.hasMore);
-          setComics(allComics);
-        }
+      console.log({ latestNewerCursor, newerCursor });
+
+      if (
+        newerComics &&
+        latestNewerCursor !== newerCursor &&
+        newerComics.length
+      ) {
+        const allComics = [...newerComics, ...comics];
+        setNewerCursor(latestNewerCursor);
+        setHasMoreNewerComics(data.newer.hasMore);
+        setComics(allComics);
       }
     }
   }, [comics, setComics, data]);
 
+  console.log("newerCursor", newerCursor);
+
   return (
     <div>
       <div>
-        {hasMoreNewerComics && <ShowMore isNewer offset={newerCursor} />}
+        <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
         <div className="comics-container">
           {comics.map(({ cellsCount, initialCell, urlId }) => (
             <UnstyledLink
@@ -158,7 +179,7 @@ export default function IndexRoute() {
             </UnstyledLink>
           ))}
         </div>
-        {hasMoreOlderComics && <ShowMore offset={olderCursor} />}
+        <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
       </div>
 
       {/* {newerComicsExist && (
