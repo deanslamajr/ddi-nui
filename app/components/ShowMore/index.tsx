@@ -13,7 +13,7 @@ type Props = {
 export default function ShowMore({ offset }: Props) {
   console.log("offset", offset);
   return typeof offset === "string" ? (
-    <div className="nav-button bottom-center">
+    <div className="nav-button bottom-center show-more">
       <Form method="get">
         <input
           type="checkbox"

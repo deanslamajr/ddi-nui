@@ -66,12 +66,18 @@ export default function IndexRoute() {
 
   return (
     <div>
-      <div className="comics-container">
-        {data.comics.map(({ cellsCount, initialCell, urlId }) => (
-          <UnstyledLink key={urlId} href={DDI_APP_PAGES.getComicPageUrl(urlId)}>
-            <CellsThumb cell={initialCell} cellsCount={cellsCount} />
-          </UnstyledLink>
-        ))}
+      <div>
+        <div className="comics-container">
+          {data.comics.map(({ cellsCount, initialCell, urlId }) => (
+            <UnstyledLink
+              key={urlId}
+              href={DDI_APP_PAGES.getComicPageUrl(urlId)}
+            >
+              <CellsThumb cell={initialCell} cellsCount={cellsCount} />
+            </UnstyledLink>
+          ))}
+        </div>
+        <ShowMore offset={data.cursor} />
       </div>
 
       {/* {newerComicsExist && (
@@ -81,22 +87,7 @@ export default function IndexRoute() {
           position={TOP_RIGHT}
         />
       )}
-
-      {this.props.hasMoreComics && (
-        <ShowMoreButton
-          value="SHOW MORE"
-          cb={this.showMoreComics}
-          position={BOTTOM_CENTER}
-        />
-      )}
-
-      <CreateButton
-        value="+"
-        accented
-        cb={this.navigateToNewOrDrafts}
-        position={BOTTOM_RIGHT}
-      /> */}
-      <ShowMore offset={data.cursor} />
+      */}
       <CreateNavButton />
     </div>
   );
