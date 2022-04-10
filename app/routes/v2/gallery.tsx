@@ -156,10 +156,11 @@ export default function IndexRoute() {
         newerComics.length
       ) {
         const allComics = [...newerComics, ...comics];
-        setNewerCursor(latestNewerCursor);
-        setHasMoreNewerComics(data.newer.hasMore);
         setComics(allComics);
       }
+
+      setNewerCursor(latestNewerCursor);
+      setHasMoreNewerComics(data.newer.hasMore);
     }
   }, [comics, setComics, data]);
 
