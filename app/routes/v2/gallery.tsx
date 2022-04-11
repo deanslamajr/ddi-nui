@@ -74,7 +74,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       newer: {
         comics: comics,
         hasMore: getNewerComicsResponse.hasMore,
-        cursor: hasComics ? comics[0].updatedAt : null,
+        cursor: hasComics ? comics[comics.length - 1].updatedAt : null,
       },
       // will only use this data on page load requests
       // to initialize the component state
@@ -82,7 +82,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         // assume there are older comics so that the showmore button is rendered
         // on hardrefreshes that include the NEWER_OFFSET_QUERYSTRING
         hasMore: true,
-        cursor: hasComics ? comics[comics.length - 1].updatedAt : null,
+        cursor: hasComics ? comics[0].updatedAt : null,
       },
     });
   }
@@ -114,11 +114,16 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
+
+  const [comics, setComics] = useState<Comic[]>(
+    data.older?.comics || data.newer?.comics || []
+  );
+
   const [olderCursor, setOlderCursor] = useState<string | null>(
-    data.older?.cursor || null
+    comics.length > 0 ? comics[comics.length - 1].updatedAt : null
   );
   const [newerCursor, setNewerCursor] = useState<string | null>(
-    data.newer?.cursor || null
+    comics.length > 0 ? comics[0].updatedAt : null
   );
   const [hasMoreOlderComics, setHasMoreOlderComics] = useState<boolean>(
     data.older?.hasMore || false
@@ -126,45 +131,55 @@ export default function IndexRoute() {
   const [hasMoreNewerComics, setHasMoreNewerComics] = useState<boolean>(
     data.newer?.hasMore || false
   );
-  const [comics, setComics] = useState<Comic[]>(
-    data.older?.comics || data.newer?.comics || []
-  );
 
   useEffect(() => {
     const olderComics = data.older?.comics;
     const newerComics = data.newer?.comics;
+
+    let allComics: Comic[] | null = null;
 
     // Handle older comics
     if (olderComics) {
       const latestOlderCursor = data.older.cursor;
 
       if (latestOlderCursor !== olderCursor && olderComics.length) {
-        const allComics = [...comics, ...olderComics];
-        setOlderCursor(latestOlderCursor);
+        allComics = [...comics, ...olderComics];
         setHasMoreOlderComics(data.older.hasMore);
-        setComics(allComics);
       }
     } else {
       // Handle newer comics
       const latestNewerCursor = data.newer.cursor;
-
-      console.log({ latestNewerCursor, newerCursor });
 
       if (
         newerComics &&
         latestNewerCursor !== newerCursor &&
         newerComics.length
       ) {
-        const allComics = [...newerComics, ...comics];
-        setComics(allComics);
+        allComics = [...newerComics, ...comics];
+        setHasMoreNewerComics(data.newer.hasMore);
       }
+    }
 
-      setNewerCursor(latestNewerCursor);
-      setHasMoreNewerComics(data.newer.hasMore);
+    if (allComics !== null) {
+      const sortedComics = allComics
+        .slice() // to avoid mutating the array from the next line's in-place sort
+        .sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      const latestNewerCursor = sortedComics[0].updatedAt;
+      const latestOlderCursor = sortedComics[sortedComics.length - 1].updatedAt;
+
+      setComics(sortedComics);
+
+      if (latestNewerCursor !== newerCursor) {
+        setNewerCursor(latestNewerCursor);
+      }
+      if (latestOlderCursor !== olderCursor) {
+        setOlderCursor(latestOlderCursor);
+      }
     }
   }, [comics, setComics, data]);
-
-  console.log("newerCursor", newerCursor);
 
   return (
     <div>
