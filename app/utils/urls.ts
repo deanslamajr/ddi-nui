@@ -10,14 +10,23 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
-  getComics: (offset?: string) =>
-    `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics${
-      offset ? "?offset=" + offset : ""
-    }`,
-  getPreviousComics: (offset: string) =>
+  getComics: (isPageLoadRequest: boolean, offset?: string) => {
+    const url = new URL(
+      `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
+    );
+    url.searchParams.set(
+      "isPageLoadRequest",
+      isPageLoadRequest ? "true" : "false"
+    );
+    if (offset !== undefined) {
+      url.searchParams.append("offset", offset);
+    }
+    return url.toString();
+  },
+  getPreviousComics: (offset: string, isPageLoadRequest: boolean) =>
     `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-    )}/api/comics/latest?latestUpdatedAt=${offset}`,
+    )}/api/comics/latest?latestUpdatedAt=${offset}&isPageLoadRequest=${isPageLoadRequest}`,
 };
 
 export const DDI_APP_PAGES = {

@@ -1,7 +1,11 @@
 import { LinksFunction } from "remix";
 import { FC } from "react";
+import { Img } from "react-image";
 
 import { getCellImageUrl } from "~/utils/urls";
+import { getClientVariable } from "~/utils/environment-variables";
+import isServerContext from "~/utils/isServerContext";
+
 // import Cell from "~/components/Cell";
 
 import stylesUrl from "./cells-thumb.css";
@@ -14,10 +18,39 @@ const ThumbSchema1: FC<{
   cellsCount: number;
   imageUrl: string;
 }> = ({ cellsCount, imageUrl }) => {
+  const showLoader = isServerContext();
+
   return (
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
-      <img className="base-cell-image" src={imageUrl} />
+      {showLoader ? (
+        <img
+          className="base-cell-image"
+          src={`${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/loading.png`}
+          alt="Loading image"
+        />
+      ) : (
+        <Img
+          className="base-cell-image"
+          src={imageUrl}
+          loader={
+            <img
+              className="base-cell-image"
+              src={`${getClientVariable(
+                "ASSETS_URL_WITH_PROTOCOL"
+              )}/loading.png`}
+              alt="Loading image"
+            />
+          }
+          unloader={
+            <img
+              className="base-cell-image"
+              src={`${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/error.png`}
+              alt="Cannot load image"
+            />
+          }
+        />
+      )}
     </>
   );
 };

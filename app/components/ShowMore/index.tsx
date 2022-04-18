@@ -1,5 +1,7 @@
 import { Form, LinksFunction } from "remix";
+import { useTransition } from "@remix-run/react";
 import classnames from "classnames";
+import { useEffect, useState } from "react";
 
 import stylesUrl from "./show-more.css";
 
@@ -17,12 +19,25 @@ export const OLDER_OFFSET_QUERYSTRING = "oo";
 export const NEWER_OFFSET_QUERYSTRING = "no";
 
 export default function ShowMore({ isNewer, isVisible, offset }: Props) {
-  const isDisabled = !isVisible;
+  const [isLoading, setIsLoading] = useState(false);
+  const transition = useTransition();
+  const isSomethingOnPageLoading = transition.state === "submitting";
+
+  useEffect(() => {
+    if (transition.state === "idle" && isLoading) {
+      setIsLoading(false);
+    }
+  }, [transition.state]);
+
+  const onClick = () => {
+    setIsLoading(true);
+  };
 
   return typeof offset === "string" ? (
     <div
       className={classnames("nav-button", "bottom-center", "show-more", {
-        disabled: isDisabled,
+        disabled: !isVisible,
+        loading: isLoading,
       })}
     >
       <Form replace>
@@ -45,8 +60,12 @@ export default function ShowMore({ isNewer, isVisible, offset }: Props) {
             hidden
           />
         )}
-        <button disabled={!isVisible} type="submit">
-          {isNewer ? "↑" : "↓"}
+        <button
+          disabled={!isVisible || isSomethingOnPageLoading}
+          type="submit"
+          onClick={onClick}
+        >
+          {isLoading ? "🤙" : isNewer ? "↑" : "↓"}
         </button>
       </Form>
     </div>

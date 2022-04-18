@@ -1,5 +1,6 @@
 import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
+// import { useTransition } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 import ShowMore, {
@@ -16,6 +17,7 @@ import CellsThumb, {
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
+import Logo, { links as logoStylesUrl } from "~/components/Logo";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 
@@ -27,6 +29,7 @@ export const links: LinksFunction = () => {
     ...cellsThumbStylesUrl(),
     ...createNavButtonStylesUrl(),
     ...unstyledLinkStylesUrl(),
+    ...logoStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -55,8 +58,21 @@ type LoaderData = {
   newer: ComicsPagination;
 };
 
+const sortComics = (comics: Comic[]): Comic[] => {
+  return comics
+    .slice() // to avoid mutating the array from the next line's in-place sort
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+};
+
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
+  // TODO figure out a better way to do this
+  // e.g. instead of relying on an implicit form submit to trigger this
+  // from the client, have an imperative approach.
+  const isPageLoadRequest = true;
 
   const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
   const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
@@ -64,31 +80,32 @@ export const loader: LoaderFunction = async ({ request }) => {
   // This data request is asking for
   if (newerOffset) {
     const getNewerComicsResponse = await fetch(
-      DDI_API_ENDPOINTS["getPreviousComics"](newerOffset)
+      DDI_API_ENDPOINTS["getPreviousComics"](newerOffset, isPageLoadRequest)
     ).then((res) => res.json());
 
     const comics: Comic[] = getNewerComicsResponse.comics || [];
     const hasComics = comics.length > 0;
+    const sortedComics = sortComics(comics);
 
     return json({
       newer: {
-        comics: comics,
-        hasMore: getNewerComicsResponse.hasMore,
-        cursor: hasComics ? comics[comics.length - 1].updatedAt : null,
+        comics: sortedComics,
+        hasMore: getNewerComicsResponse.hasMoreNewer,
+        cursor: hasComics ? sortedComics[0].updatedAt : null,
       },
       // will only use this data on page load requests
       // to initialize the component state
       older: {
-        // assume there are older comics so that the showmore button is rendered
-        // on hardrefreshes that include the NEWER_OFFSET_QUERYSTRING
-        hasMore: true,
-        cursor: hasComics ? comics[0].updatedAt : null,
+        hasMore: getNewerComicsResponse.hasMoreOlder,
+        cursor: hasComics
+          ? sortedComics[sortedComics.length - 1].updatedAt
+          : null,
       },
     });
   }
 
   const getComicsResponse = await fetch(
-    DDI_API_ENDPOINTS["getComics"](olderOffset)
+    DDI_API_ENDPOINTS["getComics"](isPageLoadRequest, olderOffset)
   ).then((res) => res.json());
 
   let earliestComicUpdatedAt;
@@ -100,14 +117,14 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json({
     older: {
       comics: getComicsResponse.comics,
-      hasMore: getComicsResponse.hasMore,
+      hasMore: getComicsResponse.hasMoreOlder,
       cursor: getComicsResponse.cursor,
     },
     // will only use this data on page load requests
     // to initialize the component state
     newer: {
       cursor: earliestComicUpdatedAt,
-      hasMore: getComicsResponse.hasMorePrevious,
+      hasMore: getComicsResponse.hasMoreNewer,
     },
   });
 };
@@ -161,12 +178,8 @@ export default function IndexRoute() {
     }
 
     if (allComics !== null) {
-      const sortedComics = allComics
-        .slice() // to avoid mutating the array from the next line's in-place sort
-        .sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
+      const sortedComics = sortComics(allComics);
+
       const latestNewerCursor = sortedComics[0].updatedAt;
       const latestOlderCursor = sortedComics[sortedComics.length - 1].updatedAt;
 
@@ -184,6 +197,7 @@ export default function IndexRoute() {
   return (
     <div>
       <div>
+        <Logo />
         <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
         <div className="comics-container">
           {comics.map(({ cellsCount, initialCell, urlId }) => (

@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "remix";
+import type { ShouldReloadFunction } from "@remix-run/react";
 import { ThemeProvider } from "styled-components";
 
 import globalStylesUrl from "~/styles/global.css";
@@ -17,6 +18,9 @@ import cssTheme from "~/styles/variables.css";
 import { theme } from "~/utils/stylesTheme";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
+
+// don't rerun the loader on client actions
+export const unstable_shouldReload: ShouldReloadFunction = () => false;
 
 export const links: LinksFunction = () => {
   return [
@@ -30,6 +34,7 @@ export async function loader() {
     CELL_IMAGES_URL: process.env.CELL_IMAGES_URL || "",
     LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL:
       process.env.LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL || "",
+    ASSETS_URL_WITH_PROTOCOL: process.env.ASSETS_URL_WITH_PROTOCOL || "",
   };
 
   return json({
