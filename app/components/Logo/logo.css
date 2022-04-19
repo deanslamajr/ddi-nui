@@ -19,6 +19,8 @@
 
   font-stretch: expanded;
   opacity: 0.6;
+
+  z-index: var(--bottom);
 }
 
 .logo:hover {

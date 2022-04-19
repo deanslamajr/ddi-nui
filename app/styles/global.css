@@ -17,7 +17,7 @@ body {
   color: var(--black);
 
   cursor: pointer;
-  z-index: 9999;
+  z-index: var(--top);
   border-radius: 5rem;
   width: var(--buttonDiameter);
   height: var(--buttonDiameter);
@@ -29,6 +29,8 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0.5rem;
+
+  opacity: 0.8;
 }
 
 @media (max-width: 599px) {
