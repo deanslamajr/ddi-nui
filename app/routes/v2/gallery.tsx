@@ -67,6 +67,8 @@ const sortComics = (comics: Comic[]): Comic[] => {
     );
 };
 
+const OFFSET_QUERYSTRING = "o";
+
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   // TODO figure out a better way to do this
@@ -74,6 +76,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   // from the client, have an imperative approach.
   const isPageLoadRequest = true;
 
+  const offset = url.searchParams.getAll(OFFSET_QUERYSTRING)[0];
   const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
   const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
 
@@ -105,7 +108,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const getComicsResponse = await fetch(
-    DDI_API_ENDPOINTS["getComics"](isPageLoadRequest, olderOffset)
+    DDI_API_ENDPOINTS["getComics"](
+      isPageLoadRequest,
+      offset || olderOffset,
+      Boolean(offset)
+    )
   ).then((res) => res.json());
 
   let earliestComicUpdatedAt;

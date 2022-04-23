@@ -1,6 +1,7 @@
-import { Form, LinksFunction } from "remix";
+import { LinksFunction } from "remix";
+import { useSearchParams } from "@remix-run/react";
 
-import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
+import { DDI_APP_PAGES } from "~/utils/urls";
 
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
@@ -15,8 +16,12 @@ export const links: LinksFunction = () => {
 type Props = {};
 
 export default function CreateNavButton({}: Props) {
+  const [searchParams] = useSearchParams();
+
   return (
-    <UnstyledLink href={DDI_APP_PAGES.getDraftsPageUrl()}>
+    <UnstyledLink
+      href={DDI_APP_PAGES.getDraftsPageUrl(searchParams.toString())}
+    >
       <div className="nav-button bottom-right accented create">+</div>
     </UnstyledLink>
   );

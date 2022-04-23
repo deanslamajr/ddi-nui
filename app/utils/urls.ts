@@ -1,4 +1,5 @@
 import { getClientVariable } from "~/utils/environment-variables";
+import isServerContext from "./isServerContext";
 
 export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
   const cellUrl =
@@ -10,13 +11,21 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
-  getComics: (isPageLoadRequest: boolean, offset?: string) => {
+  getComics: (
+    isPageLoadRequest: boolean,
+    offset?: string,
+    includeComicAtOffset?: boolean
+  ) => {
     const url = new URL(
       `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
     );
     url.searchParams.set(
       "isPageLoadRequest",
       isPageLoadRequest ? "true" : "false"
+    );
+    url.searchParams.set(
+      "includeComicAtOffset",
+      includeComicAtOffset ? "true" : "false"
     );
     if (offset !== undefined) {
       url.searchParams.append("offset", offset);
@@ -35,9 +44,9 @@ export const DDI_APP_PAGES = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/comic/${comidUrlId}`;
   },
-  getDraftsPageUrl: () => {
+  getDraftsPageUrl: (searchParams?: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-    )}/me/drafts`;
+    )}/me/drafts${searchParams ? `?${searchParams}` : ""}`;
   },
 };
