@@ -8,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  ErrorBoundaryComponent,
 } from "remix";
 import type { ShouldReloadFunction } from "@remix-run/react";
 import { ThemeProvider } from "styled-components";
@@ -35,6 +36,9 @@ export async function loader() {
     LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL:
       process.env.LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL || "",
     ASSETS_URL_WITH_PROTOCOL: process.env.ASSETS_URL_WITH_PROTOCOL || "",
+    NR_ACCOUNT_ID: process.env.NR_ACCOUNT_ID || "",
+    NR_APP_ID_REMIX_DDI_CLIENT: process.env.NR_APP_ID_REMIX_DDI_CLIENT || "",
+    NR_BROWSER_KEY: process.env.NR_BROWSER_KEY || "",
   };
 
   return json({
@@ -67,9 +71,27 @@ export default function App() {
             __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
           }}
         />
+        <script type="text/javascript" src="./newRelic.js"></script>
         <Scripts />
         <LiveReload />
       </body>
     </html>
   );
 }
+
+export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
+  console.error(error);
+  return (
+    <html>
+      <head>
+        <title>draw draw ink - Error!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        Sorry, there was an error. Please try refreshing the page.
+        <Scripts />
+      </body>
+    </html>
+  );
+};

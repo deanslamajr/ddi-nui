@@ -1,3 +1,4 @@
+import newrelic from "newrelic";
 import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 // import { useTransition } from "@remix-run/react";
@@ -71,68 +72,93 @@ const OFFSET_QUERYSTRING = "o";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
-  // TODO figure out a better way to do this
-  // e.g. instead of relying on an implicit form submit to trigger this
-  // from the client, have an imperative approach.
-  const isPageLoadRequest = true;
+  const path = url.pathname;
 
-  const offset = url.searchParams.getAll(OFFSET_QUERYSTRING)[0];
-  const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
-  const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
+  return new Promise<Response>((resolve, reject) => {
+    newrelic.startWebTransaction(path, async () => {
+      // TODO figure out a better way to do this
+      // e.g. instead of relying on an implicit form submit to trigger this
+      // from the client, have an imperative approach.
+      const isPageLoadRequest = true;
 
-  // This data request is asking for
-  if (newerOffset) {
-    const getNewerComicsResponse = await fetch(
-      DDI_API_ENDPOINTS["getPreviousComics"](newerOffset, isPageLoadRequest)
-    ).then((res) => res.json());
+      const offset = url.searchParams.getAll(OFFSET_QUERYSTRING)[0];
+      const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
+      const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
 
-    const comics: Comic[] = getNewerComicsResponse.comics || [];
-    const hasComics = comics.length > 0;
-    const sortedComics = sortComics(comics);
+      // This data request is asking for
+      if (newerOffset) {
+        const getNewerComicsResponse = await newrelic.startSegment(
+          "fetch:previousComics",
+          true,
+          async () => {
+            return await fetch(
+              DDI_API_ENDPOINTS["getPreviousComics"](
+                newerOffset,
+                isPageLoadRequest
+              )
+            ).then((res) => res.json());
+          }
+        );
 
-    return json({
-      newer: {
-        comics: sortedComics,
-        hasMore: getNewerComicsResponse.hasMoreNewer,
-        cursor: hasComics ? sortedComics[0].updatedAt : null,
-      },
-      // will only use this data on page load requests
-      // to initialize the component state
-      older: {
-        hasMore: getNewerComicsResponse.hasMoreOlder,
-        cursor: hasComics
-          ? sortedComics[sortedComics.length - 1].updatedAt
-          : null,
-      },
+        const comics: Comic[] = getNewerComicsResponse.comics || [];
+        const hasComics = comics.length > 0;
+        const sortedComics = sortComics(comics);
+
+        return resolve(
+          json({
+            newer: {
+              comics: sortedComics,
+              hasMore: getNewerComicsResponse.hasMoreNewer,
+              cursor: hasComics ? sortedComics[0].updatedAt : null,
+            },
+            // will only use this data on page load requests
+            // to initialize the component state
+            older: {
+              hasMore: getNewerComicsResponse.hasMoreOlder,
+              cursor: hasComics
+                ? sortedComics[sortedComics.length - 1].updatedAt
+                : null,
+            },
+          })
+        );
+      }
+
+      const getComicsResponse = await newrelic.startSegment(
+        "fetch:getComics",
+        true,
+        async () => {
+          return await fetch(
+            DDI_API_ENDPOINTS["getComics"](
+              isPageLoadRequest,
+              offset || olderOffset,
+              Boolean(offset)
+            )
+          ).then((res) => res.json());
+        }
+      );
+
+      let earliestComicUpdatedAt;
+      if (getComicsResponse.comics.length > 0) {
+        const earliestComic = getComicsResponse.comics[0];
+        earliestComicUpdatedAt = earliestComic.updatedAt;
+      }
+
+      return resolve(
+        json({
+          older: {
+            comics: getComicsResponse.comics,
+            hasMore: getComicsResponse.hasMoreOlder,
+            cursor: getComicsResponse.cursor,
+          },
+          // will only use this data on page load requests
+          // to initialize the component state
+          newer: {
+            cursor: earliestComicUpdatedAt,
+            hasMore: getComicsResponse.hasMoreNewer,
+          },
+        })
+      );
     });
-  }
-
-  const getComicsResponse = await fetch(
-    DDI_API_ENDPOINTS["getComics"](
-      isPageLoadRequest,
-      offset || olderOffset,
-      Boolean(offset)
-    )
-  ).then((res) => res.json());
-
-  let earliestComicUpdatedAt;
-  if (getComicsResponse.comics.length > 0) {
-    const earliestComic = getComicsResponse.comics[0];
-    earliestComicUpdatedAt = earliestComic.updatedAt;
-  }
-
-  return json({
-    older: {
-      comics: getComicsResponse.comics,
-      hasMore: getComicsResponse.hasMoreOlder,
-      cursor: getComicsResponse.cursor,
-    },
-    // will only use this data on page load requests
-    // to initialize the component state
-    newer: {
-      cursor: earliestComicUpdatedAt,
-      hasMore: getComicsResponse.hasMoreNewer,
-    },
   });
 };
 

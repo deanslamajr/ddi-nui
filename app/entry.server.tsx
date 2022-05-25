@@ -1,34 +1,53 @@
+import newrelic from "newrelic";
 import { renderToString } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
 import { ServerStyleSheet } from "styled-components";
 
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
-  const sheet = new ServerStyleSheet();
+  return new Promise<Response>((resolve, reject) => {
+    const url = new URL(request.url);
+    const path = url.pathname;
 
-  let markup = renderToString(
-    sheet.collectStyles(
-      <RemixServer context={remixContext} url={request.url} />
-    )
-  );
-  const styles = sheet.getStyleTags();
+    newrelic.startWebTransaction(path, async () => {
+      const nrTransaction = newrelic.getTransaction();
 
-  markup = markup.replace("__STYLES__", styles);
+      const sheet = new ServerStyleSheet();
 
-  // Old stuff
-  // const markup = renderToString(
-  //   <RemixServer context={remixContext} url={request.url} />
-  // );
+      let markup = newrelic.startSegment("renderToString", true, () => {
+        return renderToString(
+          sheet.collectStyles(
+            <RemixServer context={remixContext} url={request.url} />
+          )
+        );
+      });
 
-  responseHeaders.set("Content-Type", "text/html");
+      const styles = sheet.getStyleTags();
 
-  return new Response("<!DOCTYPE html>" + markup, {
-    status: responseStatusCode,
-    headers: responseHeaders,
+      markup = markup.replace("__STYLES__", styles);
+
+      responseHeaders.set("Content-Type", "text/html");
+
+      const response = new Response("<!DOCTYPE html>" + markup, {
+        status: responseStatusCode,
+        headers: responseHeaders,
+      });
+
+      const attributes = {
+        pathname: path,
+        search: url.search,
+        responseStatusCode,
+      };
+      newrelic.addCustomAttributes(attributes);
+
+      nrTransaction.end();
+
+      resolve(response);
+    });
   });
 }

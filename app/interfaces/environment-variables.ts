@@ -2,6 +2,9 @@ export type ClientEnvironmentVariables = {
   CELL_IMAGES_URL: string;
   LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: string;
   ASSETS_URL_WITH_PROTOCOL: string;
+  NR_ACCOUNT_ID: string;
+  NR_APP_ID_REMIX_DDI_CLIENT: string;
+  NR_BROWSER_KEY: string;
 };
 
 export type ServerEnvironmentVariables = {};
