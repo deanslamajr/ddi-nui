@@ -85,22 +85,46 @@ export const loader: LoaderFunction = async ({ request }) => {
       const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
       const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
 
+      let errorAttributes: Record<string, string> = {};
+
       // This data request is asking for
       if (newerOffset) {
-        const getNewerComicsResponse = await newrelic.startSegment(
-          "fetch:previousComics",
-          true,
-          async () => {
-            return await fetch(
-              DDI_API_ENDPOINTS["getPreviousComics"](
-                newerOffset,
-                isPageLoadRequest
-              )
-            ).then((res) => res.json());
-          }
-        );
+        let getNewerComicsResponse: {
+          comics: Comic[];
+          hasMoreNewer: boolean;
+          hasMoreOlder: boolean;
+        } | null = null;
 
-        const comics: Comic[] = getNewerComicsResponse.comics || [];
+        try {
+          const response: Response = await fetch(
+            DDI_API_ENDPOINTS["getPreviousComics"](
+              newerOffset,
+              isPageLoadRequest
+            )
+          );
+
+          if (!response.ok) {
+            errorAttributes = {
+              statusCode: response.status.toString(),
+              url: response.url,
+              statusText: response.statusText,
+            };
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          getNewerComicsResponse = await response.json();
+        } catch (error: any) {
+          // TODO better logging
+          console.error(error);
+          newrelic.noticeError(error, {
+            action: "getPreviousComics",
+            newerOffset,
+            isPageLoadRequest,
+            ...errorAttributes,
+          });
+        }
+
+        const comics: Comic[] = getNewerComicsResponse?.comics || [];
         const hasComics = comics.length > 0;
         const sortedComics = sortComics(comics);
 
@@ -108,13 +132,13 @@ export const loader: LoaderFunction = async ({ request }) => {
           json({
             newer: {
               comics: sortedComics,
-              hasMore: getNewerComicsResponse.hasMoreNewer,
+              hasMore: getNewerComicsResponse?.hasMoreNewer || false,
               cursor: hasComics ? sortedComics[0].updatedAt : null,
             },
             // will only use this data on page load requests
             // to initialize the component state
             older: {
-              hasMore: getNewerComicsResponse.hasMoreOlder,
+              hasMore: getNewerComicsResponse?.hasMoreOlder || false,
               cursor: hasComics
                 ? sortedComics[sortedComics.length - 1].updatedAt
                 : null,
@@ -123,38 +147,63 @@ export const loader: LoaderFunction = async ({ request }) => {
         );
       }
 
-      const getComicsResponse = await newrelic.startSegment(
-        "fetch:getComics",
-        true,
-        async () => {
-          return await fetch(
-            DDI_API_ENDPOINTS["getComics"](
-              isPageLoadRequest,
-              offset || olderOffset,
-              Boolean(offset)
-            )
-          ).then((res) => res.json());
+      let getComicsResponse: {
+        comics: Comic[];
+        cursor: string;
+        hasMoreNewer: boolean;
+        hasMoreOlder: boolean;
+      } | null = null;
+
+      try {
+        const response: Response = await fetch(
+          DDI_API_ENDPOINTS["getComics"](
+            isPageLoadRequest,
+            offset || olderOffset,
+            Boolean(offset)
+          )
+        );
+
+        if (!response.ok) {
+          errorAttributes = {
+            statusCode: response.status.toString(),
+            url: response.url,
+            statusText: response.statusText,
+          };
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      );
+
+        getComicsResponse = await response.json();
+      } catch (error: any) {
+        // TODO better logging
+        console.error(error);
+        newrelic.noticeError(error, {
+          action: "getComics",
+          offset,
+          olderOffset,
+          isPageLoadRequest,
+          ...errorAttributes,
+        });
+      }
 
       let earliestComicUpdatedAt;
-      if (getComicsResponse.comics.length > 0) {
-        const earliestComic = getComicsResponse.comics[0];
+      const comics: Comic[] = getComicsResponse?.comics || [];
+      if (comics.length > 0) {
+        const earliestComic = comics[0];
         earliestComicUpdatedAt = earliestComic.updatedAt;
       }
 
       return resolve(
         json({
           older: {
-            comics: getComicsResponse.comics,
-            hasMore: getComicsResponse.hasMoreOlder,
-            cursor: getComicsResponse.cursor,
+            comics,
+            hasMore: getComicsResponse?.hasMoreOlder || false,
+            cursor: getComicsResponse?.cursor || null,
           },
           // will only use this data on page load requests
           // to initialize the component state
           newer: {
-            cursor: earliestComicUpdatedAt,
-            hasMore: getComicsResponse.hasMoreNewer,
+            cursor: earliestComicUpdatedAt || null,
+            hasMore: getComicsResponse?.hasMoreNewer || false,
           },
         })
       );
