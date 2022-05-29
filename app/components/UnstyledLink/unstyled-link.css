@@ -2,4 +2,9 @@
   text-decoration: none;
   color: inherit;
   position: relative;
+  background-color: var(--white);
+}
+
+.unstyled-link:visited {
+  background-color: var(--pinkWhite);
 }

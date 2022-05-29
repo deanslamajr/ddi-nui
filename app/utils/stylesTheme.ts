@@ -5,6 +5,7 @@ export const theme: DefaultTheme = {
     // https://coolors.co/fffaf9-f4364c-cececf-e7e7e7-464655
     white: "#FFFAF9",
     pink: "#FF4C7F",
+    pinkTran: "#FF4C7F50",
     darkGray: "#CECECF",
     lightGray: "#E7E7E7",
     black: "#464655",
