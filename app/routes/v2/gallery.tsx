@@ -60,15 +60,21 @@ type LoaderData = {
 };
 
 const sortComics = (comics: Comic[]): Comic[] => {
+  const comicUrlIdsForFilteringDuplicates: string[] = [];
   return comics
     .slice() // to avoid mutating the array from the next line's in-place sort
     .sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
+    )
+    .filter((comic) => {
+      if (!comicUrlIdsForFilteringDuplicates.includes(comic.urlId)) {
+        comicUrlIdsForFilteringDuplicates.push(comic.urlId);
+        return true;
+      }
+      return false;
+    });
 };
-
-const OFFSET_QUERYSTRING = "o";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -76,12 +82,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   return new Promise<Response>((resolve, reject) => {
     newrelic.startWebTransaction(path, async () => {
-      // TODO figure out a better way to do this
-      // e.g. instead of relying on an implicit form submit to trigger this
-      // from the client, have an imperative approach.
-      const isPageLoadRequest = true;
-
-      const offset = url.searchParams.getAll(OFFSET_QUERYSTRING)[0];
       const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
       const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
 
@@ -92,15 +92,11 @@ export const loader: LoaderFunction = async ({ request }) => {
         let getNewerComicsResponse: {
           comics: Comic[];
           hasMoreNewer: boolean;
-          hasMoreOlder: boolean;
         } | null = null;
 
         try {
           const response: Response = await fetch(
-            DDI_API_ENDPOINTS["getPreviousComics"](
-              newerOffset,
-              isPageLoadRequest
-            )
+            DDI_API_ENDPOINTS.getPreviousComics(newerOffset)
           );
 
           if (!response.ok) {
@@ -119,7 +115,6 @@ export const loader: LoaderFunction = async ({ request }) => {
           newrelic.noticeError(error, {
             action: "getPreviousComics",
             newerOffset,
-            isPageLoadRequest,
             ...errorAttributes,
           });
         }
@@ -138,7 +133,7 @@ export const loader: LoaderFunction = async ({ request }) => {
             // will only use this data on page load requests
             // to initialize the component state
             older: {
-              hasMore: getNewerComicsResponse?.hasMoreOlder || false,
+              hasMore: true,
               cursor: hasComics
                 ? sortedComics[sortedComics.length - 1].updatedAt
                 : null,
@@ -150,17 +145,12 @@ export const loader: LoaderFunction = async ({ request }) => {
       let getComicsResponse: {
         comics: Comic[];
         cursor: string;
-        hasMoreNewer: boolean;
         hasMoreOlder: boolean;
       } | null = null;
 
       try {
         const response: Response = await fetch(
-          DDI_API_ENDPOINTS["getComics"](
-            isPageLoadRequest,
-            offset || olderOffset,
-            Boolean(offset)
-          )
+          DDI_API_ENDPOINTS.getComics(olderOffset)
         );
 
         if (!response.ok) {
@@ -178,9 +168,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         console.error(error);
         newrelic.noticeError(error, {
           action: "getComics",
-          offset,
           olderOffset,
-          isPageLoadRequest,
           ...errorAttributes,
         });
       }
@@ -203,7 +191,7 @@ export const loader: LoaderFunction = async ({ request }) => {
           // to initialize the component state
           newer: {
             cursor: earliestComicUpdatedAt || null,
-            hasMore: getComicsResponse?.hasMoreNewer || false,
+            hasMore: true,
           },
         })
       );
@@ -225,10 +213,10 @@ export default function IndexRoute() {
     comics.length > 0 ? comics[0].updatedAt : null
   );
   const [hasMoreOlderComics, setHasMoreOlderComics] = useState<boolean>(
-    data.older?.hasMore || false
+    data.older?.hasMore || true
   );
   const [hasMoreNewerComics, setHasMoreNewerComics] = useState<boolean>(
-    data.newer?.hasMore || false
+    data.newer?.hasMore || true
   );
 
   useEffect(() => {
@@ -255,8 +243,8 @@ export default function IndexRoute() {
         newerComics.length
       ) {
         allComics = [...newerComics, ...comics];
-        setHasMoreNewerComics(data.newer.hasMore);
       }
+      setHasMoreNewerComics(data.newer.hasMore);
     }
 
     if (allComics !== null) {

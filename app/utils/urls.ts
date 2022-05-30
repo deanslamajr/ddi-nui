@@ -11,31 +11,19 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
-  getComics: (
-    isPageLoadRequest: boolean,
-    offset?: string,
-    includeComicAtOffset?: boolean
-  ) => {
+  getComics: (offset?: string) => {
     const url = new URL(
       `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
-    );
-    url.searchParams.set(
-      "isPageLoadRequest",
-      isPageLoadRequest ? "true" : "false"
-    );
-    url.searchParams.set(
-      "includeComicAtOffset",
-      includeComicAtOffset ? "true" : "false"
     );
     if (offset !== undefined) {
       url.searchParams.append("offset", offset);
     }
     return url.toString();
   },
-  getPreviousComics: (offset: string, isPageLoadRequest: boolean) =>
+  getPreviousComics: (offset: string) =>
     `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-    )}/api/comics/latest?latestUpdatedAt=${offset}&isPageLoadRequest=${isPageLoadRequest}`,
+    )}/api/comics/latest?latestUpdatedAt=${offset}`,
 };
 
 export const DDI_APP_PAGES = {
