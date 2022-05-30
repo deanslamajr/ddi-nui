@@ -231,8 +231,8 @@ export default function IndexRoute() {
 
       if (latestOlderCursor !== olderCursor && olderComics.length) {
         allComics = [...comics, ...olderComics];
-        setHasMoreOlderComics(data.older.hasMore);
       }
+      setHasMoreOlderComics(data.older.hasMore);
     } else {
       // Handle newer comics
       const latestNewerCursor = data.newer.cursor;
