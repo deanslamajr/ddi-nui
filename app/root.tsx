@@ -17,6 +17,7 @@ import globalStylesUrl from "~/styles/global.css";
 import cssTheme from "~/styles/variables.css";
 
 import { theme } from "~/utils/stylesTheme";
+import { getClientVariable } from "~/utils/environment-variables";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
@@ -24,9 +25,46 @@ import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 export const unstable_shouldReload: ShouldReloadFunction = () => false;
 
 export const links: LinksFunction = () => {
+  const faviconUrl = getClientVariable("FAVICON_URL_WITH_PROTOCOL");
+  const favicons = faviconUrl
+    ? [
+        {
+          rel: "apple-touch-icon",
+          sizes: "180x180",
+          href: `${faviconUrl}/apple-touch-icon.png`,
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "32x32",
+          href: `${faviconUrl}/favicon-32x32.png`,
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "16x16",
+          href: `${faviconUrl}/favicon-16x16.png`,
+        },
+        {
+          rel: "manifest",
+          href: `${faviconUrl}/site.webmanifest`,
+        },
+        {
+          rel: "mask-icon",
+          href: `${faviconUrl}/safari-pinned-tab.svg`,
+          color: "#5bbad5",
+        },
+        {
+          rel: "shortcut icon",
+          href: `${faviconUrl}/favicon.ico`,
+        },
+      ]
+    : [];
+
   return [
     { rel: "stylesheet", href: cssTheme },
     { rel: "stylesheet", href: globalStylesUrl },
+    ...favicons,
   ];
 };
 
@@ -48,7 +86,7 @@ export async function loader() {
 }
 
 export default function App() {
-  const data = useLoaderData();
+  const data = useLoaderData<{ ENV: ClientEnvironmentVariables }>();
   return (
     <html lang="en">
       <head>
@@ -58,6 +96,12 @@ export default function App() {
           name="viewport"
           content="width=device-width, initial-scale=1, minimum-scale=1"
         />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta
+          name="msapplication-config"
+          content={`${data.ENV.FAVICON_URL_WITH_PROTOCOL}/browserconfig.xml`}
+        />
+        <meta name="theme-color" content="#ffffff" />
         <title>draw draw ink</title>
         <Links />
         {typeof document === "undefined" ? "__STYLES__" : null}
