@@ -9,8 +9,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 270px;
-  height: 270px;
+  width: 100%;
+  aspect-ratio: 1;
 }
 
 .load-spinner {

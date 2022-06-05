@@ -1,5 +1,4 @@
 import { getClientVariable } from "~/utils/environment-variables";
-import isServerContext from "./isServerContext";
 
 export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
   const cellUrl =
