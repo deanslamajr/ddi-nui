@@ -36,6 +36,7 @@ export async function loader() {
     LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL:
       process.env.LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL || "",
     ASSETS_URL_WITH_PROTOCOL: process.env.ASSETS_URL_WITH_PROTOCOL || "",
+    FAVICON_URL_WITH_PROTOCOL: process.env.FAVICON_URL_WITH_PROTOCOL || "",
     NR_ACCOUNT_ID: process.env.NR_ACCOUNT_ID || "",
     NR_APP_ID_REMIX_DDI_CLIENT: process.env.NR_APP_ID_REMIX_DDI_CLIENT || "",
     NR_BROWSER_KEY: process.env.NR_BROWSER_KEY || "",

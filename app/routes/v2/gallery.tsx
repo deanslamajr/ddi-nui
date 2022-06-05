@@ -2,7 +2,7 @@ import newrelic from "newrelic";
 import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 // import { useTransition } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import ShowMore, {
   links as showMoreStylesUrls,
@@ -18,6 +18,9 @@ import CellsThumb, {
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
+import CellWithLoadSpinner, {
+  links as cellWithLoadSpinnerStylesUrl,
+} from "~/components/CellWithLoadSpinner";
 import Logo, { links as logoStylesUrl } from "~/components/Logo";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
@@ -31,6 +34,7 @@ export const links: LinksFunction = () => {
     ...createNavButtonStylesUrl(),
     ...unstyledLinkStylesUrl(),
     ...logoStylesUrl(),
+    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -199,6 +203,33 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
+type ComicPreviewProps = {
+  cellsCount: number;
+  initialCell: Comic["initialCell"];
+  urlId: string;
+};
+
+const ComicPreview: FC<ComicPreviewProps> = ({
+  cellsCount,
+  initialCell,
+  urlId,
+}) => {
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+
+  return (
+    <UnstyledLink
+      href={DDI_APP_PAGES.getComicPageUrl(urlId)}
+      onclick={() => setIsClicked(true)}
+    >
+      {isClicked ? (
+        <CellWithLoadSpinner />
+      ) : (
+        <CellsThumb cell={initialCell} cellsCount={cellsCount} />
+      )}
+    </UnstyledLink>
+  );
+};
+
 export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
 
@@ -271,12 +302,12 @@ export default function IndexRoute() {
         <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
         <div className="comics-container">
           {comics.map(({ cellsCount, initialCell, urlId }) => (
-            <UnstyledLink
+            <ComicPreview
               key={urlId}
-              href={DDI_APP_PAGES.getComicPageUrl(urlId)}
-            >
-              <CellsThumb cell={initialCell} cellsCount={cellsCount} />
-            </UnstyledLink>
+              cellsCount={cellsCount}
+              initialCell={initialCell}
+              urlId={urlId}
+            />
           ))}
         </div>
         <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
