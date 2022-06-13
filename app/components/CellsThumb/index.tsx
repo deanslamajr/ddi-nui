@@ -7,6 +7,7 @@ import { getClientVariable } from "~/utils/environment-variables";
 import isServerContext from "~/utils/isServerContext";
 
 // import Cell from "~/components/Cell";
+import { DynamicTextContainer } from "../DynamicTextContainer";
 
 import stylesUrl from "./cells-thumb.css";
 
@@ -15,14 +16,20 @@ export const links: LinksFunction = () => {
 };
 
 const ThumbSchema1: FC<{
+  caption?: string;
   cellsCount: number;
   imageUrl: string;
-}> = ({ cellsCount, imageUrl }) => {
+}> = ({ caption, cellsCount, imageUrl }) => {
   const showLoader = isServerContext();
 
   return (
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
+      {caption && (
+        <DynamicTextContainer fontRatio={14} isPreview={true}>
+          {caption}
+        </DynamicTextContainer>
+      )}
       {showLoader ? (
         <img
           className="base-cell-image"
@@ -85,12 +92,18 @@ type Cell = {
 const CellsThumb: FC<{
   cell?: Cell;
   cellsCount: number;
+  resizeIndicator: number;
 }> = ({ cell, cellsCount }) => {
   if (cell) {
     return cell.schemaVersion === 1 ? (
-      <ThumbSchema1 cellsCount={cellsCount} imageUrl={cell.imageUrl} />
+      <ThumbSchema1
+        caption={cell.caption}
+        cellsCount={cellsCount}
+        imageUrl={cell.imageUrl}
+      />
     ) : (
       <ThumbSchema1
+        caption={cell.caption}
         cellsCount={cellsCount}
         imageUrl={getCellImageUrl(cell.imageUrl, cell.schemaVersion)}
       />

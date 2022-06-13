@@ -206,12 +206,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 type ComicPreviewProps = {
   cellsCount: number;
   initialCell: Comic["initialCell"];
+  resizeIndicator: number;
   urlId: string;
 };
 
 const ComicPreview: FC<ComicPreviewProps> = ({
   cellsCount,
   initialCell,
+  resizeIndicator,
   urlId,
 }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -224,9 +226,43 @@ const ComicPreview: FC<ComicPreviewProps> = ({
       {isClicked ? (
         <CellWithLoadSpinner />
       ) : (
-        <CellsThumb cell={initialCell} cellsCount={cellsCount} />
+        <CellsThumb
+          cell={initialCell}
+          cellsCount={cellsCount}
+          resizeIndicator={resizeIndicator}
+        />
       )}
     </UnstyledLink>
+  );
+};
+
+const ComicsPreviewContainer: FC<{ comics: Comic[] }> = ({ comics }) => {
+  const [width, setWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth;
+
+      setWidth(newWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div className="comics-container">
+      {comics.map(({ cellsCount, initialCell, urlId }) => (
+        <ComicPreview
+          key={urlId}
+          cellsCount={cellsCount}
+          initialCell={initialCell}
+          resizeIndicator={width}
+          urlId={urlId}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -300,16 +336,7 @@ export default function IndexRoute() {
       <div>
         <Logo />
         <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
-        <div className="comics-container">
-          {comics.map(({ cellsCount, initialCell, urlId }) => (
-            <ComicPreview
-              key={urlId}
-              cellsCount={cellsCount}
-              initialCell={initialCell}
-              urlId={urlId}
-            />
-          ))}
-        </div>
+        <ComicsPreviewContainer comics={comics} />
         <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
       </div>
 

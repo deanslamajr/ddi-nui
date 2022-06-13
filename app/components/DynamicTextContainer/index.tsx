@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { phoneMax } from "~/components/breakpoints";
 
@@ -8,9 +8,11 @@ const MIN_WIDTH = 1;
 const MAX_FONT_SIZE = 9999;
 const MIN_FONT_SIZE = 1;
 
-const Container = styled.div<{ fontSize: number }>`
+type ContainerProps = { fontSize: number | null; isPreview?: boolean };
+
+const Container = styled.div<ContainerProps>`
   display: ${(props) => (props.fontSize ? "inherit" : "none")};
-  font-size: ${(props) => props.fontSize}px;
+  font-size: ${(props) => (props.fontSize ? `${props.fontSize}px` : "inherit")};
   background: ${(props) => props.theme.colors.white};
   padding: 0.25vw;
   line-height: 1;
@@ -19,6 +21,28 @@ const Container = styled.div<{ fontSize: number }>`
   ${phoneMax`
     padding: 1vw;
   `}
+
+  ${(props) =>
+    props.isPreview
+      ? css<ContainerProps>`
+          z-index: ${props.theme.zIndex.highest};
+          position: absolute;
+          bottom: 0.1rem;
+          left: 0.1rem;
+          right: 0.1rem;
+
+          opacity: 0.75;
+          background-color: ${props.theme.colors.white};
+          color: ${props.theme.colors.black};
+
+          user-select: none;
+          cursor: pointer;
+          overflow: hidden;
+
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        `
+      : ""}
 `;
 
 function calculateFontSize(elemWidth: number, fontRatio: number) {
@@ -39,60 +63,21 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 }
 
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
-export class DynamicTextContainer extends React.Component<
-  { fontRatio: number },
-  {
-    elemWidth: number | null;
-    fontSize: number | null;
-  }
-> {
-  state = {
-    elemWidth: MIN_WIDTH,
-    fontSize: MIN_FONT_SIZE,
-  };
+export const DynamicTextContainer: React.FC<{
+  fontRatio: number;
+  isPreview?: boolean;
+}> = ({ children, fontRatio, isPreview }) => {
+  let fontSize: number | null = null;
+  const container = React.useRef<HTMLDivElement>(null);
 
-  container: HTMLDivElement | null = null;
-
-  componentDidMount() {
-    if (this.container) {
-      this.setFontSize();
-    }
+  if (container) {
+    const elemWidth = container?.current?.offsetWidth || 0;
+    fontSize = calculateFontSize(elemWidth, fontRatio);
   }
 
-  componentDidUpdate(
-    prevProps: { fontRatio: number },
-    prevState: {
-      elemWidth: number;
-      fontSize: number;
-    }
-  ) {
-    if (
-      this.container &&
-      (this.container.offsetWidth !== prevState.elemWidth ||
-        this.props.fontRatio !== prevProps.fontRatio)
-    ) {
-      this.setFontSize();
-    }
-  }
-
-  setFontSize = () => {
-    const elemWidth = this.container?.offsetWidth || 0;
-    const fontSize = calculateFontSize(elemWidth, this.props.fontRatio);
-
-    this.setState({
-      elemWidth,
-      fontSize,
-    });
-  };
-
-  render() {
-    return (
-      <Container
-        fontSize={this.state.fontSize}
-        ref={(container) => (this.container = container)}
-      >
-        {this.props.children}
-      </Container>
-    );
-  }
-}
+  return (
+    <Container fontSize={fontSize} isPreview={isPreview} ref={container}>
+      {children}
+    </Container>
+  );
+};
