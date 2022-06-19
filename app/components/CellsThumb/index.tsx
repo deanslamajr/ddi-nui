@@ -6,7 +6,6 @@ import { getCellImageUrl } from "~/utils/urls";
 import { getClientVariable } from "~/utils/environment-variables";
 import isServerContext from "~/utils/isServerContext";
 
-// import Cell from "~/components/Cell";
 import { DynamicTextContainer } from "../DynamicTextContainer";
 
 import stylesUrl from "./cells-thumb.css";
@@ -62,27 +61,6 @@ const ThumbSchema1: FC<{
   );
 };
 
-// const ThumbEarlierSchemas: FC<{
-//   caption: string;
-//   cellsCount: number;
-//   schemaVersion: number;
-//   imageUrl: string;
-// }> = ({ caption, cellsCount, schemaVersion, imageUrl }) => {
-//   return (
-//     <>
-//       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
-//       <Cell
-//         clickable
-//         removeBorders
-//         imageUrl={imageUrl}
-//         isImageUrlAbsolute={schemaVersion > 1}
-//         schemaVersion={schemaVersion}
-//         caption={caption}
-//       />
-//     </>
-//   );
-// };
-
 type Cell = {
   caption: string;
   imageUrl: string;
@@ -92,27 +70,19 @@ type Cell = {
 const CellsThumb: FC<{
   cell?: Cell;
   cellsCount: number;
-  resizeIndicator: number;
 }> = ({ cell, cellsCount }) => {
   if (cell) {
-    return cell.schemaVersion === 1 ? (
+    const imageUrl =
+      cell.schemaVersion === 1
+        ? cell.imageUrl
+        : getCellImageUrl(cell.imageUrl, cell.schemaVersion);
+
+    return (
       <ThumbSchema1
         caption={cell.caption}
         cellsCount={cellsCount}
-        imageUrl={cell.imageUrl}
+        imageUrl={imageUrl}
       />
-    ) : (
-      <ThumbSchema1
-        caption={cell.caption}
-        cellsCount={cellsCount}
-        imageUrl={getCellImageUrl(cell.imageUrl, cell.schemaVersion)}
-      />
-      // <ThumbEarlierSchemas
-      //   cellsCount={cellsCount}
-      //   imageUrl={getCellUrl(cell.imageUrl, cell.schemaVersion)}
-      //   schemaVersion={cell.schemaVersion}
-      //   caption={cell.caption}
-      // />
     );
   }
 

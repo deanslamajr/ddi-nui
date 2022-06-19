@@ -206,19 +206,15 @@ export const loader: LoaderFunction = async ({ request }) => {
 type ComicPreviewProps = {
   cellsCount: number;
   initialCell: Comic["initialCell"];
-  resizeIndicator: number;
   urlId: string;
 };
 
 const ComicPreview: FC<ComicPreviewProps> = ({
   cellsCount,
   initialCell,
-  resizeIndicator,
   urlId,
 }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
-
-  console.log("resizeIndicator", resizeIndicator);
 
   return (
     <UnstyledLink
@@ -228,11 +224,7 @@ const ComicPreview: FC<ComicPreviewProps> = ({
       {isClicked ? (
         <CellWithLoadSpinner />
       ) : (
-        <CellsThumb
-          cell={initialCell}
-          cellsCount={cellsCount}
-          resizeIndicator={resizeIndicator}
-        />
+        <CellsThumb cell={initialCell} cellsCount={cellsCount} />
       )}
     </UnstyledLink>
   );
@@ -256,13 +248,14 @@ const ComicsPreviewContainer: FC<{ comics: Comic[] }> = ({ comics }) => {
   }, []);
 
   return (
-    <div className="comics-container">
+    // key on width to trigger a rerender of children
+    // when resize event occurs
+    <div key={width} className="comics-container">
       {comics.map(({ cellsCount, initialCell, urlId }) => (
         <ComicPreview
           key={urlId}
           cellsCount={cellsCount}
           initialCell={initialCell}
-          resizeIndicator={width}
           urlId={urlId}
         />
       ))}
