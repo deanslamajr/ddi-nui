@@ -218,6 +218,8 @@ const ComicPreview: FC<ComicPreviewProps> = ({
 }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
+  console.log("resizeIndicator", resizeIndicator);
+
   return (
     <UnstyledLink
       href={DDI_APP_PAGES.getComicPageUrl(urlId)}
@@ -245,6 +247,8 @@ const ComicsPreviewContainer: FC<{ comics: Comic[] }> = ({ comics }) => {
 
       setWidth(newWidth);
     };
+
+    handleResize();
 
     window.addEventListener("resize", handleResize);
 
