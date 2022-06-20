@@ -69,14 +69,21 @@ export const DynamicTextContainer: React.FC<{
 }> = ({ children, fontRatio, isPreview }) => {
   const [fontSize, setFontSize] = React.useState<null | number>(null);
   const container = React.useRef<HTMLDivElement>(null);
+  const isMountedVal = React.useRef(1);
 
   React.useEffect(() => {
+    isMountedVal.current = 1;
     if (container) {
       const elemWidth = container.current?.offsetWidth || 0;
       const newFontSize = calculateFontSize(elemWidth, fontRatio);
-      setFontSize(newFontSize);
+      if (isMountedVal.current) {
+        setFontSize(newFontSize);
+      }
     }
-  }, [container.current?.offsetWidth]);
+    return () => {
+      isMountedVal.current = 0;
+    };
+  }, [container.current?.offsetWidth, isMountedVal.current]);
 
   return (
     <Container fontSize={fontSize} isPreview={isPreview} ref={container}>

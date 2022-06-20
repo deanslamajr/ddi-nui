@@ -3,6 +3,7 @@ import type { LinksFunction, LoaderFunction } from "remix";
 import { json, useLoaderData } from "remix";
 // import { useTransition } from "@remix-run/react";
 import { FC, useEffect, useState } from "react";
+import { usePageVisibility } from "react-page-visibility";
 
 import ShowMore, {
   links as showMoreStylesUrls,
@@ -297,6 +298,8 @@ export default function IndexRoute() {
   const [showNewComicsExistButton, setShowNewComicsExistButton] =
     useState<boolean>(false);
 
+  const isVisible = usePageVisibility();
+
   useEffect(() => {
     const olderComics = data.older?.comics;
     const newerComics = data.newer?.comics;
@@ -349,8 +352,15 @@ export default function IndexRoute() {
       const now = Date.now();
       setLatestTimestamp(now);
     }
+  }, []);
 
+  useEffect(() => {
     const latestComicsPolling = setInterval(async () => {
+      // only do this if the browser tab is active
+      if (!isVisible) {
+        return;
+      }
+
       const latestTimestamp = getLatestTimestamp();
       if (latestTimestamp === null) {
         // TODO better logging
@@ -370,7 +380,7 @@ export default function IndexRoute() {
       }
     }, 5000);
     return () => clearInterval(latestComicsPolling);
-  }, []);
+  }, [isVisible]);
 
   return (
     <div className="gallery-outer-container">
