@@ -5,8 +5,16 @@
   grid-auto-rows: auto;
 }
 
+.gallery-outer-container {
+  margin: 5rem 0;
+}
+
 @media (max-width: 899px) {
   .comics-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .gallery-outer-container {
+    margin: 4.5rem 0;
   }
 }

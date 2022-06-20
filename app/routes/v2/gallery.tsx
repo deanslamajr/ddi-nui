@@ -9,6 +9,9 @@ import ShowMore, {
   OLDER_OFFSET_QUERYSTRING,
   NEWER_OFFSET_QUERYSTRING,
 } from "~/components/ShowMore";
+import NewComicsExistButton, {
+  links as newComicsExistStylesUrl,
+} from "~/components/NewComicsExistButton";
 import CreateNavButton, {
   links as createNavButtonStylesUrl,
 } from "~/components/CreateNavButton";
@@ -25,6 +28,8 @@ import Logo, { links as logoStylesUrl } from "~/components/Logo";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 
+import { getLatestTimestamp, setLatestTimestamp } from "~/frontend/clientCache";
+
 import stylesUrl from "~/styles/gallery.css";
 
 export const links: LinksFunction = () => {
@@ -35,6 +40,7 @@ export const links: LinksFunction = () => {
     ...unstyledLinkStylesUrl(),
     ...logoStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
+    ...newComicsExistStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -59,6 +65,7 @@ type ComicsPagination = {
 };
 
 type LoaderData = {
+  hasCursor: boolean;
   older: ComicsPagination;
   newer: ComicsPagination;
 };
@@ -88,6 +95,8 @@ export const loader: LoaderFunction = async ({ request }) => {
     newrelic.startWebTransaction(path, async () => {
       const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
       const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
+
+      const hasCursor = Boolean(olderOffset || newerOffset);
 
       let errorAttributes: Record<string, string> = {};
 
@@ -129,6 +138,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
         return resolve(
           json({
+            hasCursor,
             newer: {
               comics: sortedComics,
               hasMore: getNewerComicsResponse?.hasMoreNewer || false,
@@ -186,6 +196,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
       return resolve(
         json({
+          hasCursor,
           older: {
             comics,
             hasMore: getComicsResponse?.hasMoreOlder || false,
@@ -283,6 +294,9 @@ export default function IndexRoute() {
     data.newer?.hasMore || true
   );
 
+  const [showNewComicsExistButton, setShowNewComicsExistButton] =
+    useState<boolean>(false);
+
   useEffect(() => {
     const olderComics = data.older?.comics;
     const newerComics = data.newer?.comics;
@@ -328,23 +342,46 @@ export default function IndexRoute() {
     }
   }, [comics, setComics, data]);
 
-  return (
-    <div>
-      <div>
-        <Logo />
-        <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
-        <ComicsPreviewContainer comics={comics} />
-        <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
-      </div>
+  useEffect(() => {
+    const latestTimestamp = getLatestTimestamp();
 
-      {/* {newerComicsExist && (
-        <NavButton
-          value="SHOW NEWER"
-          cb={this.handleRefreshClick}
-          position={TOP_RIGHT}
-        />
-      )}
-      */}
+    if (latestTimestamp === null || !data.hasCursor) {
+      const now = Date.now();
+      setLatestTimestamp(now);
+    }
+
+    const latestComicsPolling = setInterval(async () => {
+      const latestTimestamp = getLatestTimestamp();
+      if (latestTimestamp === null) {
+        // TODO better logging
+        console.error(
+          "Cant ping for latest comics: latest timestamp does not exist in client cache"
+        );
+      } else {
+        const response: Response = await fetch(
+          DDI_API_ENDPOINTS.getPreviousComics(`${latestTimestamp}`)
+        );
+        if (response.ok) {
+          const getNewerComicsResponse = await response.json();
+          if (getNewerComicsResponse?.comics?.length > 0) {
+            setShowNewComicsExistButton(true);
+          }
+        }
+      }
+    }, 5000);
+    return () => clearInterval(latestComicsPolling);
+  }, []);
+
+  return (
+    <div className="gallery-outer-container">
+      <Logo />
+
+      {/* <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} /> */}
+      <ComicsPreviewContainer comics={comics} />
+      {/* <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} /> */}
+
+      <NewComicsExistButton isVisible={showNewComicsExistButton} />
+
       <CreateNavButton />
     </div>
   );
