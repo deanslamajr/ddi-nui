@@ -35,10 +35,18 @@ export default function ShowMore({ isNewer, isVisible, offset }: Props) {
 
   return typeof offset === "string" ? (
     <div
-      className={classnames("nav-button", "bottom-center", "show-more", {
-        disabled: !isVisible,
-        loading: isLoading,
-      })}
+      className={classnames(
+        "nav-button",
+        "show-more",
+        {
+          disabled: !isVisible,
+          loading: isLoading,
+        },
+        {
+          ["bottom-center"]: !isNewer,
+          ["top-center"]: isNewer,
+        }
+      )}
     >
       <Form replace>
         {isNewer ? (

@@ -386,9 +386,9 @@ export default function IndexRoute() {
     <div className="gallery-outer-container">
       <Logo />
 
-      {/* <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} /> */}
+      <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
       <ComicsPreviewContainer comics={comics} />
-      {/* <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} /> */}
+      <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
 
       <NewComicsExistButton isVisible={showNewComicsExistButton} />
 
