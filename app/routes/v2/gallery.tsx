@@ -1,15 +1,10 @@
 import newrelic from "newrelic";
-import type { LinksFunction, LoaderFunction } from "remix";
-import { json, useLoaderData } from "remix";
-// import { useTransition } from "@remix-run/react";
+import type { LinksFunction } from "remix";
+import { useLoaderData } from "remix";
 import { FC, useEffect, useState } from "react";
 import { usePageVisibility } from "react-page-visibility";
 
-import ShowMore, {
-  links as showMoreStylesUrls,
-  OLDER_OFFSET_QUERYSTRING,
-  NEWER_OFFSET_QUERYSTRING,
-} from "~/components/ShowMore";
+import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
 } from "~/components/NewComicsExistButton";
@@ -28,10 +23,16 @@ import CellWithLoadSpinner, {
 import Logo, { links as logoStylesUrl } from "~/components/Logo";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
+import sortComics from "~/utils/sortComics";
 
 import { getLatestTimestamp, setLatestTimestamp } from "~/frontend/clientCache";
 
+import { Comic } from "~/interfaces/comic";
+
 import stylesUrl from "~/styles/gallery.css";
+
+import { LoaderData } from "~/loaders/gallery";
+export { default as loader } from "~/loaders/gallery";
 
 export const links: LinksFunction = () => {
   return [
@@ -44,175 +45,6 @@ export const links: LinksFunction = () => {
     ...newComicsExistStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
-};
-
-type Comic = {
-  cellsCount: number;
-  initialCell: {
-    caption: string;
-    imageUrl: string;
-    order: number | null;
-    schemaVersion: number;
-    urlId: string;
-  };
-  updatedAt: string;
-  urlId: string;
-};
-
-type ComicsPagination = {
-  cursor: string | null;
-  comics?: Array<Comic>;
-  hasMore: boolean;
-};
-
-type LoaderData = {
-  hasCursor: boolean;
-  older: ComicsPagination;
-  newer: ComicsPagination;
-};
-
-const sortComics = (comics: Comic[]): Comic[] => {
-  const comicUrlIdsForFilteringDuplicates: string[] = [];
-  return comics
-    .slice() // to avoid mutating the array from the next line's in-place sort
-    .sort(
-      (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    )
-    .filter((comic) => {
-      if (!comicUrlIdsForFilteringDuplicates.includes(comic.urlId)) {
-        comicUrlIdsForFilteringDuplicates.push(comic.urlId);
-        return true;
-      }
-      return false;
-    });
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const path = url.pathname;
-
-  return new Promise<Response>((resolve, reject) => {
-    newrelic.startWebTransaction(path, async () => {
-      const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
-      const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
-
-      const hasCursor = Boolean(olderOffset || newerOffset);
-
-      let errorAttributes: Record<string, string> = {};
-
-      // This data request is asking for
-      if (newerOffset) {
-        let getNewerComicsResponse: {
-          comics: Comic[];
-          hasMoreNewer: boolean;
-        } | null = null;
-
-        try {
-          const response: Response = await fetch(
-            DDI_API_ENDPOINTS.getPreviousComics(newerOffset)
-          );
-
-          if (!response.ok) {
-            errorAttributes = {
-              statusCode: response.status.toString(),
-              url: response.url,
-              statusText: response.statusText,
-            };
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          getNewerComicsResponse = await response.json();
-        } catch (error: any) {
-          // TODO better logging
-          console.error(error);
-          newrelic.noticeError(error, {
-            action: "getPreviousComics",
-            newerOffset,
-            ...errorAttributes,
-          });
-        }
-
-        const comics: Comic[] = getNewerComicsResponse?.comics || [];
-        const hasComics = comics.length > 0;
-        const sortedComics = sortComics(comics);
-
-        return resolve(
-          json({
-            hasCursor,
-            newer: {
-              comics: sortedComics,
-              hasMore: getNewerComicsResponse?.hasMoreNewer || false,
-              cursor: hasComics ? sortedComics[0].updatedAt : null,
-            },
-            // will only use this data on page load requests
-            // to initialize the component state
-            older: {
-              hasMore: true,
-              cursor: hasComics
-                ? sortedComics[sortedComics.length - 1].updatedAt
-                : null,
-            },
-          })
-        );
-      }
-
-      let getComicsResponse: {
-        comics: Comic[];
-        cursor: string;
-        hasMoreOlder: boolean;
-      } | null = null;
-
-      try {
-        const response: Response = await fetch(
-          DDI_API_ENDPOINTS.getComics(olderOffset)
-        );
-
-        if (!response.ok) {
-          errorAttributes = {
-            statusCode: response.status.toString(),
-            url: response.url,
-            statusText: response.statusText,
-          };
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        getComicsResponse = await response.json();
-      } catch (error: any) {
-        // TODO better logging
-        console.error(error);
-        newrelic.noticeError(error, {
-          action: "getComics",
-          olderOffset,
-          ...errorAttributes,
-        });
-      }
-
-      let earliestComicUpdatedAt;
-      const comics: Comic[] = getComicsResponse?.comics || [];
-      if (comics.length > 0) {
-        const earliestComic = comics[0];
-        earliestComicUpdatedAt = earliestComic.updatedAt;
-      }
-
-      return resolve(
-        json({
-          hasCursor,
-          older: {
-            comics,
-            hasMore: getComicsResponse?.hasMoreOlder || false,
-            cursor: getComicsResponse?.cursor || null,
-          },
-          // will only use this data on page load requests
-          // to initialize the component state
-          newer: {
-            cursor: earliestComicUpdatedAt || null,
-            hasMore: true,
-          },
-        })
-      );
-    });
-  });
 };
 
 type ComicPreviewProps = {
@@ -289,10 +121,11 @@ export default function IndexRoute() {
     comics.length > 0 ? comics[0].updatedAt : null
   );
   const [hasMoreOlderComics, setHasMoreOlderComics] = useState<boolean>(
-    data.older?.hasMore || true
+    data.older?.hasMore
   );
   const [hasMoreNewerComics, setHasMoreNewerComics] = useState<boolean>(
-    data.newer?.hasMore || true
+    data.hasCursor && // don't want to show the showMoreNewer button on root page loads that don't have querystrings
+      data.newer?.hasMore
   );
 
   const [showNewComicsExistButton, setShowNewComicsExistButton] =
@@ -386,7 +219,11 @@ export default function IndexRoute() {
     <div className="gallery-outer-container">
       <Logo />
 
-      <ShowMore isVisible={hasMoreNewerComics} isNewer offset={newerCursor} />
+      <ShowMore
+        isVisible={data.hasCursor && hasMoreNewerComics}
+        isNewer
+        offset={newerCursor}
+      />
       <ComicsPreviewContainer comics={comics} />
       <ShowMore isVisible={hasMoreOlderComics} offset={olderCursor} />
 
