@@ -13,12 +13,18 @@ type Props = {
   offset: string | null;
   isNewer?: boolean;
   isVisible: boolean;
+  onClick?: () => void;
 };
 
 export const OLDER_OFFSET_QUERYSTRING = "oo";
 export const NEWER_OFFSET_QUERYSTRING = "no";
 
-export default function ShowMore({ isNewer, isVisible, offset }: Props) {
+export default function ShowMore({
+  isNewer,
+  isVisible,
+  offset,
+  onClick: onClickFromConsumer,
+}: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const transition = useTransition();
   const isSomethingOnPageLoading = transition.state === "submitting";
@@ -30,6 +36,9 @@ export default function ShowMore({ isNewer, isVisible, offset }: Props) {
   }, [transition.state]);
 
   const onClick = () => {
+    if (onClickFromConsumer) {
+      onClickFromConsumer();
+    }
     setIsLoading(true);
   };
 

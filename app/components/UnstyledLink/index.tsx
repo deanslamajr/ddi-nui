@@ -8,13 +8,14 @@ export const links: LinksFunction = () => {
 };
 
 type Props = {
+  id: string;
   href: string;
   onclick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
-const UnstyledLink: FC<Props> = ({ children, href, onclick }) => {
+const UnstyledLink: FC<Props> = ({ children, href, id, onclick }) => {
   return (
-    <a className="unstyled-link" href={href} onClick={onclick}>
+    <a id={id} className="unstyled-link" href={href} onClick={onclick}>
       {children}
     </a>
   );

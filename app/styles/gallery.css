@@ -16,7 +16,7 @@
   top: 0;
   justify-content: center;
   width: 100%;
-  /* For the sticky to work with buttons like "new" */
+  /* For the sticky to work with buttons e.g. "new comics exist button" */
   height: 100%;
 }
 
