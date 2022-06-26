@@ -1,7 +1,14 @@
 .nav-button.new-comics-exist {
-  position: fixed;
+  position: sticky;
+  top: 0.5rem;
   /* This is to hide strange NEW emoji whitespace text */
   color: var(--pink);
+}
+
+@media (max-width: 599px) {
+  .nav-button.new-comics-exist {
+    top: 3px;
+  }
 }
 
 /* This is to hide strange NEW emoji whitespace text */

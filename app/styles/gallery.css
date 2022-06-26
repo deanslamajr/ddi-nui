@@ -10,12 +10,22 @@
   padding: 5rem 0;
 }
 
+.top-button-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  justify-content: center;
+  width: 100%;
+  /* For the sticky to work with buttons like "new" */
+  height: 100%;
+}
+
 @media (max-width: 899px) {
   .comics-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 
   .gallery-outer-container {
-    margin: 4.5rem 0;
+    padding: 4.5rem 0;
   }
 }

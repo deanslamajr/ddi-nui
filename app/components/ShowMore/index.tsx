@@ -44,7 +44,9 @@ export default function ShowMore({ isNewer, isVisible, offset }: Props) {
         },
         {
           ["bottom-center"]: !isNewer,
-          ["top-center"]: isNewer,
+        },
+        {
+          absolute: !isNewer,
         }
       )}
     >

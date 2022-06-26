@@ -15,12 +15,7 @@ const NewComicsExistButton: React.FC<Props> = ({ isVisible }) => {
   return isVisible ? (
     <a
       href="/"
-      className={classnames(
-        "nav-button",
-        "top-center",
-        "accented",
-        "new-comics-exist"
-      )}
+      className={classnames("nav-button", "accented", "new-comics-exist")}
     >
       <button>🆕</button>
     </a>
