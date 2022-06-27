@@ -1,13 +1,6 @@
 import type { LinksFunction } from "remix";
 import { useLoaderData } from "remix";
-import {
-  FC,
-  useCallback,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-  useState,
-} from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { usePageVisibility } from "react-page-visibility";
 useRef;
 import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
@@ -100,7 +93,6 @@ const ComicsPreviewContainer: FC<ComicsPreviewContainerProps> = ({
 }) => {
   const [width, setWidth] = useState<number>(0);
   const [urlIdToScrollTo, setUrlIdToScrollTo] = useState<string | null>(null);
-  // const initialComicRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -123,7 +115,7 @@ const ComicsPreviewContainer: FC<ComicsPreviewContainerProps> = ({
     }
   }, [comics.length]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (urlIdToScrollTo) {
       const comicPreviewToScrollTo = document.getElementById(urlIdToScrollTo);
       if (comicPreviewToScrollTo) {

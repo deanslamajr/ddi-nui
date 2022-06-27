@@ -8,7 +8,7 @@ export const links: LinksFunction = () => {
 };
 
 type Props = {
-  id: string;
+  id?: string;
   href: string;
   onclick?: MouseEventHandler<HTMLAnchorElement>;
 };

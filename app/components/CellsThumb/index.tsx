@@ -19,14 +19,27 @@ const ThumbSchema1: FC<{
   cellsCount: number;
   imageUrl: string;
 }> = ({ caption, cellsCount, imageUrl }) => {
+  const isPreview = true;
   const showLoader = isServerContext();
+
+  const captionWithBreaks = caption
+    ? caption.split("\n").map((item, key) => {
+        return (
+          <span key={key}>
+            {item}
+            <br />
+          </span>
+        );
+      })
+    : [null];
 
   return (
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
       {caption && (
-        <DynamicTextContainer fontRatio={14} isPreview={true}>
-          {caption}
+        <DynamicTextContainer fontRatio={14} isPreview={isPreview}>
+          {/* {caption} */}
+          {isPreview ? captionWithBreaks[0] : captionWithBreaks}
         </DynamicTextContainer>
       )}
       {showLoader ? (

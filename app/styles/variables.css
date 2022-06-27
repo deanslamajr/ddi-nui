@@ -13,6 +13,7 @@
   --buttonDiameter: 60px;
 
   /* Heights */
+  --toptop: 99999;
   --top: 999;
   --bottom: -999;
 }

@@ -3,6 +3,7 @@
   top: 0.5rem;
   /* This is to hide strange NEW emoji whitespace text */
   color: var(--pink);
+  z-index: var(--toptop);
 }
 
 @media (max-width: 599px) {
