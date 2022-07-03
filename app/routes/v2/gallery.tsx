@@ -231,9 +231,16 @@ export default function IndexRoute() {
   useEffect(() => {
     const latestTimestamp = getLatestTimestamp();
 
-    if (latestTimestamp === null || !data.hasCursor) {
-      const now = Date.now();
-      setLatestTimestamp(now);
+    if (
+      latestTimestamp === null ||
+      !data.hasCursor ||
+      // OR the latest comic loaded in the gallery
+      // is newer than the cached timestamp
+      // Therefore, need to update the timestamp so the "there is newer" notification is accurate
+      (typeof data.newer.cursor === "string" &&
+        latestTimestamp < new Date(data.newer.cursor).getTime())
+    ) {
+      setLatestTimestamp(new Date(data.newer.cursor!).getTime());
     }
   }, []);
 
