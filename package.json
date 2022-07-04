@@ -1,7 +1,7 @@
 {
-  "name": "remix-app-template",
+  "name": "ddi-nui",
   "private": true,
-  "description": "",
+  "description": "draw-draw-ink 2",
   "license": "",
   "sideEffects": false,
   "scripts": {
