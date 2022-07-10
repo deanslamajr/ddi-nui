@@ -9,6 +9,7 @@
     "remix:dev": "cross-env NODE_ENV=development remix dev",
     "postinstall": "remix setup node",
     "start": "cross-env NODE_ENV=production remix-serve build",
+    "start:ci": "npm run build && npm start",
     "typecheck": "tsc --noEmit --pretty",
     "typecheck:watch": "npm run typecheck -- --watch --preserveWatchOutput",
     "clean": "rm -rf node_modules",
@@ -22,7 +23,11 @@
     "publish:test": "npm version prerelease --preid=g\"$(git rev-parse --short=5 HEAD)\" && npm run publish",
     "publish:patch": "npm version patch && npm run publish",
     "publish:minor": "npm version minor && npm run publish",
-    "publish:major": "npm version major && npm run publish"
+    "publish:major": "npm version major && npm run publish",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:inspect": "PWDEBUG=1 npm run test",
+    "test:watch": "playwright-watch exec npm run test"
   },
   "dependencies": {
     "@remix-run/react": "^1.2.3",
@@ -40,6 +45,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.23.2",
     "@remix-run/dev": "^1.2.3",
     "@remix-run/eslint-config": "^1.2.3",
     "@types/newrelic": "^7.0.3",
@@ -48,6 +54,7 @@
     "@types/react-page-visibility": "^6.4.1",
     "@types/styled-components": "^5.1.24",
     "eslint": "^8.9.0",
+    "playwright-watch": "^1.3.23",
     "typescript": "^4.5.5"
   },
   "engines": {
