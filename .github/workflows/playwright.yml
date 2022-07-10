@@ -1,0 +1,40 @@
+name: Playwright Tests
+on:
+  push
+  # push:
+  #   branches: [ main, master ]
+  # pull_request:
+  #   branches: [ main, master ]
+jobs:
+  test:
+    env:
+      # TODO: move these to github secrets
+      PORT: 1234
+      ASSETS_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/assets
+      FAVICON_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/favicons
+      CELL_IMAGES_URL: cell-images-qa.drawdraw.ink
+      LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: https://qa.drawdraw.ink
+      ENV: CI
+      NR_LICENSE: a5b515c0144faf9827d6a97a9b4c6112a67e939e
+      NR_BROWSER_KEY: c4e5286f47
+      NR_APP_ID_REMIX_DDI_CLIENT: 1134200804
+      NR_ACCOUNT_ID: 2327784
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
