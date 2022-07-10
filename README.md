@@ -2,18 +2,12 @@
 
 ## Getting Started
 
-- First, ensure we're using the correct version of node.js
-
-```bash
-nvm use
-```
-
 ### This "v2" of ddi requires the original service running, so get that infrastructure running
 
 - Start the original drawdrawink (It's best to consult that project README directly but this usually works):
 
 ```bash
-cd ./path/to/ddi-v1>
+cd ../ddi-legacy
 nvm use
 npm run dev
 ```
@@ -24,7 +18,7 @@ npm run dev
   - database client (for direct access to DB)
 
 ```bash
-cd ./path/to/ddi-v2>
+cd ../ddi-nui
 docker-compose up
 ```
 
@@ -32,12 +26,35 @@ docker-compose up
 
 ```bash
 nvm use
-npm run dev
+npm run clean:dev
 ```
 
 - View app at `localhost`
 
-## Test Image
+## Testing
+
+### Run tests
+
+```bash
+npm run test:watch
+```
+
+### Debug tests
+
+- requires [Playwright Test for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
+- add a breakpoint to the test file
+- click the `Testing` side menu button (I believe this is added to vs code by the Playwright Test for VSCode extension)
+- find the test and click its `Debug Test` button
+
+### Test code generator
+
+- helpful for finding selectors
+
+```bash
+npm run test:codegen
+```
+
+## Test Image (Needs updates!)
 
 - (if image to test wasn't the most recently built image) `npm run image:build`
 - make sure `image-test.env` exists and has valid values for the container

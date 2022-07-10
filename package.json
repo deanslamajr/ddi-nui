@@ -24,9 +24,11 @@
     "publish:patch": "npm version patch && npm run publish",
     "publish:minor": "npm version minor && npm run publish",
     "publish:major": "npm version major && npm run publish",
+    "webkit": "playwright wk localhost",
     "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:inspect": "PWDEBUG=1 npm run test",
+    "test:headed": "playwright test --headed --project=chromium",
+    "test:inspect": "PWDEBUG=1 npm run test -- --project=chromium",
+    "test:codegen": "playwright codegen localhost",
     "test:watch": "playwright-watch exec npm run test"
   },
   "dependencies": {
