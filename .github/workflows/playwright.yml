@@ -8,6 +8,7 @@ jobs:
   test:
     env:
       # TODO: move these to github secrets
+      APP_PATH_PREFIX: /v2
       PORT: 1234
       ASSETS_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/assets
       FAVICON_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/favicons
@@ -18,7 +19,9 @@ jobs:
       NR_BROWSER_KEY: c4e5286f47
       NR_APP_ID_REMIX_DDI_CLIENT: 1134200804
       NR_ACCOUNT_ID: 2327784
-    timeout-minutes: 60
+      # playwright debugging
+      DEBUG: pw:webserver # reveals stdout
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

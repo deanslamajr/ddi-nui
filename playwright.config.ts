@@ -5,7 +5,7 @@ import { devices } from "@playwright/test";
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+require("dotenv").config();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -33,6 +33,7 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI ? "github" : "list",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    screenshot: "only-on-failure",
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -95,15 +96,14 @@ const config: PlaywrightTestConfig = {
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  // outputDir: 'test-results/',
+  outputDir: "playwright-report/",
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI
-    ? {
-        command: "npm run start:ci",
-        port: process.env.PORT ? Number(process.env.PORT) : undefined,
-      }
-    : undefined,
+  webServer: {
+    url: `http://localhost:${process.env.PORT}/${process.env.APP_PATH_PREFIX}`,
+    reuseExistingServer: !process.env.CI, // disregard invoking the following command if this is a CI environemnt
+    command: "npm run start:ci",
+  },
 };
 
 export default config;

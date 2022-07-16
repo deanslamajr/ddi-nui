@@ -25,11 +25,11 @@
     "publish:minor": "npm version minor && npm run publish",
     "publish:major": "npm version major && npm run publish",
     "webkit": "playwright wk localhost",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed --project=chromium",
-    "test:inspect": "PWDEBUG=1 npm run test -- --project=chromium",
-    "test:codegen": "playwright codegen localhost",
-    "test:watch": "playwright-watch exec npm run test"
+    "test": "DEBUG=pw:webserver playwright test",
+    "test:headed": "npm run test -- --headed --project=chromium",
+    "test:inspect": "PWDEBUG=1 npm run test:headed",
+    "test:watch": "playwright-watch exec npm run test",
+    "test:codegen": "playwright codegen localhost"
   },
   "dependencies": {
     "@remix-run/react": "^1.2.3",
