@@ -1,7 +1,7 @@
 import { LinksFunction } from "remix";
 import { MouseEventHandler, FC } from "react";
 
-import stylesUrl from "./unstyled-link.css";
+import stylesUrl from "~/styles/components/UnstyledLink.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];

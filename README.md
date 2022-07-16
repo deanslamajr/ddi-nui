@@ -54,6 +54,10 @@ npm run test:watch
 npm run test:codegen
 ```
 
+## **KNOWN BUGS**
+
+- `npm run dev:css` - the postcss cli build's "watch mode" doesn't detect new files being created in `ddi-nui/styles`. Restarting `dev:css` script will detect the new files
+
 ## Test Image (Needs updates!)
 
 - (if image to test wasn't the most recently built image) `npm run image:build`

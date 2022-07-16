@@ -13,8 +13,8 @@ import {
 import type { ShouldReloadFunction } from "@remix-run/react";
 import { ThemeProvider } from "styled-components";
 
-import globalStylesUrl from "~/styles/global.css";
-import cssTheme from "~/styles/variables.css";
+import rootStylesPath from "~/styles/root.css";
+import cssThemePath from "~/styles/theme.css";
 
 import { theme } from "~/utils/stylesTheme";
 import { getClientVariable } from "~/utils/environment-variables";
@@ -62,8 +62,8 @@ export const links: LinksFunction = () => {
     : [];
 
   return [
-    { rel: "stylesheet", href: cssTheme },
-    { rel: "stylesheet", href: globalStylesUrl },
+    { rel: "stylesheet", href: cssThemePath },
+    { rel: "stylesheet", href: rootStylesPath },
     ...favicons,
   ];
 };

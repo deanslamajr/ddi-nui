@@ -7,7 +7,7 @@ import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
 
-import stylesUrl from "./create-nav-button.css";
+import stylesUrl from "~/styles/components/CreateNavButton.css";
 
 export const links: LinksFunction = () => {
   return [...unstyledLinkStylesUrl(), { rel: "stylesheet", href: stylesUrl }];

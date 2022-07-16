@@ -28,7 +28,7 @@ import { getLatestTimestamp, setLatestTimestamp } from "~/frontend/clientCache";
 
 import { Comic } from "~/interfaces/comic";
 
-import stylesUrl from "~/styles/gallery.css";
+import stylesUrl from "~/styles/routes/gallery.css";
 
 import { LoaderData } from "~/loaders/gallery";
 export { default as loader } from "~/loaders/gallery";

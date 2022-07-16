@@ -1,7 +1,7 @@
 import { Link, LinksFunction } from "remix";
 import classnames from "classnames";
 
-import stylesUrl from "./new-comics-exist.css";
+import stylesUrl from "~/styles/components/NewComicsExistButton.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];

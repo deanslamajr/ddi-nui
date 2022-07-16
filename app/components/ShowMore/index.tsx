@@ -3,7 +3,7 @@ import { useTransition } from "@remix-run/react";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
 
-import stylesUrl from "./show-more.css";
+import stylesUrl from "~/styles/components/ShowMore.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
