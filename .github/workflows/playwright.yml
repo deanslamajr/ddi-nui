@@ -7,20 +7,20 @@ on:
 jobs:
   test:
     env:
-      # TODO: move these to github secrets
+      ENV: CI
       APP_PATH_PREFIX: /v2
       PORT: 1234
+      # playwright debugging
+      DEBUG: pw:webserver # reveals stdout
+      # TODO: move these to github secrets
       ASSETS_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/assets
       FAVICON_URL_WITH_PROTOCOL: https://assets.drawdraw.ink/favicons
       CELL_IMAGES_URL: cell-images-qa.drawdraw.ink
       LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: https://qa.drawdraw.ink
-      ENV: CI
-      NR_LICENSE: a5b515c0144faf9827d6a97a9b4c6112a67e939e
-      NR_BROWSER_KEY: c4e5286f47
-      NR_APP_ID_REMIX_DDI_CLIENT: 1134200804
-      NR_ACCOUNT_ID: 2327784
-      # playwright debugging
-      DEBUG: pw:webserver # reveals stdout
+      # NR_LICENSE: a5b515c0144faf9827d6a97a9b4c6112a67e939e
+      # NR_BROWSER_KEY: c4e5286f47
+      # NR_APP_ID_REMIX_DDI_CLIENT: 1134200804
+      # NR_ACCOUNT_ID: 2327784
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
