@@ -1,4 +1,5 @@
 export type ClientEnvironmentVariables = {
+  APP_PATH_PREFIX: string;
   CELL_IMAGES_URL: string;
   LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: string;
   ASSETS_URL_WITH_PROTOCOL: string;
