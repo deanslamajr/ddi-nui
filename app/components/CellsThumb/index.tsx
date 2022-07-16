@@ -8,7 +8,7 @@ import isServerContext from "~/utils/isServerContext";
 
 import { DynamicTextContainer } from "../DynamicTextContainer";
 
-import stylesUrl from "./cells-thumb.css";
+import stylesUrl from "~/styles/components/CellsThumb.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];

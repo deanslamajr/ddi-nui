@@ -1,7 +1,7 @@
 import { LinksFunction } from "remix";
 import { getClientVariable } from "~/utils/environment-variables";
 
-import stylesUrl from "./cell-with-load-spinner.css";
+import stylesUrl from "~/styles/components/CellWithLoadSpinner.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];

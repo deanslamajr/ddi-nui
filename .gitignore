@@ -3,6 +3,8 @@ node_modules
 /.cache
 /build
 /public/v2/build
+/app/styles
+
 .env
 
 newrelic_agent.log

@@ -1,6 +1,6 @@
 import { LinksFunction } from "remix";
 
-import stylesUrl from "./logo.css";
+import stylesUrl from "~/styles/components/Logo.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];

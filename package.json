@@ -5,6 +5,8 @@
   "license": "",
   "sideEffects": false,
   "scripts": {
+    "dev:css": "postcss styles --base styles --dir app/styles -w",
+    "build:css": "postcss styles --base styles --dir app/styles --env production",
     "build": "cross-env NODE_ENV=production remix build",
     "remix:dev": "cross-env NODE_ENV=development remix dev",
     "postinstall": "remix setup node",
@@ -12,9 +14,9 @@
     "start:ci": "npm run build && npm start",
     "typecheck": "tsc --noEmit --pretty",
     "typecheck:watch": "npm run typecheck -- --watch --preserveWatchOutput",
-    "clean": "rm -rf node_modules",
+    "clean": "rm -rf node_modules && rm -rf app/styles",
     "clean:dev": "npm run clean && npm i && npm run dev",
-    "dev": "concurrently -k -p \"-{index}_{name} \" npm:typecheck:watch npm:remix:dev",
+    "dev": "concurrently -k -p \"-{index}_{name}\" npm:dev:css npm:typecheck:watch npm:remix:dev",
     "image:build": "docker build -f ../deployment/ddi/nui/Dockerfile -t us-central1-docker.pkg.dev/development-262721/draw-draw-ink/ddi-nui:\"$(git describe)\" .",
     "image:promote": "docker push us-central1-docker.pkg.dev/development-262721/draw-draw-ink/ddi-nui:\"$(git describe)\"",
     "image:start": "CLIENT_APP_IMAGE_NAME=us-central1-docker.pkg.dev/development-262721/draw-draw-ink/ddi-nui:\"$(git describe)\" docker-compose -f ./docker-compose-image-test.yml up",
@@ -55,8 +57,11 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-page-visibility": "^6.4.1",
     "@types/styled-components": "^5.1.24",
+    "autoprefixer": "^10.4.7",
     "eslint": "^8.9.0",
     "playwright-watch": "^1.3.23",
+    "postcss": "^8.4.14",
+    "postcss-cli": "^10.0.0",
     "typescript": "^4.5.5"
   },
   "engines": {
