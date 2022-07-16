@@ -24,7 +24,10 @@ import Logo, { links as logoStylesUrl } from "~/components/Logo";
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 import sortComics from "~/utils/sortComics";
 
-import { getLatestTimestamp, setLatestTimestamp } from "~/frontend/clientCache";
+import {
+  getLatestTimestamp,
+  setLatestTimestamp,
+} from "~/utils/clientCache/latestTimestamp";
 
 import { Comic } from "~/interfaces/comic";
 

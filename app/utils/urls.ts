@@ -10,6 +10,11 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
+  getComic: (comicUrlId: string) => {
+    return `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/api/comic/${comicUrlId}`;
+  },
   getComics: (offset?: string) => {
     const url = new URL(
       `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
@@ -35,5 +40,8 @@ export const DDI_APP_PAGES = {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/me/drafts${searchParams ? `?${searchParams}` : ""}`;
+  },
+  getGalleryPageUrl: () => {
+    return `${getClientVariable("APP_PATH_PREFIX")}/gallery`;
   },
 };
