@@ -7,7 +7,7 @@ import {
 } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("localhost/v2/gallery");
+  await page.goto("./gallery");
 });
 
 const getComicUrlId = async (locator: Locator): Promise<string | undefined> => {
