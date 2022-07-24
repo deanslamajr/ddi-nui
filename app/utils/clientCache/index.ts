@@ -4,9 +4,10 @@ import { STORAGEKEY_STUDIO } from "~/utils/constants";
 
 export type CellFromClientCache = {
   hasNewImage: boolean;
-  urlId: string;
+  urlId: string | null;
   imageUrl: string | null;
-  comicUrlId: string;
+  isDirty?: boolean;
+  comicUrlId: string | null;
   previousCellUrlId: string | null;
   studioState: object;
 };
@@ -20,10 +21,8 @@ export type ClientCache = {
   comics: Record<string, ComicFromClientCache>;
 };
 
-const cache = store.namespace(STORAGEKEY_STUDIO);
-
 export const getCache = (): StoreType => {
-  return cache;
+  return store.namespace(STORAGEKEY_STUDIO);
 };
 
 // const setCache = (newCache: ClientCacheSchema) => {

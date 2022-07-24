@@ -18,7 +18,8 @@ console.log("baseURL", baseURL);
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  testDir: "./tests",
+  // testDir: "./tests",
+  testMatch: /.*(spec)\.(ts)/,
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
   expect: {
