@@ -83,7 +83,7 @@ type ComicCellLegacy = {
   previousCellUrlId: string | null;
 };
 
-type ComicLegacy = {
+export type ComicLegacy = {
   cells: ComicCellLegacy[];
   comicUpdatedAt: string;
   isActive: boolean;

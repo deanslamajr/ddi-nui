@@ -25,3 +25,35 @@ export const getCellsByComicUrlId = (
     return acc;
   }, {} as Record<string, CellFromClientCache>);
 };
+
+type StudioState = {};
+
+export const getInitializedStudioState = (): StudioState => {
+  return {
+    activeEmojiId: null,
+    backgroundColor: "#FFFAF9",
+    caption: "",
+    currentEmojiId: 1,
+    emojis: {},
+  };
+};
+
+export const getInitializedCell = ({
+  comicUrlId = null,
+  hasNewImage = false,
+  imageUrl = null,
+  isDirty = false,
+  previousCellUrlId,
+  studioState = getInitializedStudioState(),
+  urlId = null,
+}: CellFromClientCache): CellFromClientCache => {
+  return {
+    comicUrlId,
+    hasNewImage,
+    imageUrl,
+    isDirty,
+    previousCellUrlId,
+    studioState,
+    urlId,
+  };
+};

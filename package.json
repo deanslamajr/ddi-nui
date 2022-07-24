@@ -31,7 +31,8 @@
     "test:headed": "npm run test -- --headed --project=chromium",
     "test:inspect": "PWDEBUG=1 npm run test:headed",
     "test:watch": "playwright-watch exec npm run test",
-    "test:codegen": "playwright codegen localhost"
+    "test:codegen": "playwright codegen localhost",
+    "test:unit": "jest --watch"
   },
   "dependencies": {
     "@remix-run/react": "^1.2.3",
@@ -52,13 +53,18 @@
     "@playwright/test": "^1.23.2",
     "@remix-run/dev": "^1.2.3",
     "@remix-run/eslint-config": "^1.2.3",
+    "@types/jest": "^28.1.6",
     "@types/newrelic": "^7.0.3",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
     "@types/react-page-visibility": "^6.4.1",
     "@types/styled-components": "^5.1.24",
+    "alias-hq": "^5.4.0",
     "autoprefixer": "^10.4.7",
+    "babel-jest": "^28.1.3",
+    "esbuild-jest": "^0.5.0",
     "eslint": "^8.9.0",
+    "jest": "^28.1.3",
     "playwright-watch": "^1.3.23",
     "postcss": "^8.4.14",
     "postcss-cli": "^10.0.0",
