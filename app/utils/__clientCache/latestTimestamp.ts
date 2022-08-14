@@ -1,4 +1,4 @@
-import { getCache } from "./";
+import { getCache } from ".";
 
 const LATEST_TIMESTAMP_CACHE_KEY = "LATEST_TIMESTAMP";
 

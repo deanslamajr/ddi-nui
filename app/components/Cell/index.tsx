@@ -72,11 +72,11 @@ const Cell: FC<{
   imageUrl: string;
   isImageUrlAbsolute: boolean;
   caption: string;
-  clickable: boolean;
+  clickable?: boolean;
   onClick?: () => void;
-  removeBorders: boolean;
+  removeBorders?: boolean;
   schemaVersion: number;
-  width?: string;
+  cellWidth?: string;
 }> = ({
   className,
   imageUrl,
@@ -86,22 +86,24 @@ const Cell: FC<{
   onClick,
   removeBorders,
   schemaVersion,
-  width,
+  cellWidth,
 }) => {
   const cellUrl = isImageUrlAbsolute
     ? imageUrl
     : getCellImageUrl(imageUrl, schemaVersion);
 
-  const resolvedWidth = width
-    ? width
+  const resolvedWidth = cellWidth
+    ? cellWidth
     : removeBorders
     ? theme.cell.fullWidth
     : undefined;
 
+  console.log("resolvedWidth", resolvedWidth);
+
   return (
     <CellContainer
       className={className}
-      clickable={clickable}
+      clickable={clickable || false}
       onClick={clickable && onClick ? onClick : () => {}}
       schemaVersion={schemaVersion}
     >
