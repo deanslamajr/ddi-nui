@@ -1,5 +1,7 @@
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 
+import { StudioState } from "~/interfaces/studioState";
+
 // mock data circa 16 July 2022
 // {
 //   "comicUpdatedAt": "2022-07-03T21:19:46.811Z",
@@ -46,39 +48,12 @@ import { DDI_API_ENDPOINTS } from "~/utils/urls";
 //   "userCanEdit": true
 // }
 
-type EmojiLegacy = {
-  emoji: string;
-  id: number;
-  order: number;
-  x: number;
-  y: number;
-  scaleX: number;
-  scaleY: number;
-  skewX: number;
-  skewY: number;
-  rotation: number;
-  size: number;
-  alpha: number;
-  red: number;
-  green: number;
-  blue: number;
-  opacity: number;
-};
-
-type StudioStateLegacy = {
-  activeEmojiId: number;
-  backgroundColor: string;
-  currentEmojiId: number;
-  caption: string;
-  emojis: Record<string, EmojiLegacy>;
-};
-
 type ComicCellLegacy = {
   urlId: string;
   imageUrl: string;
   order: number | null;
   schemaVersion: number | null;
-  studioState: StudioStateLegacy | null;
+  studioState: StudioState | null;
   caption: string | null;
   previousCellUrlId: string | null;
 };

@@ -44,4 +44,9 @@ export const DDI_APP_PAGES = {
   getGalleryPageUrl: () => {
     return `${getClientVariable("APP_PATH_PREFIX")}/gallery`;
   },
+  getCreateNewCellPageUrl: (cellUrlId?: string) => {
+    return `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/s/cell/${cellUrlId || "new"}`;
+  },
 };

@@ -27,7 +27,7 @@ import sortComics from "~/utils/sortComics";
 import {
   getLatestTimestamp,
   setLatestTimestamp,
-} from "~/utils/clientCache/latestTimestamp";
+} from "~/utils/__clientCache/latestTimestamp";
 
 import { Comic } from "~/interfaces/comic";
 
