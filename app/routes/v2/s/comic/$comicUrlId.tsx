@@ -3,6 +3,8 @@ import { LinksFunction } from "remix";
 import { useParams, useNavigate } from "@remix-run/react";
 import styled from "styled-components";
 
+import { StudioState } from "~/interfaces/studioState";
+
 import {
   // createComicFromPublishedComic,
   CellFromClientCache,
@@ -10,14 +12,13 @@ import {
   doesComicUrlIdExist,
   hydrateComicFromClientCache,
   HydratedComic,
-  StudioState,
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
-import isDraftId from "~/utils/isDraftId";
+import { isDraftId, removeSuffix } from "~/utils/draftId";
 
 import Cell from "~/components/Cell";
 import { PinkMenuButton } from "~/components/Button";
@@ -25,13 +26,12 @@ import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
 import AddCellModal from "~/components/AddCellModal";
-
-import stylesUrl from "~/styles/components/CreateNavButton.css";
+import CellActionsModal from "~/components/CellActionsModal";
 
 import { get as getComicFromNetwork } from "~/data/external/comics";
 
 export const links: LinksFunction = () => {
-  return [...unstyledLinkStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [...unstyledLinkStylesUrl()];
 };
 
 const SIDE_BUTTONS_SPACER = 0; //.4
@@ -162,9 +162,12 @@ export default function ComicStudioRoute() {
   const navigate = useNavigate();
   const params = useParams();
 
+  const [activeCell, setActiveCell] = useState<CellFromClientCache | null>(
+    null
+  );
   const [comic, setComic] = useState<HydratedComic | null>(null);
-  const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showActionsModal, setShowActionsModal] = useState(false);
+  const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
     useState(false);
 
@@ -236,7 +239,6 @@ export default function ComicStudioRoute() {
       : [];
   };
 
-  // Only allow up to 10 cells to be dirty at any given time
   const canAddMoreCells = () => {
     const sortedCells = getCellsFromState();
     const dirtyCells = sortedCells.filter(({ isDirty }) => isDirty);
@@ -245,19 +247,20 @@ export default function ComicStudioRoute() {
 
   const getExitNavLink = () => {
     // this.props.showSpinner()
-    // if (isDraftId(comicUrlId)) {
-    //   if (this.props.searchParams) {
-    //     window.location = DDI_APP_PAGES.getGalleryPageUrl({
-    //       queryString: this.props.searchParams,
-    //     })
-    //   } else {
-    //     const withoutSuffix = removeDraftSuffix(this.props.comicUrlId)
-    //     Router.pushRoute(`/comic/${withoutSuffix}`)
-    //   }
-    // } else {
-    // Router.pushRoute(`/comic/${this.props.comicUrlId}`)
-    return DDI_APP_PAGES.getComicPageUrl(comicUrlId);
-    // }
+    if (isDraftId(comicUrlId)) {
+      // if (this.props.searchParams) {
+      //   window.location = DDI_APP_PAGES.getGalleryPageUrl({
+      //     queryString: this.props.searchParams,
+      //   })
+      // } else {
+      const withoutSuffix = removeSuffix(comicUrlId);
+      return DDI_APP_PAGES.getComicPageUrl(withoutSuffix);
+      // Router.pushRoute(`/comic/${withoutSuffix}`);
+      // }
+    } else {
+      // Router.pushRoute(`/comic/${this.props.comicUrlId}`)
+      return DDI_APP_PAGES.getComicPageUrl(comicUrlId);
+    }
   };
 
   const navigateToAddCellFromNew = () => {
@@ -288,6 +291,16 @@ export default function ComicStudioRoute() {
     location.replace(DDI_APP_PAGES.getCreateNewCellPageUrl(newCell.urlId));
   };
 
+  const handleCellClick = (activeCell: CellFromClientCache) => {
+    // if this cell is pristine but we've reached the limit of dirty cells
+    // don't allow edits to this cell
+    if (!activeCell.isDirty && !canAddMoreCells()) {
+      // this.showReachedDirtyCellLimitModal()
+    } else {
+      setActiveCell(activeCell);
+    }
+  };
+
   const sortedCells = getCellsFromState();
 
   return (
@@ -295,10 +308,7 @@ export default function ComicStudioRoute() {
       <OuterContainer>
         {/* CELLS */}
         {sortedCells.map((cell) => (
-          <div
-            key={cell.imageUrl}
-            // onClick={() => this.handleCellClick(cell)}
-          >
+          <div key={cell.imageUrl} onClick={() => handleCellClick(cell)}>
             {cell.isDirty && <UnpublishedChangesLabel />}
             <StudioCell
               clickable
@@ -343,12 +353,12 @@ export default function ComicStudioRoute() {
             />
           )} */}
 
-      {/* {this.state.activeCell && (
-            <CellActionsModal
-              cell={this.state.activeCell}
-              onCancelClick={() => this.setState({ activeCell: null })}
-            />
-          )} */}
+      {activeCell && (
+        <CellActionsModal
+          cell={activeCell}
+          onCancelClick={() => setActiveCell(null)}
+        />
+      )}
 
       {/* {this.state.showPreviewModal && (
             <PublishPreviewModal

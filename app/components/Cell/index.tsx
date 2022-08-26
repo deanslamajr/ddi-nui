@@ -59,12 +59,11 @@ const OldCellBorder = styled.div<{
   `}
 `;
 
-const CellImageContainer = styled.div<{
-  width?: string;
+const CellImage = styled.img<{
+  cellWidth?: string;
 }>`
-  width: ${(props) => props.width || props.theme.cell.width};
+  width: ${(props) => props.cellWidth || props.theme.cell.width};
   max-width: calc(100vw - ${(props) => props.theme.padding}px);
-  height: 257px;
 `;
 
 const Cell: FC<{
@@ -109,17 +108,14 @@ const Cell: FC<{
     >
       {schemaVersion === 1 ? (
         <CellBorder>
-          <CellImageContainer
-            width={removeBorders ? theme.cell.fullWidth : undefined}
-          >
-            <img src={cellUrl} />
-          </CellImageContainer>
+          <CellImage
+            cellWidth={removeBorders ? theme.cell.fullWidth : undefined}
+            src={cellUrl}
+          />
         </CellBorder>
       ) : (
         <OldCellBorder width={resolvedWidth}>
-          <CellImageContainer width={resolvedWidth}>
-            <img src={cellUrl} />
-          </CellImageContainer>
+          <CellImage cellWidth={resolvedWidth} src={cellUrl} />
           {caption && caption.length && (
             <DynamicTextContainer fontRatio={17}>
               {caption}

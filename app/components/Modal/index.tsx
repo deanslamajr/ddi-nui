@@ -8,7 +8,7 @@ const TransparentDarkBackground = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,8 +51,8 @@ const Modal: React.FC<Props> = ({ children, className, onCancelClick }) => {
     <TransparentDarkBackground>
       <ModalContainer className={className}>
         {onCancelClick && (
-          <div className="nav-button top-center accented larger-font">
-            <button onClick={onCancelClick}>✖️</button>
+          <div className="nav-button top-center larger-font">
+            <button onClick={onCancelClick}>❌</button>
           </div>
         )}
         {children}

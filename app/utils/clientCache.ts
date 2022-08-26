@@ -312,7 +312,7 @@ export const createNewCell = ({
   initialStudioState,
 }: {
   comicUrlId?: string;
-  initialStudioState?: StudioState;
+  initialStudioState?: StudioState | null;
 }): CellFromClientCache => {
   let localCache = getCache();
   let comic: ComicFromClientCache;
