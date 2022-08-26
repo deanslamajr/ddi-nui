@@ -15,7 +15,7 @@ export const theme: DefaultTheme = {
     height: 250,
   },
   cell: {
-    fullWidth: "257px",
+    fullWidth: "100%",
     width: "300px",
   },
   layout: {
