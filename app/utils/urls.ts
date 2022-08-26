@@ -10,6 +10,11 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
 };
 
 export const DDI_API_ENDPOINTS = {
+  deleteComic: (comicUrlId: string) => {
+    return `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/api/comic/${comicUrlId}`;
+  },
   getComic: (comicUrlId: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"

@@ -1,15 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 
-// import { Router } from '../../../routes'
-
 import Cell from "~/components/Cell";
 import Modal, { CenteredButtons } from "~/components/Modal";
-import { PinkMenuButton } from "~/components/Button";
+import { MenuButton, PinkMenuButton } from "~/components/Button";
 
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { CellFromClientCache } from "~/utils/clientCache";
 import { DDI_APP_PAGES } from "~/utils/urls";
+
+import { StudioState } from "~/interfaces/studioState";
 
 const HomeModal = styled(Modal)`
   width: 315px;
@@ -23,13 +23,17 @@ const CellPreview = styled(Cell)`
 export type Props = {
   cell: CellFromClientCache;
   onCancelClick: () => void;
+  onDuplicateClick: (studioStateToDuplicate?: StudioState | null) => void;
 };
 
-const CellActionsModal: React.FC<Props> = ({ cell, onCancelClick }) => {
+const CellActionsModal: React.FC<Props> = ({
+  cell,
+  onCancelClick,
+  onDuplicateClick,
+}) => {
   const { hasNewImage, imageUrl, schemaVersion, studioState, urlId } = cell;
 
   const navigateToCellStudio = () => {
-    // Router.pushRoute(`/s/cell/${this.props.cell.urlId}`);
     location.href = DDI_APP_PAGES.getCreateNewCellPageUrl(urlId);
   };
 
@@ -44,6 +48,11 @@ const CellActionsModal: React.FC<Props> = ({ cell, onCancelClick }) => {
       />
       <CenteredButtons>
         <PinkMenuButton onClick={navigateToCellStudio}>EDIT</PinkMenuButton>
+      </CenteredButtons>
+      <CenteredButtons>
+        <MenuButton onClick={() => onDuplicateClick(studioState)}>
+          DUPLICATE
+        </MenuButton>
       </CenteredButtons>
     </HomeModal>
   );

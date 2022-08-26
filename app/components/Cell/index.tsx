@@ -97,8 +97,6 @@ const Cell: FC<{
     ? theme.cell.fullWidth
     : undefined;
 
-  console.log("resolvedWidth", resolvedWidth);
-
   return (
     <CellContainer
       className={className}
