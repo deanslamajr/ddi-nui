@@ -9,11 +9,12 @@ import {
   // createComicFromPublishedComic,
   CellFromClientCache,
   createNewCell,
+  deleteComic,
   doesComicUrlIdExist,
   hydrateComicFromClientCache,
   HydratedComic,
 } from "~/utils/clientCache";
-import { DDI_APP_PAGES } from "~/utils/urls";
+import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
@@ -27,6 +28,7 @@ import UnstyledLink, {
 } from "~/components/UnstyledLink";
 import AddCellModal from "~/components/AddCellModal";
 import CellActionsModal from "~/components/CellActionsModal";
+import ComicActionsModal from "~/components/ComicActionsModal";
 
 import { get as getComicFromNetwork } from "~/data/external/comics";
 
@@ -245,6 +247,12 @@ export default function ComicStudioRoute() {
     return dirtyCells.length < MAX_DIRTY_CELLS;
   };
 
+  const isComicDirty = () => {
+    const sortedCells = getCellsFromState();
+    const dirtyCells = sortedCells.filter(({ isDirty }) => isDirty);
+    return dirtyCells.length > 0;
+  };
+
   const getExitNavLink = () => {
     // this.props.showSpinner()
     if (isDraftId(comicUrlId)) {
@@ -301,6 +309,36 @@ export default function ComicStudioRoute() {
     }
   };
 
+  const handleDeleteComicClick = async () => {
+    // this.props.showSpinner()
+    setShowActionsModal(false);
+
+    try {
+      if (!isDraftId(comicUrlId)) {
+        await fetch(DDI_API_ENDPOINTS.deleteComic(comicUrlId), {
+          method: "DELETE",
+        });
+
+        // TODO: remove this comic from the gallery cache (when there is a gallery cache in v2)
+        // this.props.deleteComicFromCache(
+        //   this.props.comicUrlId,
+        //   () =>
+        //     (window.location = DDI_APP_PAGES.getGalleryPageUrl({
+        //       queryString: this.props.searchParams,
+        //     }))
+        // )
+      }
+
+      deleteComic(comicUrlId);
+      navigate(DDI_APP_PAGES.getGalleryPageUrl(), { replace: true });
+    } catch (error) {
+      // this.props.hideSpinner()
+      // @todo log error
+      console.error(error);
+      return;
+    }
+  };
+
   const sortedCells = getCellsFromState();
 
   return (
@@ -340,23 +378,25 @@ export default function ComicStudioRoute() {
         />
       )}
 
-      {/* {this.state.showComicActionsModal && (
-            <ComicActionsModal
-              isComicDirty={this.isComicDirty()}
-              onCancelClick={() => this.toggleComicActionsModal(false)}
-              onDeleteClick={() => this.handleDeleteComicClick()}
-              onPublishClick={() =>
-                this.handlePublishPreviewClick(() =>
-                  this.toggleComicActionsModal(false)
-                )
-              }
-            />
-          )} */}
+      {showActionsModal && (
+        <ComicActionsModal
+          isComicDirty={isComicDirty()}
+          onCancelClick={() => setShowActionsModal(false)}
+          onDeleteClick={() => handleDeleteComicClick()}
+          onPublishClick={
+            () => {}
+            // this.handlePublishPreviewClick(() =>
+            //   this.toggleComicActionsModal(false)
+            // )
+          }
+        />
+      )}
 
       {activeCell && (
         <CellActionsModal
           cell={activeCell}
           onCancelClick={() => setActiveCell(null)}
+          onDuplicateClick={navigateToAddCellFromDuplicate}
         />
       )}
 
