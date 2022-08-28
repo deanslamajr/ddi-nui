@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LinksFunction } from "remix";
-import { useParams, useNavigate } from "@remix-run/react";
+import { Outlet, useParams, useNavigate } from "@remix-run/react";
 import styled from "styled-components";
 
 import { StudioState } from "~/interfaces/studioState";
@@ -10,12 +10,8 @@ import {
   CellFromClientCache,
   createNewCell,
   deleteComic,
-  doesComicUrlIdExist,
-  hydrateComicFromClientCache,
-  HydratedComic,
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
-import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
@@ -26,14 +22,25 @@ import { PinkMenuButton } from "~/components/Button";
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
-import AddCellModal from "~/components/AddCellModal";
-import CellActionsModal from "~/components/CellActionsModal";
-import ComicActionsModal from "~/components/ComicActionsModal";
+import AddCellModal, {
+  links as addCellModalStylesUrl,
+} from "~/components/AddCellModal";
+import CellActionsModal, {
+  links as cellActionsModalStylesUrl,
+} from "~/components/CellActionsModal";
+import ComicActionsModal, {
+  links as comicActionsModalStylesUrl,
+} from "~/components/ComicActionsModal";
 
-import { get as getComicFromNetwork } from "~/data/external/comics";
+import useComic from "~/hooks/useComic";
 
 export const links: LinksFunction = () => {
-  return [...unstyledLinkStylesUrl()];
+  return [
+    ...unstyledLinkStylesUrl(),
+    ...addCellModalStylesUrl(),
+    ...cellActionsModalStylesUrl(),
+    ...comicActionsModalStylesUrl(),
+  ];
 };
 
 const SIDE_BUTTONS_SPACER = 0; //.4
@@ -79,85 +86,6 @@ const OuterContainer = styled.div`
 `;
 
 /**
- * UTILS
- */
-const hydrateComicFromNetwork = async (
-  comicUrlId: string
-): Promise<HydratedComic | null> => {
-  const comicFromNetwork = await getComicFromNetwork(comicUrlId);
-
-  if (!comicFromNetwork) {
-    console.error(`Comic not found. comicUrlId:${comicUrlId}`);
-    return null;
-  } else if (!comicFromNetwork.userCanEdit) {
-    console.error(
-      `User is not authorized to edit comic. comicUrlId:${comicUrlId}`
-    );
-    return null;
-  } else if (!comicFromNetwork.isActive) {
-    console.error(
-      `Comic cannot be edited as it is not active. comicUrlId:${comicUrlId}`
-    );
-    return null;
-  }
-
-  return {
-    ...comicFromNetwork,
-    cells: comicFromNetwork.cells.reduce((acc, cell) => {
-      if (cell.urlId) {
-        acc[cell.urlId] = {
-          ...cell,
-          comicUrlId,
-        };
-      }
-      return acc;
-    }, {} as Record<string, CellFromClientCache>),
-  };
-
-  // return createComicFromPublishedComic(comicFromNetwork);
-  // return comicFromNetwork as HydratedComic;
-};
-
-const hydrateComic = async (
-  comicUrlId: string
-): Promise<HydratedComic | null> => {
-  let hydratedComic: HydratedComic | null = null;
-
-  // try to fetch from client cache
-  // if exists in client cache
-  if (doesComicUrlIdExist(comicUrlId)) {
-    console.log(`doesComicUrlIdExist:${comicUrlId}->true`);
-    // hydrate the cells and comic from client cache and return formatted data
-    hydratedComic = hydrateComicFromClientCache(comicUrlId);
-  } else {
-    console.log(`doesComicUrlIdExist:${comicUrlId}->false`);
-    hydratedComic = await hydrateComicFromNetwork(comicUrlId);
-  }
-
-  console.log("hydratedComic", hydratedComic);
-
-  if (!hydratedComic) {
-    return null;
-    // throw new Error(
-    //   `Was not able to hydrate comic for comicUrlId:${comicUrlId}`
-    // );
-  }
-
-  // hydratedComic = _hydratedComic;
-
-  // generate images for any unpublished cell
-  const cells = Object.values(hydratedComic.cells || {});
-  const cellsWithUnpublishedImages = cells.filter((cell) => cell.hasNewImage);
-  await Promise.all(
-    cellsWithUnpublishedImages.map((cellFromClientCache) =>
-      generateCellImage(cellFromClientCache)
-    )
-  );
-
-  return hydratedComic;
-};
-
-/**
  * MAIN
  */
 export default function ComicStudioRoute() {
@@ -167,7 +95,6 @@ export default function ComicStudioRoute() {
   const [activeCell, setActiveCell] = useState<CellFromClientCache | null>(
     null
   );
-  const [comic, setComic] = useState<HydratedComic | null>(null);
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
@@ -175,63 +102,12 @@ export default function ComicStudioRoute() {
 
   const comicUrlId = params.comicUrlId!;
 
-  useEffect(() => {
-    const redirectToGallery = () => {
-      navigate(DDI_APP_PAGES.getGalleryPageUrl(), { replace: true });
-    };
-
-    // redirect to gallery view if url is malformed
-    // This is probably handled by remix and therefore unnecessary
-    // if (!comicUrlId) {
-    //   return redirectToGallery();
-    // }
-
-    // let hydratedComic: HydratedComic | null = null;
-
-    hydrateComic(comicUrlId)
-      // .then((_hydratedComic) => {
-      // console.log("hydratedComic", _hydratedComic);
-
-      // if (!_hydratedComic) {
-      //   throw new Error(
-      //     `Was not able to hydrate comic for comicUrlId:${comicUrlId}`
-      //   );
-      // }
-
-      // hydratedComic = _hydratedComic;
-
-      // // generate images for any unpublished cell
-      // const cells = Object.values(hydratedComic.cells || {});
-      // const cellsWithUnpublishedImages = cells.filter(
-      //   (cell) => cell.hasNewImage
-      // );
-      // return Promise.all(
-      //   cellsWithUnpublishedImages.map((cellFromClientCache) =>
-      //     generateCellImage(cellFromClientCache)
-      //   )
-      // );
-      // })
-      .then((hydratedComic) => {
-        if (!hydratedComic) {
-          // this.props.showSpinner()
-          // return navigate(DDI_APP_PAGES.getCreateNewCellPageUrl(), {
-          //   replace: true,
-          // });
-          return location.replace(DDI_APP_PAGES.getCreateNewCellPageUrl());
-        }
-        setComic(hydratedComic); /*, () => {
-          // hide spinner and scroll to bottom of comic
-          this.props.hideSpinner(() =>
-            window.scrollTo(0, document.body.scrollHeight)
-          );
-        });*/
-      })
-      .catch((error) => {
-        // TODO - improve logging
-        console.error(error);
-        return redirectToGallery();
-      });
-  }, [comicUrlId]);
+  const comic = useComic({
+    comicUrlId,
+    onError: () => {
+      navigate(DDI_APP_PAGES.gallery(), { replace: true });
+    },
+  });
 
   const getCellsFromState = () => {
     const comicsCells = comic?.cells;
@@ -262,12 +138,12 @@ export default function ComicStudioRoute() {
       //   })
       // } else {
       const withoutSuffix = removeSuffix(comicUrlId);
-      return DDI_APP_PAGES.getComicPageUrl(withoutSuffix);
+      return DDI_APP_PAGES.comic(withoutSuffix);
       // Router.pushRoute(`/comic/${withoutSuffix}`);
       // }
     } else {
       // Router.pushRoute(`/comic/${this.props.comicUrlId}`)
-      return DDI_APP_PAGES.getComicPageUrl(comicUrlId);
+      return DDI_APP_PAGES.comic(comicUrlId);
     }
   };
 
@@ -280,7 +156,7 @@ export default function ComicStudioRoute() {
     // this.props.showSpinner()
     // this.hideAddCellModal()
     // Router.pushRoute(`/s/cell/${cellId}`)
-    location.replace(DDI_APP_PAGES.getCreateNewCellPageUrl(newCell.urlId));
+    location.replace(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
   const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
@@ -296,7 +172,11 @@ export default function ComicStudioRoute() {
     // this.props.showSpinner()
     // this.hideAddCellModal()
     // Router.pushRoute(`/s/cell/${newCell}`)
-    location.replace(DDI_APP_PAGES.getCreateNewCellPageUrl(newCell.urlId));
+    location.replace(DDI_APP_PAGES.cellStudio(newCell.urlId));
+  };
+
+  const navigateToComicStudioGallery = () => {
+    location.replace(DDI_APP_PAGES.comicStudioCopyFromComic(comicUrlId));
   };
 
   const handleCellClick = (activeCell: CellFromClientCache) => {
@@ -330,7 +210,7 @@ export default function ComicStudioRoute() {
       }
 
       deleteComic(comicUrlId);
-      navigate(DDI_APP_PAGES.getGalleryPageUrl(), { replace: true });
+      navigate(DDI_APP_PAGES.gallery(), { replace: true });
     } catch (error) {
       // this.props.hideSpinner()
       // @todo log error
@@ -374,6 +254,7 @@ export default function ComicStudioRoute() {
           onCancelClick={() => setShowAddCellModal(false)}
           onAddCellFromNewClick={navigateToAddCellFromNew}
           onAddCellFromDuplicate={navigateToAddCellFromDuplicate}
+          onAddCellFromAnotherComic={navigateToComicStudioGallery}
           cells={sortedCells}
         />
       )}
@@ -434,6 +315,10 @@ export default function ComicStudioRoute() {
       <div className="nav-button bottom-right accented larger-font">
         <button onClick={() => setShowActionsModal(true)}>⚙️</button>
       </div>
+
+      <Outlet />
     </>
   );
 }
+
+export const unstable_shouldReload = () => false;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { LinksFunction } from "remix";
 
 import { CellFromClientCache } from "~/utils/clientCache";
 import { SCHEMA_VERSION } from "~/utils/constants";
@@ -8,6 +9,7 @@ import { SCHEMA_VERSION } from "~/utils/constants";
 import Modal, {
   CenteredButtons,
   MessageContainer as Message,
+  links as modalStylesUrl,
 } from "~/components/Modal";
 // import Modal, { CenteredButtons, MessageContainer as Message } from '../../../components/Modal'
 import { MenuButton } from "~/components/Button";
@@ -18,6 +20,10 @@ import { phoneMax, tabletMax } from "~/components/breakpoints";
 // import { media } from '../../../helpers/style-utils'
 
 import { StudioState } from "~/interfaces/studioState";
+
+export const links: LinksFunction = () => {
+  return [...modalStylesUrl()];
+};
 
 const DuplicateModal = styled(Modal)`
   display: flex;
@@ -63,6 +69,7 @@ const MessageContainer = styled(Message)`
 type Props = {
   cells: CellFromClientCache[];
   onAddCellFromNewClick: () => void;
+  onAddCellFromAnotherComic: () => void;
   onAddCellFromDuplicate: (studioStateToDuplicate?: StudioState | null) => void;
   onCancelClick: () => void;
 };
@@ -70,48 +77,92 @@ type Props = {
 const AddCellModal: React.FC<Props> = ({
   cells,
   onAddCellFromNewClick,
+  onAddCellFromAnotherComic,
   onAddCellFromDuplicate,
   onCancelClick,
 }) => {
-  const [currentView, setCurrentView] = useState<"HOME" | "CELL_LIST">("HOME");
+  const [currentView, setCurrentView] = useState<
+    "HOME" | "CELL_LIST" | "COMIC_LIST"
+  >("HOME");
 
-  return currentView === "HOME" ? (
-    <HomeModal onCancelClick={onCancelClick}>
-      <Message>Add a new cell</Message>
+  return (
+    <>
+      {currentView === "HOME" && (
+        <HomeModal onCancelClick={onCancelClick}>
+          <Message>Add a new cell:</Message>
 
-      <CenteredButtons>
-        <MenuButton onClick={() => setCurrentView("CELL_LIST")}>
-          FROM DUPLICATE
-        </MenuButton>
-      </CenteredButtons>
-      <CenteredButtons>
-        <MenuButton onClick={onAddCellFromNewClick}>FROM NEW</MenuButton>
-      </CenteredButtons>
-    </HomeModal>
-  ) : (
-    <DuplicateModal>
-      <MessageContainer>Pick a cell to duplicate:</MessageContainer>
-      <CellsContainer>
-        {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
-          <CellContainer
-            key={imageUrl}
-            onClick={() => onAddCellFromDuplicate(studioState)}
-          >
-            <Cell
-              imageUrl={imageUrl || ""}
-              isImageUrlAbsolute={Boolean(hasNewImage)}
-              schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-              caption={studioState?.caption || ""}
-              cellWidth="250px"
-              clickable
-            />
-          </CellContainer>
-        ))}
-      </CellsContainer>
-      <CenteredButtons>
-        <MenuButton onClick={() => setCurrentView("HOME")}>BACK</MenuButton>
-      </CenteredButtons>
-    </DuplicateModal>
+          <CenteredButtons>
+            <MenuButton onClick={() => setCurrentView("CELL_LIST")}>
+              COPY A CELL
+            </MenuButton>
+          </CenteredButtons>
+          <CenteredButtons>
+            <MenuButton onClick={onAddCellFromAnotherComic}>
+              FROM ANOTHER COMIC
+            </MenuButton>
+          </CenteredButtons>
+          <CenteredButtons>
+            <MenuButton onClick={onAddCellFromNewClick}>
+              NEW EMPTY CELL
+            </MenuButton>
+          </CenteredButtons>
+        </HomeModal>
+      )}
+      {currentView === "CELL_LIST" && (
+        <DuplicateModal>
+          <MessageContainer>Pick a cell to duplicate:</MessageContainer>
+          <CellsContainer>
+            {cells.map(
+              ({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
+                <CellContainer
+                  key={imageUrl}
+                  onClick={() => onAddCellFromDuplicate(studioState)}
+                >
+                  <Cell
+                    imageUrl={imageUrl || ""}
+                    isImageUrlAbsolute={Boolean(hasNewImage)}
+                    schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                    caption={studioState?.caption || ""}
+                    cellWidth="250px"
+                    clickable
+                  />
+                </CellContainer>
+              )
+            )}
+          </CellsContainer>
+          <CenteredButtons>
+            <MenuButton onClick={() => setCurrentView("HOME")}>BACK</MenuButton>
+          </CenteredButtons>
+        </DuplicateModal>
+      )}
+      {currentView === "COMIC_LIST" && (
+        <DuplicateModal>
+          <MessageContainer>Pick a cell to duplicate:</MessageContainer>
+          <CellsContainer>
+            {cells.map(
+              ({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
+                <CellContainer
+                  key={imageUrl}
+                  onClick={() => onAddCellFromDuplicate(studioState)}
+                >
+                  <Cell
+                    imageUrl={imageUrl || ""}
+                    isImageUrlAbsolute={Boolean(hasNewImage)}
+                    schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                    caption={studioState?.caption || ""}
+                    cellWidth="250px"
+                    clickable
+                  />
+                </CellContainer>
+              )
+            )}
+          </CellsContainer>
+          <CenteredButtons>
+            <MenuButton onClick={() => setCurrentView("HOME")}>BACK</MenuButton>
+          </CenteredButtons>
+        </DuplicateModal>
+      )}
+    </>
   );
 };
 
