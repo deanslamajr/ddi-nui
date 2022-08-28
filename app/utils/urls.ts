@@ -36,22 +36,38 @@ export const DDI_API_ENDPOINTS = {
 };
 
 export const DDI_APP_PAGES = {
-  getComicPageUrl: (comidUrlId: string) => {
+  comic: (comidUrlId: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/comic/${comidUrlId}`;
   },
-  getDraftsPageUrl: (searchParams?: string) => {
+  drafts: (searchParams?: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/me/drafts${searchParams ? `?${searchParams}` : ""}`;
   },
-  getGalleryPageUrl: () => {
+  gallery: () => {
     return `${getClientVariable("APP_PATH_PREFIX")}/gallery`;
   },
-  getCreateNewCellPageUrl: (cellUrlId?: string) => {
+  cellStudio: (cellUrlId?: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/s/cell/${cellUrlId || "new"}`;
+  },
+  comicStudio: (comicUrlId: string) => {
+    return `${getClientVariable("APP_PATH_PREFIX")}/s/comic/${comicUrlId}`;
+  },
+  comicStudioCopyFromComicCell: (
+    editedComicUrlId: string,
+    copiedComicUrlId: string
+  ) => {
+    return `${getClientVariable(
+      "APP_PATH_PREFIX"
+    )}/s/comic/${editedComicUrlId}/copyFromComic/${copiedComicUrlId}`;
+  },
+  comicStudioCopyFromComic: (comicUrlId: string) => {
+    return `${getClientVariable(
+      "APP_PATH_PREFIX"
+    )}/s/comic/${comicUrlId}/copyFromComic`;
   },
 };

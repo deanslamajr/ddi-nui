@@ -17,9 +17,7 @@ export default function CreateNavButton({}: Props) {
   const [searchParams] = useSearchParams();
 
   return (
-    <UnstyledLink
-      href={DDI_APP_PAGES.getDraftsPageUrl(searchParams.toString())}
-    >
+    <UnstyledLink href={DDI_APP_PAGES.drafts(searchParams.toString())}>
       <div className="nav-button bottom-right accented larger-font">+</div>
     </UnstyledLink>
   );

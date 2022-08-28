@@ -1,0 +1,41 @@
+.background-mask {
+  z-index: 999999;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-container {
+  background-color: var(--lightGray);
+  width: 70vw;
+  padding: 1rem;
+  border-radius: 1px;
+  max-height: calc(100% - (2 * var(--buttonDiameter)) - 2rem);
+  overflow: auto;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.message-container {
+  color: var(--black);
+  font-size: 1.5rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.centered-button {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}

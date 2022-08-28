@@ -1,3 +1,8 @@
+.within-modal {
+  background-color: transparent;
+  width: 100%;
+}
+
 .comics-container {
   display: grid;
   grid-gap: 2px;
@@ -12,7 +17,7 @@
 
 .top-button-container {
   display: flex;
-  position: absolute;
+  position: relative;
   top: 0;
   justify-content: center;
   width: 100%;

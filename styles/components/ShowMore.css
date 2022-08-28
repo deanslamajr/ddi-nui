@@ -1,5 +1,5 @@
 .nav-button.absolute {
-  position: absolute;
+  position: relative;
 }
 
 .nav-button button {

@@ -1,5 +1,6 @@
 import type { LinksFunction } from "remix";
 import { useLoaderData } from "remix";
+import { Outlet, useParams, useNavigate } from "@remix-run/react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { usePageVisibility } from "react-page-visibility";
 useRef;
@@ -19,7 +20,7 @@ import UnstyledLink, {
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
-import Header, { links as headerStylesUrl } from "~/components/Header";
+import Modal, { links as modalStylesUrl } from "~/components/Modal";
 
 import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
 import sortComics from "~/utils/sortComics";
@@ -42,9 +43,9 @@ export const links: LinksFunction = () => {
     ...cellsThumbStylesUrl(),
     ...createNavButtonStylesUrl(),
     ...unstyledLinkStylesUrl(),
-    ...headerStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...newComicsExistStylesUrl(),
+    ...modalStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -60,12 +61,15 @@ const ComicPreview: FC<ComicPreviewProps> = ({
   initialCell,
   urlId,
 }) => {
+  const params = useParams();
+  const comicUrlId = params.comicUrlId!;
+
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   return (
     <UnstyledLink
       id={urlId}
-      href={DDI_APP_PAGES.comic(urlId)}
+      href={DDI_APP_PAGES.comicStudioCopyFromComicCell(comicUrlId, urlId)}
       onclick={() => setIsClicked(true)}
     >
       {isClicked ? (
@@ -161,6 +165,10 @@ const ComicsPreviewContainer: FC<ComicsPreviewContainerProps> = ({
 };
 
 export default function IndexRoute() {
+  const navigate = useNavigate();
+  const params = useParams();
+  const comicUrlId = params.comicUrlId!;
+
   const data = useLoaderData<LoaderData>();
 
   const [comics, setComics] = useState<Comic[]>(
@@ -275,19 +283,23 @@ export default function IndexRoute() {
     return () => clearInterval(latestComicsPolling);
   }, [isVisible]);
 
-  return (
-    <div className="gallery-outer-container">
-      <Header text="draw draw ink" />
-      <ComicsPreviewContainer
-        comics={comics}
-        isNewComicsExistVisible={showNewComicsExistButton}
-        isShowMoreNewerVisible={data.hasCursor && hasMoreNewerComics}
-        isShowMoreOlderVisible={hasMoreOlderComics}
-        newerCursor={newerCursor}
-        olderCursor={olderCursor}
-      />
+  const returnToParent = () => {
+    navigate("..");
+  };
 
-      <CreateNavButton />
-    </div>
+  return (
+    <>
+      <Modal onCancelClick={returnToParent} className="within-modal">
+        <ComicsPreviewContainer
+          comics={comics}
+          isNewComicsExistVisible={showNewComicsExistButton}
+          isShowMoreNewerVisible={data.hasCursor && hasMoreNewerComics}
+          isShowMoreOlderVisible={hasMoreOlderComics}
+          newerCursor={newerCursor}
+          olderCursor={olderCursor}
+        />
+      </Modal>
+      <Outlet />
+    </>
   );
 }
