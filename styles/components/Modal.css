@@ -13,7 +13,6 @@
 
 .modal-container {
   background-color: var(--lightGray);
-  width: 70vw;
   padding: 1rem;
   border-radius: 1px;
   max-height: calc(100% - (2 * var(--buttonDiameter)) - 2rem);

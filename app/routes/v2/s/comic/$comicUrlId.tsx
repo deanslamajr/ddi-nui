@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LinksFunction } from "remix";
 import { Outlet, useParams, useNavigate } from "@remix-run/react";
 import styled from "styled-components";
@@ -148,35 +148,27 @@ export default function ComicStudioRoute() {
   };
 
   const navigateToAddCellFromNew = () => {
-    // const { comicUrlId } = this.props
-
-    // const { createNewCell } = require('../../../helpers/clientCache')
     const newCell = createNewCell({ comicUrlId });
 
-    // this.props.showSpinner()
-    // this.hideAddCellModal()
-    // Router.pushRoute(`/s/cell/${cellId}`)
-    location.replace(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    setShowAddCellModal(false);
+
+    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
   const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
-    // const { comicUrlId } = this.props
-
-    // const { createNewCell } = require('../../../helpers/clientCache')
-
     const newCell = createNewCell({
       comicUrlId,
       initialStudioState: studioState,
     });
 
-    // this.props.showSpinner()
-    // this.hideAddCellModal()
-    // Router.pushRoute(`/s/cell/${newCell}`)
-    location.replace(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    setShowAddCellModal(false);
+
+    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
   const navigateToComicStudioGallery = () => {
-    location.replace(DDI_APP_PAGES.comicStudioCopyFromComic(comicUrlId));
+    navigate(DDI_APP_PAGES.comicStudioCopyFromComic(comicUrlId));
+    setShowAddCellModal(false);
   };
 
   const handleCellClick = (activeCell: CellFromClientCache) => {

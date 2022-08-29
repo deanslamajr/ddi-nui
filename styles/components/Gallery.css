@@ -1,18 +1,8 @@
-.within-modal {
-  background-color: transparent;
-  width: 100%;
-}
-
 .comics-container {
   display: grid;
   grid-gap: 2px;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-auto-rows: auto;
-}
-
-.gallery-outer-container {
-  position: relative;
-  padding: 5rem 0;
 }
 
 .top-button-container {
@@ -28,9 +18,5 @@
 @media (max-width: 899px) {
   .comics-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .gallery-outer-container {
-    padding: 4.5rem 0;
   }
 }

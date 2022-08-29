@@ -1,12 +1,9 @@
 import store from "store2";
 import shortid from "shortid";
-import cloneDeep from "lodash.clonedeep";
-
-// import { sortByOrder } from "../helpers/sorts";
 
 import { theme } from "~/utils/stylesTheme";
 // import theme from "../helpers/theme";
-import { sortCellsV4 } from "~/utils/sortCells";
+import { sortByOrder, sortCellsV4 } from "~/utils/sortCells";
 import {
   DRAFT_SUFFIX,
   SCHEMA_VERSION,
@@ -15,6 +12,8 @@ import {
 // import { DRAFT_SUFFIX, STORAGEKEY_STUDIO } from "../config/constants.json";
 
 import { StudioState } from "~/interfaces/studioState";
+
+import { ComicLegacy } from "~/data/external/comics";
 
 const getCache = (): ClientCache => {
   const cacheFromStore: ClientCache | null = store(STORAGEKEY_STUDIO);
@@ -34,7 +33,7 @@ const setCache = (newCache: ClientCache) => {
   store(STORAGEKEY_STUDIO, newCache);
 };
 
-const generateUrlId = () => {
+const generateDraftUrlId = () => {
   return `${shortid.generate()}${DRAFT_SUFFIX}`;
 };
 
@@ -105,7 +104,7 @@ const createNewComic = (
   return {
     initialCellUrlId: template?.initialCellUrlId || null,
     lastModified: Date.now(),
-    urlId: template?.urlId || generateUrlId(),
+    urlId: template?.urlId || generateDraftUrlId(),
   };
 };
 
@@ -126,16 +125,9 @@ const getInitializedCell = ({
     previousCellUrlId,
     schemaVersion: SCHEMA_VERSION,
     studioState: studioState || getInitializedStudioState(),
-    urlId: urlId || generateUrlId(),
+    urlId: urlId || generateDraftUrlId(),
   };
 };
-
-// function transformStudioStateToV4(studioStatePreV4) {
-//   return {
-//     ...studioStatePreV4,
-//     caption: studioStatePreV4.title,
-//   };
-// }
 
 export const getInitializedStudioState = (): StudioState => {
   return {
@@ -425,89 +417,135 @@ export const createNewCell = ({
 // //   urlId: "knwg8fySZ",
 // //   userCanEdit: true
 // // }
-// export const createComicFromPublishedComic = ({
-//   cells: cellsToCopy,
-//   initialCellUrlId,
-//   title,
-//   urlId: comicUrlId,
-// }) => {
-//   let cache = getCache();
+export const copyComicFromPublishedComic = (
+  publishedComic: ComicLegacy
+): HydratedComic => createComicFromPublishedComic(publishedComic, true);
 
-//   if (!cache) {
-//     cache = getInitializedCache();
-//   }
-//   if (!cache.cells) {
-//     cache.cells = {};
-//   }
-//   if (!cache.comics) {
-//     cache.comics = {};
-//   }
+export const createComicFromPublishedComic = (
+  { cells: cellsToCopy, initialCellUrlId, urlId }: ComicLegacy,
+  shouldDuplicateComic?: boolean
+): HydratedComic => {
+  const cache = getCache();
 
-//   if (cellsToCopy[0].schemaVersion >= 4) {
-//     // create cells
-//     cellsToCopy.forEach((cell) => {
-//       cache.cells[cell.urlId] = getInitializedCell({
-//         comicUrlId,
-//         urlId: cell.urlId,
-//         studioState: cell.studioState,
-//         previousCellUrlId: cell.previousCellUrlId,
-//         imageUrl: cell.imageUrl,
-//       });
-//     });
+  const comicUrlId = shouldDuplicateComic ? generateDraftUrlId() : urlId;
 
-//     const comic = createNewComic({initialCellUrlId, urlId: comicUrlId});
-//     //comic.urlId = comicUrlId;
-//     //comic.initialCellUrlId = initialCellUrlId;
-//     cache.comics[comicUrlId] = comic;
-//   } else {
-//     const sortedCells = cellsToCopy.sort(sortByOrder);
-//     // cell (v3): {
-//     //   caption: ""
-//     //   imageUrl: "iSe-T7oDa.png"
-//     //   order: 2
-//     //   previousCellId: null
-//     //   schemaVersion: 3
-//     //   studioState: {activeEmojiId: 3, backgroundColor: "#19194d", currentEmojiId: 6, showEmojiPicker: false, title: "", …}
-//     //   urlId: "4vR8TtVLb"
-//     // }
+  if (cellsToCopy[0].schemaVersion && cellsToCopy[0].schemaVersion >= 4) {
+    let comic;
 
-//     // create cells
-//     for (let cur = 0; cur < sortedCells.length; cur++) {
-//       const currentCell = sortedCells[cur];
-//       const previousCell = cur > 0 ? sortedCells[cur - 1] : null;
+    if (shouldDuplicateComic) {
+      const sortedCellsToCopy = sortCellsV4(cellsToCopy, initialCellUrlId);
 
-//       cache.cells[currentCell.urlId] = getInitializedCell({
-//         comicUrlId,
-//         urlId: currentCell.urlId,
-//         studioState: transformStudioStateToV4(currentCell.studioState),
-//         previousCellUrlId: previousCell ? previousCell.urlId : null,
-//         imageUrl: currentCell.imageUrl,
-//         // need to create a new image to get the imageUrl to correspond to
-//         // the latest schemaVersion pattern
-//         // e.g. schemaVersion < 3 is in a different s3 bucket and if an update bumps
-//         // schemaVersion to the latest, components won't know to treat imageUrl as
-//         // an absolute URL
-//         hasNewImage: true,
-//         isDirty: true, // set as dirty so that the next publish action will update the schema
-//       });
-//     }
+      let newComicInitialUrlId;
+      for (
+        let currentCellIndex = 0;
+        currentCellIndex < sortedCellsToCopy.length;
+        currentCellIndex++
+      ) {
+        const currentCell = sortedCellsToCopy[currentCellIndex];
 
-//     const comic = createNewComic({initialCellUrlId: sortedCells[0].urlId, urlId: comicUrlId});
-//     //comic.urlId = comicUrlId;
-//     c//omic.initialCellUrlId = sortedCells[0].urlId;
-//     cache.comics[comicUrlId] = comic;
-//   }
+        const newCellUrlId = generateDraftUrlId();
+        if (currentCellIndex === 0) {
+          newComicInitialUrlId = newCellUrlId;
+        }
 
-//   setCache(cache);
+        cache.cells[newCellUrlId] = getInitializedCell({
+          comicUrlId: comicUrlId,
+          urlId: newCellUrlId,
+          studioState: currentCell.studioState,
+          previousCellUrlId:
+            currentCellIndex > 0
+              ? sortedCellsToCopy[currentCellIndex - 1].urlId
+              : null,
+          imageUrl: currentCell.imageUrl,
+        });
+      }
 
-//   const comic = getComic(comicUrlId);
-//   const cells = getCellsByComicUrlId(comicUrlId);
+      comic = createNewComic({
+        initialCellUrlId: newComicInitialUrlId,
+        urlId: comicUrlId,
+      });
+    } else {
+      cellsToCopy.forEach((cell) => {
+        cache.cells[cell.urlId] = getInitializedCell({
+          comicUrlId,
+          urlId: cell.urlId,
+          studioState: cell.studioState,
+          previousCellUrlId: cell.previousCellUrlId,
+          imageUrl: cell.imageUrl,
+        });
+      });
 
-//   return {
-//     ...comic,
-//     cells,
-//   };
-// };
+      comic = createNewComic({ initialCellUrlId, urlId: comicUrlId });
+    }
+
+    cache.comics[comicUrlId] = comic;
+  } else {
+    const sortedCells = cellsToCopy.sort(sortByOrder) as any as CellPreV4[];
+
+    type CellPreV4 = {
+      caption: string;
+      imageUrl: string;
+      order: number;
+      previousCellId: null | string;
+      schemaVersion: 1 | 2 | 3;
+      studioState: {
+        activeEmojiId: number;
+        backgroundColor: string;
+        currentEmojiId: number;
+        showEmojiPicker: boolean;
+        title: string;
+        emojis: {};
+      };
+      urlId: string;
+    };
+
+    let comic;
+    if (shouldDuplicateComic) {
+      throw new Error("need to implement prev4 version of this!");
+    } else {
+      function transformStudioStateToV4(
+        studioStatePreV4: CellPreV4["studioState"]
+      ) {
+        return {
+          ...studioStatePreV4,
+          caption: studioStatePreV4.title,
+        };
+      }
+
+      // create cells
+      for (let cur = 0; cur < sortedCells.length; cur++) {
+        const currentCell = sortedCells[cur];
+        const previousCell = cur > 0 ? sortedCells[cur - 1] : null;
+
+        cache.cells[currentCell.urlId] = getInitializedCell({
+          comicUrlId,
+          urlId: currentCell.urlId,
+          studioState: transformStudioStateToV4(currentCell.studioState),
+          previousCellUrlId: previousCell ? previousCell.urlId : null,
+          imageUrl: currentCell.imageUrl,
+          // need to create a new image to get the imageUrl to correspond to
+          // the latest schemaVersion pattern
+          // e.g. schemaVersion < 3 is in a different s3 bucket and if an update bumps
+          // schemaVersion to the latest, components won't know to treat imageUrl as
+          // an absolute URL
+          hasNewImage: true,
+          isDirty: true, // set as dirty so that the next publish action will update the schema
+        });
+      }
+
+      comic = createNewComic({
+        initialCellUrlId: sortedCells[0].urlId,
+        urlId: comicUrlId,
+      });
+    }
+
+    cache.comics[comicUrlId] = comic;
+  }
+
+  setCache(cache);
+
+  return hydrateComicFromClientCache(comicUrlId);
+};
 
 export const hydrateComicFromClientCache = (comicUrlId: string) => {
   const comic = getComic(comicUrlId) || ({} as ComicFromClientCache);
