@@ -155,15 +155,19 @@ export default function ComicStudioRoute() {
     location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
-  const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
-    const newCell = createNewCell({
-      comicUrlId,
-      initialStudioState: studioState,
-    });
+  const navigateToAddCellFromDuplicate = () => {
+    // const newCell = createNewCell({
+    //   comicUrlId,
+    //   initialStudioState: studioState,
+    // });
 
+    // setShowAddCellModal(false);
+
+    // location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    navigate(
+      DDI_APP_PAGES.comicStudioCopyFromComicCell(comicUrlId, comicUrlId)
+    );
     setShowAddCellModal(false);
-
-    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
   const navigateToComicStudioGallery = () => {
