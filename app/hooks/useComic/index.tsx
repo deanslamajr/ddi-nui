@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 import {
-  CellFromClientCache,
+  copyComicFromPublishedComic,
+  createComicFromPublishedComic,
   doesComicUrlIdExist,
   hydrateComicFromClientCache,
   HydratedComic,
@@ -14,35 +15,21 @@ import { get as getComicFromNetwork } from "~/data/external/comics";
 const hydrateComicFromNetwork = async (
   comicUrlId: string
 ): Promise<HydratedComic | null> => {
-  const comicFromNetwork = await getComicFromNetwork(comicUrlId);
+  let comicFromNetwork = await getComicFromNetwork(comicUrlId);
 
   if (!comicFromNetwork) {
     console.error(`Comic not found. comicUrlId:${comicUrlId}`);
-    return null;
-  } else if (!comicFromNetwork.userCanEdit) {
-    console.error(
-      `User is not authorized to edit comic. comicUrlId:${comicUrlId}`
-    );
     return null;
   } else if (!comicFromNetwork.isActive) {
     console.error(
       `Comic cannot be edited as it is not active. comicUrlId:${comicUrlId}`
     );
     return null;
+  } else if (!comicFromNetwork.userCanEdit) {
+    return Promise.resolve(copyComicFromPublishedComic(comicFromNetwork));
+  } else {
+    return Promise.resolve(createComicFromPublishedComic(comicFromNetwork));
   }
-
-  return {
-    ...comicFromNetwork,
-    cells: comicFromNetwork.cells.reduce((acc, cell) => {
-      if (cell.urlId) {
-        acc[cell.urlId] = {
-          ...cell,
-          comicUrlId,
-        };
-      }
-      return acc;
-    }, {} as Record<string, CellFromClientCache>),
-  };
 };
 
 const hydrateComic = async (

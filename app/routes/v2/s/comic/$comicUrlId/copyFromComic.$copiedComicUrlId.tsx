@@ -1,38 +1,19 @@
 import type { LinksFunction } from "remix";
-import { useLoaderData } from "remix";
 import { useParams, useNavigate } from "@remix-run/react";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Modal, {
-  CenteredButtons,
   links as modalStylesUrl,
   MessageContainer,
 } from "~/components/Modal";
 import Cell from "~/components/Cell";
-import { MenuButton } from "~/components/Button";
 
-import { DDI_API_ENDPOINTS, DDI_APP_PAGES } from "~/utils/urls";
-import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
-import sortComics from "~/utils/sortComics";
-import {
-  // createComicFromPublishedComic,
-  CellFromClientCache,
-  createNewCell,
-  deleteComic,
-  doesComicUrlIdExist,
-  hydrateComicFromClientCache,
-  HydratedComic,
-} from "~/utils/clientCache";
+import { DDI_APP_PAGES } from "~/utils/urls";
+import { SCHEMA_VERSION } from "~/utils/constants";
+import { createNewCell } from "~/utils/clientCache";
 import { sortCellsV4 } from "~/utils/sortCells";
 
 import useComic from "~/hooks/useComic";
 
-import {
-  getLatestTimestamp,
-  setLatestTimestamp,
-} from "~/utils/__clientCache/latestTimestamp";
-
-import { Comic } from "~/interfaces/comic";
 import { StudioState } from "~/interfaces/studioState";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/copyFromComic.css";
@@ -73,14 +54,11 @@ export default function CopyFromComicRoute() {
       initialStudioState: studioState,
     });
 
-    // this.props.showSpinner()
-    // this.hideAddCellModal()
-    // Router.pushRoute(`/s/cell/${newCell}`)
-    location.replace(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 
   return (
-    <Modal className="copy-from-comic" onCancelClick={returnToParent}>
+    <Modal className="copy-from-comic-modal" onCancelClick={returnToParent}>
       <MessageContainer>Pick a cell to duplicate:</MessageContainer>
       <div className="cells-container">
         {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (

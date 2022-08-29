@@ -1,5 +1,6 @@
 import { LinksFunction } from "remix";
 import { MouseEventHandler, FC } from "react";
+import { Link } from "@remix-run/react";
 
 import stylesUrl from "~/styles/components/UnstyledLink.css";
 
@@ -9,12 +10,23 @@ export const links: LinksFunction = () => {
 
 type Props = {
   id?: string;
+  isRemixLink?: boolean;
   href: string;
   onclick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
-const UnstyledLink: FC<Props> = ({ children, href, id, onclick }) => {
-  return (
+const UnstyledLink: FC<Props> = ({
+  children,
+  href,
+  id,
+  isRemixLink,
+  onclick,
+}) => {
+  return isRemixLink ? (
+    <Link id={id} className="unstyled-link" to={href} onClick={onclick}>
+      {children}
+    </Link>
+  ) : (
     <a id={id} className="unstyled-link" href={href} onClick={onclick}>
       {children}
     </a>

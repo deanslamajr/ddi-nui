@@ -21,14 +21,22 @@ export const MessageContainer: React.FC<{}> = ({ children }) => (
 export type Props = {
   className?: string;
   onCancelClick?: () => void;
+  skipScrollLock?: boolean;
 };
 
-const Modal: React.FC<Props> = ({ children, className, onCancelClick }) => {
-  const { blockScroll, allowScroll, isScrollBlocked } = useSafeScroll();
+const Modal: React.FC<Props> = ({
+  children,
+  className,
+  onCancelClick,
+  skipScrollLock,
+}) => {
+  const { blockScroll, allowScroll } = useSafeScroll();
 
   React.useEffect(() => {
-    blockScroll();
-  }, [isScrollBlocked]);
+    if (!skipScrollLock) {
+      blockScroll();
+    }
+  }, []);
 
   return (
     <div className="background-mask">
@@ -37,7 +45,9 @@ const Modal: React.FC<Props> = ({ children, className, onCancelClick }) => {
           <div className="nav-button top-center larger-font">
             <button
               onClick={() => {
-                allowScroll();
+                if (!skipScrollLock) {
+                  allowScroll();
+                }
                 onCancelClick();
               }}
             >

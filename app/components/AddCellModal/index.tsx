@@ -89,21 +89,20 @@ const AddCellModal: React.FC<Props> = ({
     <>
       {currentView === "HOME" && (
         <HomeModal onCancelClick={onCancelClick}>
-          <Message>Add a new cell:</Message>
+          <Message>Pick a template!</Message>
+
+          <CenteredButtons>
+            <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
+          </CenteredButtons>
 
           <CenteredButtons>
             <MenuButton onClick={() => setCurrentView("CELL_LIST")}>
-              COPY A CELL
+              COPY THIS COMIC
             </MenuButton>
           </CenteredButtons>
           <CenteredButtons>
             <MenuButton onClick={onAddCellFromAnotherComic}>
-              FROM ANOTHER COMIC
-            </MenuButton>
-          </CenteredButtons>
-          <CenteredButtons>
-            <MenuButton onClick={onAddCellFromNewClick}>
-              NEW EMPTY CELL
+              COPY ANOTHER COMIC
             </MenuButton>
           </CenteredButtons>
         </HomeModal>

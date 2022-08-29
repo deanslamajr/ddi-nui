@@ -86,7 +86,6 @@ export const get = async (comicUrlId: string): Promise<ComicLegacy | null> => {
     }
 
     comicFromApi = await response.json();
-    console.log("comicFromApi", comicFromApi);
   } catch (error: any) {
     // TODO better logging
     console.error(error);
