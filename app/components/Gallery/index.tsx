@@ -24,10 +24,18 @@ export const links: LinksFunction = () => {
 type Props = {
   data: LoaderData;
   generateComicLink: (comicUrlId: string) => string;
+  shouldCollapseHeader?: boolean;
+  shouldPollForUpdates?: boolean;
   useRemixLinks?: boolean;
 };
 
-const Gallery: FC<Props> = ({ data, generateComicLink, useRemixLinks }) => {
+const Gallery: FC<Props> = ({
+  data,
+  generateComicLink,
+  shouldCollapseHeader,
+  shouldPollForUpdates = true,
+  useRemixLinks,
+}) => {
   const [comics, setComics] = useState<Comic[]>(
     data.older?.comics || data.newer?.comics || []
   );
@@ -112,32 +120,34 @@ const Gallery: FC<Props> = ({ data, generateComicLink, useRemixLinks }) => {
   }, []);
 
   useEffect(() => {
-    const latestComicsPolling = setInterval(async () => {
-      // only do this if the browser tab is active
-      if (!isVisible) {
-        return;
-      }
+    if (shouldPollForUpdates) {
+      const latestComicsPolling = setInterval(async () => {
+        // only do this if the browser tab is active
+        if (!isVisible) {
+          return;
+        }
 
-      const latestTimestamp = getLatestTimestamp();
-      if (latestTimestamp === null) {
-        // TODO better logging
-        console.error(
-          "Cant ping for latest comics: latest timestamp does not exist in client cache"
-        );
-      } else {
-        const response: Response = await fetch(
-          DDI_API_ENDPOINTS.getPreviousComics(`${latestTimestamp}`)
-        );
-        if (response.ok) {
-          const getNewerComicsResponse = await response.json();
-          if (getNewerComicsResponse?.comics?.length > 0) {
-            setShowNewComicsExistButton(true);
+        const latestTimestamp = getLatestTimestamp();
+        if (latestTimestamp === null) {
+          // TODO better logging
+          console.error(
+            "Cant ping for latest comics: latest timestamp does not exist in client cache"
+          );
+        } else {
+          const response: Response = await fetch(
+            DDI_API_ENDPOINTS.getPreviousComics(`${latestTimestamp}`)
+          );
+          if (response.ok) {
+            const getNewerComicsResponse = await response.json();
+            if (getNewerComicsResponse?.comics?.length > 0) {
+              setShowNewComicsExistButton(true);
+            }
           }
         }
-      }
-    }, 5000);
-    return () => clearInterval(latestComicsPolling);
-  }, [isVisible]);
+      }, 5000);
+      return () => clearInterval(latestComicsPolling);
+    }
+  }, [isVisible, shouldPollForUpdates]);
 
   return (
     <ComicsPreviewContainer
@@ -148,6 +158,7 @@ const Gallery: FC<Props> = ({ data, generateComicLink, useRemixLinks }) => {
       generateComicLink={generateComicLink}
       newerCursor={newerCursor}
       olderCursor={olderCursor}
+      shouldCollapseHeader={shouldCollapseHeader}
       useRemixLinks={useRemixLinks}
     />
   );
