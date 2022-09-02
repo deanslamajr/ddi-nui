@@ -81,9 +81,6 @@ const ComicsPreviewContainer: FC<Props> = ({
     }
   }, [setUrlIdToScrollTo, urlIdToScrollTo, comics.length]);
 
-  console.log("isShowMoreNewerVisible", isShowMoreNewerVisible);
-  console.log("newerCursor", newerCursor);
-
   return (
     <>
       {(!shouldCollapseHeader ||

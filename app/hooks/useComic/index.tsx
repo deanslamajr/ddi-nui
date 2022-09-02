@@ -1,35 +1,47 @@
 import { useEffect, useState } from "react";
 
 import {
-  copyComicFromPublishedComic,
-  createComicFromPublishedComic,
-  doesComicUrlIdExist,
+  CellFromClientCache,
+  doesComicUrlIdExist as doesComicExistInCache,
   hydrateComicFromClientCache,
   HydratedComic,
 } from "~/utils/clientCache";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
-import { DDI_APP_PAGES } from "~/utils/urls";
+import { sortCellsV4 } from "~/utils/sortCells";
 
-import { get as getComicFromNetwork } from "~/data/external/comics";
+import {
+  ComicLegacy,
+  get as getComicFromNetwork,
+} from "~/data/external/comics";
 
-const hydrateComicFromNetwork = async (
-  comicUrlId: string
-): Promise<HydratedComic | null> => {
-  let comicFromNetwork = await getComicFromNetwork(comicUrlId);
+const convertComic = (comic: ComicLegacy): HydratedComic => {
+  const sortedCells = sortCellsV4(comic.cells, comic.initialCellUrlId);
 
-  if (!comicFromNetwork) {
-    console.error(`Comic not found. comicUrlId:${comicUrlId}`);
-    return null;
-  } else if (!comicFromNetwork.isActive) {
-    console.error(
-      `Comic cannot be edited as it is not active. comicUrlId:${comicUrlId}`
-    );
-    return null;
-  } else if (!comicFromNetwork.userCanEdit) {
-    return Promise.resolve(copyComicFromPublishedComic(comicFromNetwork));
-  } else {
-    return Promise.resolve(createComicFromPublishedComic(comicFromNetwork));
-  }
+  let previousCellUrlId: string | null = null;
+  const cells: Record<string, CellFromClientCache> = sortedCells.reduce(
+    (convertedCells, cell) => {
+      const latestCell = {
+        urlId: cell.urlId,
+        imageUrl: cell.imageUrl,
+        comicUrlId: comic.urlId,
+        previousCellUrlId,
+        schemaVersion: cell.schemaVersion,
+        studioState: cell.studioState,
+      };
+
+      previousCellUrlId = latestCell.urlId;
+
+      return {
+        ...convertedCells,
+        [cell.urlId]: latestCell,
+      };
+    },
+    {} as Record<string, CellFromClientCache>
+  );
+  return {
+    cells,
+    initialCellUrlId: comic.initialCellUrlId,
+  };
 };
 
 const hydrateComic = async (
@@ -39,56 +51,45 @@ const hydrateComic = async (
 
   // try to fetch from client cache
   // if exists in client cache
-  if (doesComicUrlIdExist(comicUrlId)) {
+  if (doesComicExistInCache(comicUrlId)) {
     // hydrate the cells and comic from client cache and return formatted data
     hydratedComic = hydrateComicFromClientCache(comicUrlId);
+
+    // generate images for any unpublished cell
+    const cells = Object.values(hydratedComic.cells || {});
+    const cellsWithUnpublishedImages = cells.filter((cell) => cell.hasNewImage);
+    await Promise.all(
+      cellsWithUnpublishedImages.map((cellFromClientCache) =>
+        generateCellImage(cellFromClientCache)
+      )
+    );
   } else {
-    hydratedComic = await hydrateComicFromNetwork(comicUrlId);
-  }
+    const comicFromNetwork = await getComicFromNetwork(comicUrlId);
 
-  if (!hydratedComic) {
-    return null;
+    if (comicFromNetwork) {
+      hydratedComic = convertComic(comicFromNetwork);
+    }
   }
-
-  // generate images for any unpublished cell
-  const cells = Object.values(hydratedComic.cells || {});
-  const cellsWithUnpublishedImages = cells.filter((cell) => cell.hasNewImage);
-  await Promise.all(
-    cellsWithUnpublishedImages.map((cellFromClientCache) =>
-      generateCellImage(cellFromClientCache)
-    )
-  );
 
   return hydratedComic;
 };
 
 const useComic = ({
   comicUrlId,
-  onError,
 }: {
   comicUrlId: string;
-  onError: () => void;
 }): HydratedComic | null => {
   const [comic, setComic] = useState<HydratedComic | null>(null);
 
   useEffect(() => {
     hydrateComic(comicUrlId)
       .then((hydratedComic) => {
-        if (!hydratedComic) {
-          // this.props.showSpinner()
-          return location.replace(DDI_APP_PAGES.cellStudio());
-        }
-        setComic(hydratedComic); /*, () => {
-          // hide spinner and scroll to bottom of comic
-          this.props.hideSpinner(() =>
-            window.scrollTo(0, document.body.scrollHeight)
-          );
-        });*/
+        setComic(hydratedComic);
       })
       .catch((error) => {
         // TODO - improve logging
         console.error(error);
-        return onError();
+        setComic(null);
       });
   }, [comicUrlId]);
 
