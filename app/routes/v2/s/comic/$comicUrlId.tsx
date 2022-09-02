@@ -32,7 +32,7 @@ import ComicActionsModal, {
   links as comicActionsModalStylesUrl,
 } from "~/components/ComicActionsModal";
 
-import useComic from "~/hooks/useComic";
+import useHydrateComic from "~/hooks/useComic";
 
 export const links: LinksFunction = () => {
   return [
@@ -102,7 +102,7 @@ export default function ComicStudioRoute() {
 
   const comicUrlId = params.comicUrlId!;
 
-  const comic = useComic({
+  const comic = useHydrateComic({
     comicUrlId,
     onError: () => {
       navigate(DDI_APP_PAGES.gallery(), { replace: true });

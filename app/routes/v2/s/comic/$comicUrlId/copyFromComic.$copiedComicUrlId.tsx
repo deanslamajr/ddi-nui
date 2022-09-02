@@ -12,7 +12,7 @@ import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache";
 import { sortCellsV4 } from "~/utils/sortCells";
 
-import useComicFromNetwork from "~/hooks/useComicFromNetwork";
+import useComic from "~/hooks/useComic";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -29,7 +29,7 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
-  const comic = useComicFromNetwork({
+  const comic = useComic({
     comicUrlId: copiedComicUrlId,
   });
 
