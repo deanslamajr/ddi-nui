@@ -43,6 +43,8 @@ export default function IndexRoute() {
               comicToCopyUrlId
             )
           }
+          shouldCollapseHeader
+          shouldPollForUpdates={false}
           useRemixLinks
         />
       </Modal>

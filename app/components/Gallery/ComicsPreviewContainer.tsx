@@ -29,6 +29,7 @@ type Props = {
   generateComicLink: (comicUrlId: string) => string;
   newerCursor: string | null;
   olderCursor: string | null;
+  shouldCollapseHeader?: boolean;
   useRemixLinks?: boolean;
 };
 
@@ -40,6 +41,7 @@ const ComicsPreviewContainer: FC<Props> = ({
   generateComicLink,
   newerCursor,
   olderCursor,
+  shouldCollapseHeader,
   useRemixLinks,
 }) => {
   const [width, setWidth] = useState<number>(0);
@@ -79,17 +81,24 @@ const ComicsPreviewContainer: FC<Props> = ({
     }
   }, [setUrlIdToScrollTo, urlIdToScrollTo, comics.length]);
 
+  console.log("isShowMoreNewerVisible", isShowMoreNewerVisible);
+  console.log("newerCursor", newerCursor);
+
   return (
     <>
-      <div className="top-button-container">
-        <ShowMore
-          isVisible={isShowMoreNewerVisible}
-          isNewer
-          offset={newerCursor}
-          onClick={saveScrollPosition}
-        />
-        <NewComicsExistButton isVisible={isNewComicsExistVisible} />
-      </div>
+      {(!shouldCollapseHeader ||
+        (shouldCollapseHeader &&
+          (isShowMoreNewerVisible || isNewComicsExistVisible))) && (
+        <div className="top-button-container">
+          <ShowMore
+            isVisible={isShowMoreNewerVisible}
+            isNewer
+            offset={newerCursor}
+            onClick={saveScrollPosition}
+          />
+          <NewComicsExistButton isVisible={isNewComicsExistVisible} />
+        </div>
+      )}
       {/* key on width to trigger a rerender of children
     when resize event occurs */}
       <div key={width} className="comics-container">

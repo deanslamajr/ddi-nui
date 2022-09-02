@@ -9,7 +9,7 @@ import CreateNavButton, {
 import Header, { links as headerStylesUrl } from "~/components/Header";
 import Gallery, { links as galleryStylesUrls } from "~/components/Gallery";
 
-import stylesUrl from "~/styles/routes/gallery.css";
+import stylesUrl from "~/styles/routes/v2/gallery.css";
 
 import { LoaderData } from "~/loaders/gallery";
 export { default as loader } from "~/loaders/gallery";

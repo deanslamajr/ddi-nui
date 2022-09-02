@@ -28,11 +28,7 @@ const spinnerUrlAsCssVariable = {
 const LoadSpinner: React.FC<{}> = ({}) => {
   return (
     <span className="load-spinner-container">
-      <div
-        className="load-spinner"
-        // style=" --url: url("https://download.unsplash.com/photo-1420708392410-3c593b80d416");"
-        style={spinnerUrlAsCssVariable}
-      >
+      <div className="load-spinner" style={spinnerUrlAsCssVariable}>
         {/* {Number.isInteger(percentCompleted) && <PercentageCompleteText>{percentCompleted}&#37;</PercentageCompleteText>} */}
       </div>
     </span>

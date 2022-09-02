@@ -15,7 +15,7 @@
   background-color: var(--lightGray);
   padding: 1rem;
   border-radius: 1px;
-  max-height: calc(100% - (2 * var(--buttonDiameter)) - 2rem);
+  max-height: calc(100% - (2 * var(--buttonDiameter)) - (2 * 2rem));
   overflow: auto;
 
   &:last-of-type {
