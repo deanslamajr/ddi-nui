@@ -70,7 +70,7 @@ const Cell: FC<{
   className?: string;
   imageUrl: string;
   isImageUrlAbsolute: boolean;
-  caption: string;
+  caption?: string;
   clickable?: boolean;
   onClick?: () => void;
   removeBorders?: boolean;

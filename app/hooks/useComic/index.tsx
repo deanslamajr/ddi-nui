@@ -10,11 +10,11 @@ import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 
 import {
-  ComicLegacy,
+  ComicFromLegacyGetComicApi,
   get as getComicFromNetwork,
 } from "~/data/external/comics";
 
-const convertComic = (comic: ComicLegacy): HydratedComic => {
+const convertComic = (comic: ComicFromLegacyGetComicApi): HydratedComic => {
   const sortedCells = sortCellsV4(comic.cells, comic.initialCellUrlId);
 
   let previousCellUrlId: string | null = null;

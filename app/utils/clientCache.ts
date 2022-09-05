@@ -13,7 +13,7 @@ import {
 
 import { StudioState } from "~/interfaces/studioState";
 
-import { ComicLegacy } from "~/data/external/comics";
+import { ComicFromLegacyGetComicApi } from "~/data/external/comics";
 
 const getCache = (): ClientCache => {
   const cacheFromStore: ClientCache | null = store(STORAGEKEY_STUDIO);
@@ -418,11 +418,11 @@ export const createNewCell = ({
 // //   userCanEdit: true
 // // }
 export const copyComicFromPublishedComic = (
-  publishedComic: ComicLegacy
+  publishedComic: ComicFromLegacyGetComicApi
 ): HydratedComic => createComicFromPublishedComic(publishedComic, true);
 
 export const createComicFromPublishedComic = (
-  { cells: cellsToCopy, initialCellUrlId, urlId }: ComicLegacy,
+  { cells: cellsToCopy, initialCellUrlId, urlId }: ComicFromLegacyGetComicApi,
   shouldDuplicateComic?: boolean
 ): HydratedComic => {
   const cache = getCache();
