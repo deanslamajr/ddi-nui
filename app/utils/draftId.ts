@@ -1,7 +1,7 @@
 import { DRAFT_SUFFIX } from "~/utils/constants";
 
 export const isDraftId = (comicUrlId: string | null = "") => {
-  if (comicUrlId === null) {
+  if (!comicUrlId) {
     return false;
   }
 
