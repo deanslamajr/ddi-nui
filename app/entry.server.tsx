@@ -1,4 +1,3 @@
-import newrelic from "newrelic";
 import { renderToString } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
@@ -11,43 +10,25 @@ export default async function handleRequest(
   remixContext: EntryContext
 ) {
   return new Promise<Response>((resolve, reject) => {
-    const url = new URL(request.url);
-    const path = url.pathname;
+    const sheet = new ServerStyleSheet();
 
-    newrelic.startWebTransaction(path, async () => {
-      const nrTransaction = newrelic.getTransaction();
+    let markup = renderToString(
+      sheet.collectStyles(
+        <RemixServer context={remixContext} url={request.url} />
+      )
+    );
 
-      const sheet = new ServerStyleSheet();
+    const styles = sheet.getStyleTags();
 
-      let markup = newrelic.startSegment("renderToString", true, () => {
-        return renderToString(
-          sheet.collectStyles(
-            <RemixServer context={remixContext} url={request.url} />
-          )
-        );
-      });
+    markup = markup.replace("__STYLES__", styles);
 
-      const styles = sheet.getStyleTags();
+    responseHeaders.set("Content-Type", "text/html");
 
-      markup = markup.replace("__STYLES__", styles);
-
-      responseHeaders.set("Content-Type", "text/html");
-
-      const response = new Response("<!DOCTYPE html>" + markup, {
-        status: responseStatusCode,
-        headers: responseHeaders,
-      });
-
-      const attributes = {
-        pathname: path,
-        search: url.search,
-        responseStatusCode,
-      };
-      newrelic.addCustomAttributes(attributes);
-
-      nrTransaction.end();
-
-      resolve(response);
+    const response = new Response("<!DOCTYPE html>" + markup, {
+      status: responseStatusCode,
+      headers: responseHeaders,
     });
+
+    resolve(response);
   });
 }

@@ -117,7 +117,6 @@ export default function App() {
             __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
           }}
         />
-        <script type="text/javascript" src="./newRelic.js"></script>
         <Scripts />
         <LiveReload />
       </body>
