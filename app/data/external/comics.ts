@@ -45,11 +45,6 @@ export const get = async (
   } catch (error: any) {
     // TODO better logging
     console.error(error);
-    // newrelic.noticeError(error, {
-    //   action: "getPreviousComics",
-    //   newerOffset,
-    //   ...errorAttributes,
-    // });
     return null;
   }
 
