@@ -4,7 +4,7 @@ import styled from "styled-components";
 import ReCAPTCHA from "react-google-recaptcha";
 
 import { PinkMenuButton } from "~/components/Button";
-import Modal, { CenteredButtons, MessageContainer } from "~/components/Modal";
+import Modal, { CenteredContainer, MessageContainer } from "~/components/Modal";
 
 const PublishFailModalContainer = styled(Modal)`
   height: inherit;
@@ -23,7 +23,7 @@ const PublishFailModal: React.FC<{
   return (
     <PublishFailModalContainer onCancelClick={onCancelClick}>
       <MessageContainer>{message}</MessageContainer>
-      <CenteredButtons>
+      <CenteredContainer>
         {hasFailedCaptcha ? (
           <ReCAPTCHA
             sitekey={getClientVariable("CAPTCHA_V2_SITE_KEY")}
@@ -36,7 +36,7 @@ const PublishFailModal: React.FC<{
             TRY AGAIN
           </PinkMenuButton>
         )}
-      </CenteredButtons>
+      </CenteredContainer>
     </PublishFailModalContainer>
   );
 };

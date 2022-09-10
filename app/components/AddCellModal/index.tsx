@@ -4,7 +4,7 @@ import { LinksFunction } from "remix";
 import { CellFromClientCache } from "~/utils/clientCache";
 
 import Modal, {
-  CenteredButtons,
+  CenteredContainer,
   MessageContainer as Message,
   links as modalStylesUrl,
 } from "~/components/Modal";
@@ -31,24 +31,29 @@ const AddCellModal: React.FC<Props> = ({
   onCancelClick,
 }) => {
   return (
-    <Modal className="add-cell-modal" onCancelClick={onCancelClick}>
-      <Message>Pick a template!</Message>
+    <Modal
+      className="add-cell-modal"
+      header={<Message>Pick a template!</Message>}
+      footer={
+        <>
+          <CenteredContainer>
+            <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
+          </CenteredContainer>
 
-      <CenteredButtons>
-        <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
-      </CenteredButtons>
-
-      <CenteredButtons>
-        <MenuButton onClick={onAddCellFromDuplicate}>
-          COPY THIS COMIC
-        </MenuButton>
-      </CenteredButtons>
-      <CenteredButtons>
-        <MenuButton onClick={onAddCellFromAnotherComic}>
-          COPY ANOTHER COMIC
-        </MenuButton>
-      </CenteredButtons>
-    </Modal>
+          <CenteredContainer>
+            <MenuButton onClick={onAddCellFromDuplicate}>
+              COPY THIS COMIC
+            </MenuButton>
+          </CenteredContainer>
+          <CenteredContainer>
+            <MenuButton onClick={onAddCellFromAnotherComic}>
+              COPY ANOTHER COMIC
+            </MenuButton>
+          </CenteredContainer>
+        </>
+      }
+      onCancelClick={onCancelClick}
+    ></Modal>
   );
 };
 

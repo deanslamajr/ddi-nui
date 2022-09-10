@@ -1,6 +1,7 @@
 import React from "react";
 import { LinksFunction } from "remix";
 import classNames from "classnames";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import useSafeScroll from "~/hooks/useSafeScroll";
 
@@ -10,8 +11,8 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export const CenteredButtons: React.FC<{}> = ({ children }) => (
-  <div className="centered-button">{children}</div>
+export const CenteredContainer: React.FC<{}> = ({ children }) => (
+  <div className="centered-container">{children}</div>
 );
 
 export const MessageContainer: React.FC<{}> = ({ children }) => (
@@ -20,43 +21,47 @@ export const MessageContainer: React.FC<{}> = ({ children }) => (
 
 export type Props = {
   className?: string;
+  footer?: React.ReactNode;
+  header?: React.ReactNode;
   onCancelClick?: () => void;
-  skipScrollLock?: boolean;
 };
 
 const Modal: React.FC<Props> = ({
   children,
   className,
+  footer,
+  header,
   onCancelClick,
-  skipScrollLock,
 }) => {
+  useHotkeys("esc", () => {
+    onCancelClick && onCancelClick();
+  });
+
   const { blockScroll, allowScroll } = useSafeScroll();
 
   React.useEffect(() => {
-    if (!skipScrollLock) {
-      blockScroll();
-    }
+    blockScroll();
+    return () => allowScroll();
   }, []);
 
   return (
     <div className="background-mask">
       <div className={classNames(className, "modal-container")}>
-        {onCancelClick && (
-          <div className="nav-button top-center larger-font">
-            <button
-              onClick={() => {
-                if (!skipScrollLock) {
-                  allowScroll();
-                }
-                onCancelClick();
-              }}
-            >
-              ❌
-            </button>
-          </div>
-        )}
+        {header && <div className="modal-header">{header}</div>}
         {children}
+        {footer && <div className="modal-footer">{footer}</div>}
       </div>
+      {onCancelClick && (
+        <div className="nav-button top-center larger-font">
+          <button
+            onClick={() => {
+              onCancelClick && onCancelClick();
+            }}
+          >
+            ❌
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,7 +10,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 80%;
-  margin: 2rem auto;
+  margin: 0;
   width: 270px;
   max-width: calc(100vw - var(--padding) px);
 }
