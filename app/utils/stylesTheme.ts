@@ -19,7 +19,7 @@ export const theme: DefaultTheme = {
     width: "300px",
   },
   layout: {
-    width: 250,
+    width: 300,
     bottomPadding: 75,
   },
   padding: 7,

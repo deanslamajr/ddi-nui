@@ -1,0 +1,6 @@
+.outer-container {
+  display: flex;
+  flex-direction: column;
+  width: var(--comicWidth);
+  margin: 1rem auto;
+}

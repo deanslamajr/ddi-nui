@@ -63,7 +63,7 @@ const ComicActionsModal: React.FC<Props> = ({
         )
       }
       onCancelClick={onCancelClick}
-    ></Modal>
+    />
   );
 };
 

@@ -178,7 +178,9 @@ export const deleteComic = (comicUrlId: string) => {
     getCellsByComicUrlId(comicUrlId, cache)
   );
 
-  cellsAssociatedWithDeletedComic.forEach((cellUrlId) => deleteCell(cellUrlId));
+  cellsAssociatedWithDeletedComic.forEach((cellUrlId) =>
+    deleteCell(cellUrlId, cache)
+  );
 
   setCache(cache);
 };

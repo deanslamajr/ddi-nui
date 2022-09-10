@@ -1,15 +1,9 @@
 import React from "react";
 import { getClientVariable } from "~/utils/environment-variables";
-import styled from "styled-components";
 import ReCAPTCHA from "react-google-recaptcha";
 
 import { PinkMenuButton } from "~/components/Button";
 import Modal, { CenteredContainer, MessageContainer } from "~/components/Modal";
-
-const PublishFailModalContainer = styled(Modal)`
-  height: inherit;
-  width: inherit;
-`;
 
 const PublishFailModal: React.FC<{
   hasFailedCaptcha: boolean;
@@ -21,23 +15,28 @@ const PublishFailModal: React.FC<{
     : "There was an error while publishing :(";
 
   return (
-    <PublishFailModalContainer onCancelClick={onCancelClick}>
-      <MessageContainer>{message}</MessageContainer>
-      <CenteredContainer>
-        {hasFailedCaptcha ? (
-          <ReCAPTCHA
-            sitekey={getClientVariable("CAPTCHA_V2_SITE_KEY")}
-            onChange={(token: string | null) => {
-              onRetryClick(token || undefined);
-            }}
-          />
-        ) : (
-          <PinkMenuButton onClick={() => onRetryClick()}>
-            TRY AGAIN
-          </PinkMenuButton>
-        )}
-      </CenteredContainer>
-    </PublishFailModalContainer>
+    <Modal
+      header={
+        message ? <MessageContainer>{message}</MessageContainer> : undefined
+      }
+      footer={
+        <CenteredContainer>
+          {hasFailedCaptcha ? (
+            <ReCAPTCHA
+              sitekey={getClientVariable("CAPTCHA_V2_SITE_KEY")}
+              onChange={(token: string | null) => {
+                onRetryClick(token || undefined);
+              }}
+            />
+          ) : (
+            <PinkMenuButton onClick={() => onRetryClick()}>
+              TRY AGAIN
+            </PinkMenuButton>
+          )}
+        </CenteredContainer>
+      }
+      onCancelClick={onCancelClick}
+    />
   );
 };
 

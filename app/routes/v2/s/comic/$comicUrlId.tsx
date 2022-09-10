@@ -28,9 +28,13 @@ import CellActionsModal, {
 import ComicActionsModal, {
   links as comicActionsModalStylesUrl,
 } from "~/components/ComicActionsModal";
-import PublishPreviewModal from "~/components/PublishPreviewModal";
+import PublishPreviewModal, {
+  links as publishPreviewModalStylesUrl,
+} from "~/components/PublishPreviewModal";
 
 import useHydrateComic from "~/hooks/useHydrateComic";
+
+import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId.css";
 
 export const links: LinksFunction = () => {
   return [
@@ -38,6 +42,8 @@ export const links: LinksFunction = () => {
     ...addCellModalStylesUrl(),
     ...cellActionsModalStylesUrl(),
     ...comicActionsModalStylesUrl(),
+    ...publishPreviewModalStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
   ];
 };
 
@@ -74,13 +80,6 @@ const UnpublishedChangesLabel = () => (
 const AddCellButton = styled(PinkMenuButton)`
   font-size: 2.5rem;
   width: ${(props) => props.theme.layout.width}px;
-`;
-
-const OuterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 250px;
-  margin: 1rem auto ${(props) => props.theme.layout.bottomPadding}px;
 `;
 
 /**
@@ -210,7 +209,7 @@ export default function ComicStudioRoute() {
 
   return (
     <>
-      <OuterContainer>
+      <div className="outer-container">
         {/* CELLS */}
         {sortedCells.map((cell) => (
           <div key={cell.imageUrl} onClick={() => handleCellClick(cell)}>
@@ -234,7 +233,7 @@ export default function ComicStudioRoute() {
         >
           +
         </AddCellButton>
-      </OuterContainer>
+      </div>
 
       {showAddCellModal && (
         <AddCellModal

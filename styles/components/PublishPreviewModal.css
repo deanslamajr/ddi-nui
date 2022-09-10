@@ -1,0 +1,9 @@
+.cells-container {
+  margin: 1rem;
+}
+
+.cell-container {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
