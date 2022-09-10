@@ -1,11 +1,11 @@
-import { CellFromClientCache, HydratedComic } from "~/utils/clientCache";
+import { CellFromClientCache } from "~/utils/clientCache";
 import { isDraftId } from "~/utils/draftId";
 import { SCHEMA_VERSION } from "~/utils/constants";
-// import { DDI_API_ENDPOINTS } from "~/utils/urls";
+
 import {
   ComicFromLegacyGetComicApi,
   get as getPublishedComic,
-} from "~/data/external/comics";
+} from "~/data/external/getComics";
 
 import { SignedCells } from "~/interfaces/signedCells";
 import { StudioState } from "~/interfaces/studioState";
@@ -242,34 +242,29 @@ type UpdatePayload =
   | undefined;
 
 const createUpdatePayload = async ({
-  comic,
+  cells,
   comicUrlIdToUpdate,
+  initialCellUrlId,
   isPublishedComic,
   signedCells,
 }: {
-  comic: HydratedComic;
+  cells: CellFromClientCache[];
   comicUrlIdToUpdate: string;
+  initialCellUrlId: string;
   isPublishedComic: boolean;
   signedCells?: SignedCells;
 }): Promise<UpdatePayload> => {
   let updatePayload: UpdatePayload;
 
-  if (!comic.cells) {
-    throw new Error("comic.cells is expected to exist by now!");
-  }
-
   if (!isPublishedComic) {
-    if (!comic.initialCellUrlId) {
-      throw new Error("comic.initialCellUrlId is expected to exist by now!");
-    }
     if (!signedCells) {
       throw new Error(
         "An unpublished comic should have a signedCells payload but this one does not."
       );
     }
 
-    const initialCell = getSignedCell(comic.initialCellUrlId, signedCells);
-    const transformedCells = Object.values(comic.cells).map((cell) =>
+    const initialCell = getSignedCell(initialCellUrlId, signedCells);
+    const transformedCells = Object.values(cells).map((cell) =>
       transformCellFromClientStateForApiUpdate(cell, signedCells)
     );
 
@@ -287,7 +282,7 @@ const createUpdatePayload = async ({
       );
     }
 
-    const transformedCells = Object.values(comic.cells)
+    const transformedCells = Object.values(cells)
       .filter(({ isDirty }) => isDirty)
       .map((cell) =>
         transformCellFromClientStateForApiUpdate(
@@ -302,8 +297,8 @@ const createUpdatePayload = async ({
       type: "UPDATE",
     };
 
-    if (comic.initialCellUrlId !== publishedComic.initialCellUrlId) {
-      updatePayload.initialCellUrlId = comic.initialCellUrlId;
+    if (initialCellUrlId !== publishedComic.initialCellUrlId) {
+      updatePayload.initialCellUrlId = initialCellUrlId;
     }
   }
 

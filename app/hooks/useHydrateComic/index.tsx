@@ -10,7 +10,7 @@ import {
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { DDI_APP_PAGES } from "~/utils/urls";
 
-import { get as getComicFromNetwork } from "~/data/external/comics";
+import { get as getComicFromNetwork } from "~/data/external/getComics";
 
 const hydrateComicFromNetwork = async (
   comicUrlId: string

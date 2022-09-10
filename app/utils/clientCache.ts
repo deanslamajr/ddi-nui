@@ -13,7 +13,7 @@ import {
 
 import { StudioState } from "~/interfaces/studioState";
 
-import { ComicFromLegacyGetComicApi } from "~/data/external/comics";
+import { ComicFromLegacyGetComicApi } from "~/data/external/getComics";
 
 const getCache = (): ClientCache => {
   const cacheFromStore: ClientCache | null = store(STORAGEKEY_STUDIO);
