@@ -12,7 +12,7 @@ import { sortCellsV4 } from "~/utils/sortCells";
 import {
   ComicFromLegacyGetComicApi,
   get as getComicFromNetwork,
-} from "~/data/external/comics";
+} from "~/data/external/getComics";
 
 const convertComic = (comic: ComicFromLegacyGetComicApi): HydratedComic => {
   const sortedCells = sortCellsV4(comic.cells, comic.initialCellUrlId);

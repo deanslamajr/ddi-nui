@@ -8,13 +8,11 @@ import {
   createNewCell as createNewCellInClientCache,
   deleteComic as removeComicAndCellsFromClientCache,
 } from "~/utils/clientCache";
-import createUpdatePayload from "~/utils/createUpdatePayload";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";
-import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 
 import Cell from "~/components/Cell";
 import { PinkMenuButton } from "~/components/Button";
@@ -34,8 +32,6 @@ import PublishPreviewModal from "~/components/PublishPreviewModal";
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
-import { SignedCells } from "~/interfaces/signedCells";
-
 export const links: LinksFunction = () => {
   return [
     ...unstyledLinkStylesUrl(),
@@ -47,25 +43,6 @@ export const links: LinksFunction = () => {
 
 const SIDE_BUTTONS_SPACER = 0; //.4
 const cellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
-
-function uploadImage(imageFile: File, signedRequest: string) {
-  return new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", signedRequest);
-    xhr.onreadystatechange = async () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          resolve();
-        } else {
-          // @todo better UX
-          console.error("could not upload file!");
-          reject();
-        }
-      }
-    };
-    xhr.send(imageFile);
-  });
-}
 
 /**
  * STYLED COMPONENTS
@@ -229,201 +206,6 @@ export default function ComicStudioRoute() {
     }
   };
 
-  const getCellsWithNewImage = () => {
-    const cells = Object.values(comic?.cells || {});
-    return cells.filter(({ hasNewImage }) => hasNewImage);
-  };
-
-  const getSignedRequest = async (captchaTokens: {
-    v2?: string;
-    v3?: string;
-  }): Promise<{
-    comicUrlId: string;
-    signedCells: SignedCells;
-  }> => {
-    const cellIdsToSign = getCellsWithNewImage().map(({ urlId }) => urlId);
-
-    const signData: {
-      newCells: string[]; // strings are draftIds e.g. 'draft--someId', 'draft--anotherId'
-      v2Token?: string;
-      v3Token?: string;
-    } = { newCells: cellIdsToSign };
-
-    if (captchaTokens.v2) {
-      signData.v2Token = captchaTokens.v2;
-    } else if (captchaTokens.v3) {
-      signData.v3Token = captchaTokens.v3;
-    }
-
-    console.log("signData", signData);
-
-    const response: Response = await fetch(
-      DDI_API_ENDPOINTS.signComicCells(comicUrlId),
-      {
-        method: "POST",
-        body: JSON.stringify(signData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Sign comic cells request failed.");
-    }
-
-    const data = await response.json();
-
-    console.log("data", data);
-
-    return {
-      comicUrlId: data.comicUrlId,
-      signedCells: data.cells,
-    };
-  };
-
-  const upload = async (
-    v2CaptchaToken?: string
-  ): Promise<{
-    comicUrlId: string;
-    signedCells: SignedCells;
-  } | void> => {
-    let token;
-
-    try {
-      // if (!v2CaptchaToken && publicRuntimeConfig.CAPTCHA_V3_SITE_KEY) {
-      //   token = await this.props.recaptcha.execute(CAPTCHA_ACTION_CELL_PUBLISH)
-      // }
-
-      const { signedCells, comicUrlId: comicUrlIdFromSignedRequest } =
-        await getSignedRequest({
-          v2: v2CaptchaToken,
-          v3: token,
-        });
-
-      // this.props.markJobAsFinished();
-
-      await Promise.all(
-        signedCells.map(async ({ draftUrlId, filename, signData }) => {
-          if (!comic) {
-            throw new Error('"comic" does not exist in component state!');
-          }
-
-          if (!comic.cells) {
-            throw new Error('"comic.cells" does not exist in component state!');
-          }
-
-          const cell = comic.cells[draftUrlId];
-
-          if (!cell) {
-            throw new Error(`signed cell ${draftUrlId} not found in state!`);
-          }
-
-          const file = await generateCellImage(cell, filename);
-
-          await uploadImage(file, signData.signedRequest);
-
-          // this.props.markJobAsFinished()
-        })
-      );
-
-      return { comicUrlId: comicUrlIdFromSignedRequest, signedCells };
-    } catch (e) {
-      console.error(e);
-      // const isCaptchaFail = e && e.response && e.response.status === 400;
-      // @todo log this
-
-      // this.props.hideSpinner();
-      // this.togglePreviewModal(false);
-      // this.togglePublishFailModal(true, isCaptchaFail);
-    }
-  };
-
-  const publishComicUpdate = async ({
-    comicUrlIdToUpdate,
-    signedCells,
-  }: {
-    comicUrlIdToUpdate: string;
-    signedCells?: SignedCells;
-  }): Promise<void> => {
-    if (!comic) {
-      throw new Error(
-        "publishComicUpdate expects a comic to exist in component state by now but this does not seem to be the case here!"
-      );
-    }
-
-    const updatePayload = await createUpdatePayload({
-      comic,
-      comicUrlIdToUpdate,
-      isPublishedComic: !isDraftId(comicUrlId),
-      signedCells,
-    });
-
-    await fetch(DDI_API_ENDPOINTS.updateComic(comicUrlIdToUpdate), {
-      method: "PATCH",
-      body: JSON.stringify(updatePayload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    // await axios.patch(`/api/comic/${comicUrlIdToUpdate}`, updatePayload);
-  };
-
-  const publish = async (v2CaptchaToken?: string) => {
-    let signedCells: SignedCells | undefined;
-    // If the comic had a draftId at signing
-    // this would be a new, non-draft comicUrlId
-    let possiblyNewComicUrlId: string | undefined;
-    // minimum number of "jobs" required to finish a publish
-    // i.e. all jobs excluding uploads
-    let totalJobsCount = 1;
-
-    const cellsThatRequireUploads = getCellsWithNewImage();
-
-    try {
-      if (cellsThatRequireUploads.length) {
-        // if image uploading is required:
-        // 1 + # of cells that require uploads
-        totalJobsCount += 1 + cellsThatRequireUploads.length;
-
-        // this.props.showSpinner(totalJobsCount)
-
-        const uploadResponse = await upload(v2CaptchaToken);
-
-        // fail case, do not continue
-        if (!uploadResponse) {
-          return;
-        }
-
-        signedCells = uploadResponse.signedCells;
-        possiblyNewComicUrlId = uploadResponse.comicUrlId;
-      } else {
-        // this.props.showSpinner(totalJobsCount);
-        possiblyNewComicUrlId = comicUrlId;
-      }
-
-      await publishComicUpdate({
-        comicUrlIdToUpdate: possiblyNewComicUrlId,
-        signedCells,
-      });
-
-      // this.props.markJobAsFinished();
-
-      //delete comic from client cache
-      removeComicAndCellsFromClientCache(comicUrlId);
-
-      // Router.pushRoute(`/comic/${possiblyNewComicUrlId}`);
-      location.assign(DDI_APP_PAGES.comic(possiblyNewComicUrlId));
-    } catch (e) {
-      console.error(e);
-      // @todo log this
-
-      // this.props.hideSpinner();
-      setShowPreviewModal(false);
-      // this.togglePublishFailModal(true);
-    }
-  };
-
   const sortedCells = getCellsFromState();
 
   return (
@@ -483,11 +265,12 @@ export default function ComicStudioRoute() {
         />
       )}
 
-      {showPreviewModal && (
+      {showPreviewModal && comic?.initialCellUrlId && (
         <PublishPreviewModal
-          onCancelClick={() => setShowPreviewModal(false)}
-          onPublishClick={() => publish()}
           cells={sortedCells}
+          comicUrlId={comicUrlId}
+          initialCellUrlId={comic.initialCellUrlId}
+          onCancelClick={() => setShowPreviewModal(false)}
         />
       )}
 
@@ -499,14 +282,6 @@ export default function ComicStudioRoute() {
                   this.hideReachedDirtyCellLimitModal()
                 )
               }
-            />
-          )} */}
-
-      {/* {this.state.showPublishFailModal && (
-            <PublishFailModal
-              hasFailedCaptcha={this.state.hasFailedCaptcha}
-              onRetryClick={(token) => this.retryPublish(token)}
-              onCancelClick={() => this.cancelPublishAttemp()}
             />
           )} */}
 

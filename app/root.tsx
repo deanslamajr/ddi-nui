@@ -71,6 +71,7 @@ export const links: LinksFunction = () => {
 export async function loader() {
   const ENV: ClientEnvironmentVariables = {
     APP_PATH_PREFIX: process.env.APP_PATH_PREFIX || "",
+    CAPTCHA_V2_SITE_KEY: process.env.CAPTCHA_V2_SITE_KEY || "",
     CELL_IMAGES_URL: process.env.CELL_IMAGES_URL || "",
     LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL:
       process.env.LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL || "",
