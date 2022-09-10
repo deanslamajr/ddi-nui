@@ -1,4 +1,11 @@
 import { hydrate } from "react-dom";
 import { RemixBrowser } from "remix";
 
-hydrate(<RemixBrowser />, document);
+import { CaptchaV3Provider } from "~/contexts/CaptchaV3";
+
+hydrate(
+  <CaptchaV3Provider>
+    <RemixBrowser />
+  </CaptchaV3Provider>,
+  document
+);
