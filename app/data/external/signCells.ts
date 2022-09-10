@@ -1,4 +1,4 @@
-import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
+import { DDI_API_ENDPOINTS } from "~/utils/urls";
 
 import { SignedCells } from "~/interfaces/signedCells";
 
@@ -6,10 +6,12 @@ const signCells = async ({
   cellUrlIdsThatRequireImageUploads,
   comicUrlId,
   v2CaptchaToken,
+  v3CaptchaToken,
 }: {
   cellUrlIdsThatRequireImageUploads: string[];
   comicUrlId: string;
   v2CaptchaToken?: string;
+  v3CaptchaToken?: string;
 }): Promise<
   | {
       comicUrlId: string;
@@ -19,11 +21,6 @@ const signCells = async ({
       didCaptchaFail: true;
     }
 > => {
-  let v3CaptchaToken;
-  // if (!v2CaptchaToken && publicRuntimeConfig.CAPTCHA_V3_SITE_KEY) {
-  //   v3CaptchaToken = await this.props.recaptcha.execute(CAPTCHA_ACTION_CELL_PUBLISH)
-  // }
-
   const signData: {
     newCells: string[]; // strings are draftIds e.g. 'draft--someId', 'draft--anotherId'
     v2Token?: string;
@@ -35,8 +32,6 @@ const signCells = async ({
   } else if (v3CaptchaToken) {
     signData.v3Token = v3CaptchaToken;
   }
-
-  console.log("signData", signData);
 
   const response: Response = await fetch(
     DDI_API_ENDPOINTS.signComicCells(comicUrlId),

@@ -1,6 +1,7 @@
 export type ClientEnvironmentVariables = {
   APP_PATH_PREFIX: string;
   CAPTCHA_V2_SITE_KEY: string;
+  CAPTCHA_V3_SITE_KEY: string;
   CELL_IMAGES_URL: string;
   LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL: string;
   ASSETS_URL_WITH_PROTOCOL: string;

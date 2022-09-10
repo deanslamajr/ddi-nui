@@ -46,6 +46,7 @@
     "react-google-recaptcha": "^2.1.0",
     "react-image": "^4.0.3",
     "react-page-visibility": "^7.0.0",
+    "recaptcha-v3": "^1.10.0",
     "remix": "^1.7.0",
     "shortid": "^2.2.16",
     "store2": "^2.13.2",

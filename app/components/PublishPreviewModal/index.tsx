@@ -14,6 +14,8 @@ import {
 import { isDraftId } from "~/utils/draftId";
 import { DDI_APP_PAGES } from "~/utils/urls";
 
+import { useCaptchaV3 } from "~/contexts/CaptchaV3";
+
 import { SignedCells } from "~/interfaces/signedCells";
 
 import publishComicUpdate from "~/data/external/publishComicUpdate";
@@ -54,6 +56,8 @@ const PublishPreviewModal: React.FC<{
   const [showPublishFailModal, setShowPublishFailModal] = React.useState(false);
   const [hasFailedCaptcha, setHasFailedCaptcha] = React.useState(false);
 
+  const captchaV3ContextState = useCaptchaV3();
+
   const getCellUrlIdsThatRequireImageUploads = () => {
     return cells
       .filter(({ hasNewImage }) => hasNewImage)
@@ -86,6 +90,7 @@ const PublishPreviewModal: React.FC<{
         // this.props.showSpinner(totalJobsCount)
 
         const uploadImagesResponse = await uploadImages({
+          captchaV3ContextState,
           cells,
           cellUrlIdsThatRequireImageUploads,
           comicUrlId,

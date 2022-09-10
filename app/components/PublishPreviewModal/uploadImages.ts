@@ -1,31 +1,51 @@
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { CellFromClientCache } from "~/utils/clientCache";
+import { CAPTCHA_ACTIONS } from "~/utils/constants";
 
 import uploadImage from "~/data/external/uploadImage";
 import getSignedRequest from "~/data/external/signCells";
 
 import { SignedCells } from "~/interfaces/signedCells";
 
+import { State as CaptchaV3ContextState } from "~/contexts/CaptchaV3";
+
 const uploadImages = async ({
   cells,
   cellUrlIdsThatRequireImageUploads,
   comicUrlId,
   onFail,
+  captchaV3ContextState,
   v2CaptchaToken,
 }: {
   cells: CellFromClientCache[];
   cellUrlIdsThatRequireImageUploads: string[];
   comicUrlId: string;
   onFail: (isCaptchaFail: boolean) => void;
+  captchaV3ContextState: CaptchaV3ContextState;
   v2CaptchaToken?: string;
 }): Promise<{
   comicUrlId: string;
   signedCells: SignedCells;
 } | void> => {
+  let v3CaptchaToken: string | undefined;
+
+  if (!v2CaptchaToken && captchaV3ContextState.isCaptchaV3Enabled) {
+    if (!captchaV3ContextState.captchaV3Instance) {
+      throw new Error(
+        "captcha V3 is enabled for this environment but the captcha V3 library was never able to initialize."
+      );
+    }
+
+    v3CaptchaToken = await captchaV3ContextState.captchaV3Instance.execute(
+      CAPTCHA_ACTIONS.CELL_PUBLISH
+    );
+  }
+
   const response = await getSignedRequest({
     cellUrlIdsThatRequireImageUploads,
     comicUrlId,
-    v2CaptchaToken: v2CaptchaToken,
+    v2CaptchaToken,
+    v3CaptchaToken,
   });
 
   if ("didCaptchaFail" in response) {
