@@ -2,7 +2,10 @@ import type { LinksFunction } from "remix";
 import { useLoaderData } from "remix";
 import { Outlet, useParams, useNavigate } from "@remix-run/react";
 
-import Modal, { links as modalStylesUrl } from "~/components/Modal";
+import Modal, {
+  links as modalStylesUrl,
+  MessageContainer,
+} from "~/components/Modal";
 import Gallery, { links as galleryStylesUrl } from "~/components/Gallery";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
@@ -34,7 +37,11 @@ export default function IndexRoute() {
 
   return (
     <>
-      <Modal onCancelClick={returnToParent} className="within-modal">
+      <Modal
+        header={<MessageContainer>Pick a comic:</MessageContainer>}
+        onCancelClick={returnToParent}
+        className="within-modal"
+      >
         <Gallery
           data={data}
           generateComicLink={(comicToCopyUrlId) =>

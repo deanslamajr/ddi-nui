@@ -45,6 +45,7 @@
   top: 0;
   background-color: var(--lightGray);
   padding: 1rem;
+  z-index: var(--toptop);
 }
 
 .modal-footer {
@@ -53,4 +54,5 @@
   bottom: 0;
   background-color: var(--lightGray);
   padding: 1rem;
+  z-index: var(--toptop);
 }

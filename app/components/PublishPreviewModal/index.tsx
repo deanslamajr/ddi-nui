@@ -1,8 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { LinksFunction } from "remix";
 
 import Cell from "~/components/Cell";
-import Modal, { CenteredContainer, MessageContainer } from "~/components/Modal";
+import Modal, {
+  CenteredContainer,
+  MessageContainer,
+  links as modalStylesUrl,
+} from "~/components/Modal";
 import { PinkMenuButton } from "~/components/Button";
 
 import { theme } from "~/utils/stylesTheme";
@@ -23,28 +28,15 @@ import publishComicUpdate from "~/data/external/publishComicUpdate";
 import uploadImages from "./uploadImages";
 import PublishFailModal from "./PublishFailModal";
 
-const HomeModal = styled(Modal)`
-  width: 315px;
-  height: inherit;
-`;
+import stylesUrl from "~/styles/components/PublishPreviewModal.css";
+
+export const links: LinksFunction = () => {
+  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+};
 
 const StudioCell = styled(Cell)<{ widthOverride: number }>`
   margin: 0 auto;
   width: ${(props) => props.widthOverride}px;
-`;
-
-const CellsContainer = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 70vh;
-  margin: 2rem auto;
-  width: 270px;
-  max-width: calc(100vw - ${(props) => props.theme.padding}px);
-`;
-const CellContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: auto;
 `;
 
 const PublishPreviewModal: React.FC<{
@@ -141,41 +133,41 @@ const PublishPreviewModal: React.FC<{
     setHasFailedCaptcha(false);
   };
 
-  return (
-    <>
-      <HomeModal onCancelClick={onCancelClick}>
-        <MessageContainer>Publish this comic?</MessageContainer>
-
-        <CellsContainer>
-          {cells.map((cell) => (
-            <CellContainer key={cell.imageUrl}>
-              <StudioCell
-                imageUrl={cell.imageUrl!}
-                isImageUrlAbsolute={Boolean(cell.hasNewImage)}
-                schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-                caption={cell.studioState?.caption}
-                widthOverride={theme.layout.width}
-              />
-            </CellContainer>
-          ))}
-        </CellsContainer>
-
+  return showPublishFailModal ? (
+    <PublishFailModal
+      hasFailedCaptcha={hasFailedCaptcha}
+      onRetryClick={(token?: string) => retryPublish(token)}
+      onCancelClick={() => {
+        setShowPublishFailModal(false);
+        setHasFailedCaptcha(false);
+        onCancelClick();
+      }}
+    />
+  ) : (
+    <Modal
+      header={<MessageContainer>Publish this comic?</MessageContainer>}
+      footer={
         <CenteredContainer>
           <PinkMenuButton onClick={() => publish()}>PUBLISH</PinkMenuButton>
         </CenteredContainer>
-      </HomeModal>
-      {showPublishFailModal && (
-        <PublishFailModal
-          hasFailedCaptcha={hasFailedCaptcha}
-          onRetryClick={(token?: string) => retryPublish(token)}
-          onCancelClick={() => {
-            setShowPublishFailModal(false);
-            setHasFailedCaptcha(false);
-            onCancelClick();
-          }}
-        />
-      )}
-    </>
+      }
+      onCancelClick={onCancelClick}
+    >
+      <div className="cells-container">
+        {cells.map((cell) => (
+          <div className="cell-container" key={cell.imageUrl}>
+            <StudioCell
+              imageUrl={cell.imageUrl!}
+              isImageUrlAbsolute={Boolean(cell.hasNewImage)}
+              schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+              caption={cell.studioState?.caption}
+              widthOverride={theme.layout.width}
+              removeBorders
+            />
+          </div>
+        ))}
+      </div>
+    </Modal>
   );
 };
 
