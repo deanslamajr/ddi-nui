@@ -252,6 +252,7 @@ export default function ComicStudioRoute() {
           onCancelClick={() => setShowActionsModal(false)}
           onDeleteClick={() => handleDeleteComicClick()}
           onPublishClick={() => {
+            setShowActionsModal(false);
             setShowPreviewModal(true);
           }}
         />

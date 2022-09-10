@@ -16,7 +16,7 @@ import useComic from "~/hooks/useComic";
 
 import { StudioState } from "~/interfaces/studioState";
 
-import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/copyFromComic.css";
+import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/copyFromComic.$copiedComicUrlId.css";
 
 export const links: LinksFunction = () => {
   return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
@@ -57,8 +57,11 @@ export default function CopyFromComicRoute() {
   };
 
   return (
-    <Modal className="copy-from-comic-modal" onCancelClick={returnToParent}>
-      <MessageContainer>Pick a cell to duplicate:</MessageContainer>
+    <Modal
+      className="copy-from-comic-modal"
+      header={<MessageContainer>Pick a cell to duplicate:</MessageContainer>}
+      onCancelClick={returnToParent}
+    >
       <div className="cells-container">
         {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
           <div

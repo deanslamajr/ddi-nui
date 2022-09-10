@@ -13,9 +13,10 @@
 
 .modal-container {
   background-color: var(--lightGray);
-  padding: 1rem;
   border-radius: 1px;
-  max-height: calc(100% - (2 * var(--buttonDiameter)) - (2 * 2rem));
+  max-height: calc(100% - var(--buttonDiameter) - 2rem);
+  margin-top: calc(var(--buttonDiameter) + 2rem);
+  min-width: 315px;
   overflow: auto;
 
   &:last-of-type {
@@ -29,12 +30,27 @@
   text-align: center;
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
 }
 
-.centered-button {
+.centered-container {
+  width: calc(100% - (2 * 1rem));
   display: flex;
   justify-content: center;
-  width: 100%;
-  margin-bottom: 1rem;
+  margin: 1rem;
+}
+
+.modal-header {
+  position: sticky;
+  will-change: transform;
+  top: 0;
+  background-color: var(--lightGray);
+  padding: 1rem;
+}
+
+.modal-footer {
+  position: sticky;
+  will-change: transform;
+  bottom: 0;
+  background-color: var(--lightGray);
+  padding: 1rem;
 }

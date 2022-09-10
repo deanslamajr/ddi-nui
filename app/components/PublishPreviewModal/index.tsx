@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import Cell from "~/components/Cell";
-import Modal, { CenteredButtons, MessageContainer } from "~/components/Modal";
+import Modal, { CenteredContainer, MessageContainer } from "~/components/Modal";
 import { PinkMenuButton } from "~/components/Button";
 
 import { theme } from "~/utils/stylesTheme";
@@ -160,9 +160,9 @@ const PublishPreviewModal: React.FC<{
           ))}
         </CellsContainer>
 
-        <CenteredButtons>
+        <CenteredContainer>
           <PinkMenuButton onClick={() => publish()}>PUBLISH</PinkMenuButton>
-        </CenteredButtons>
+        </CenteredContainer>
       </HomeModal>
       {showPublishFailModal && (
         <PublishFailModal
