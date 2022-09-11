@@ -11,12 +11,18 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export const CenteredContainer: React.FC<{}> = ({ children }) => (
-  <div className="centered-container">{children}</div>
+export const CenteredContainer: React.FC<{ className?: string }> = ({
+  children,
+  className,
+}) => (
+  <div className={classNames("centered-container", className)}>{children}</div>
 );
 
-export const MessageContainer: React.FC<{}> = ({ children }) => (
-  <div className="message-container">{children}</div>
+export const MessageContainer: React.FC<{ className?: string }> = ({
+  children,
+  className,
+}) => (
+  <div className={classNames("message-container", className)}>{children}</div>
 );
 
 export type Props = {
