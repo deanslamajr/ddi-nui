@@ -104,7 +104,7 @@ export default function ComicStudioRoute() {
   const [showComicActionsModal, setShowComicActionsModal] = useState(false);
   const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
-    useState(true);
+    useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const comicUrlId = params.comicUrlId!;
