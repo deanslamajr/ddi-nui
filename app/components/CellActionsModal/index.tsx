@@ -1,7 +1,7 @@
 import React from "react";
 import { LinksFunction } from "remix";
 
-import Cell from "~/components/Cell";
+import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import Modal, {
   CenteredContainer,
   MessageContainer,
@@ -12,13 +12,18 @@ import { MenuButton, PinkMenuButton } from "~/components/Button";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { CellFromClientCache } from "~/utils/clientCache";
 import { DDI_APP_PAGES } from "~/utils/urls";
+import { theme } from "~/utils/stylesTheme";
 
 import { StudioState } from "~/interfaces/studioState";
 
 import stylesUrl from "~/styles/components/CellActionsModal.css";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...cellStylesUrl(),
+    ...modalStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 export type Props = {
@@ -57,6 +62,7 @@ const CellActionsModal: React.FC<Props> = ({
     >
       <div className="cell-preview-container">
         <Cell
+          cellWidth={theme.cell.width}
           imageUrl={imageUrl || ""}
           isImageUrlAbsolute={Boolean(hasNewImage)}
           schemaVersion={schemaVersion ?? SCHEMA_VERSION}

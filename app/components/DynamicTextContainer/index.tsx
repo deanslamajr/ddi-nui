@@ -1,49 +1,17 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import classnames from "classnames";
+import { LinksFunction } from "remix";
 
-import { phoneMax } from "~/components/breakpoints";
+import stylesUrl from "~/styles/components/DynamicTextContainer.css";
+
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: stylesUrl }];
+};
 
 const MAX_WIDTH = 9999;
 const MIN_WIDTH = 1;
 const MAX_FONT_SIZE = 9999;
 const MIN_FONT_SIZE = 1;
-
-type ContainerProps = { fontSize: number | null; isPreview?: boolean };
-
-const Container = styled.div<ContainerProps>`
-  display: ${(props) => (props.fontSize ? "inherit" : "none")};
-  font-size: ${(props) => (props.fontSize ? `${props.fontSize}px` : "inherit")};
-  background: ${(props) => props.theme.colors.white};
-  padding: 0.25vw;
-  line-height: 1;
-  overflow-wrap: break-word;
-
-  ${phoneMax`
-    padding: 1vw;
-  `}
-
-  ${(props) =>
-    props.isPreview
-      ? css<ContainerProps>`
-          z-index: ${props.theme.zIndex.highest};
-          position: absolute;
-          bottom: 0.1rem;
-          left: 0.1rem;
-          right: 0.1rem;
-
-          opacity: 0.75;
-          background-color: ${props.theme.colors.white};
-          color: ${props.theme.colors.black};
-
-          user-select: none;
-          cursor: pointer;
-          overflow: hidden;
-
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        `
-      : ""}
-`;
 
 function calculateFontSize(elemWidth: number, fontRatio: number) {
   const width =
@@ -63,7 +31,7 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 }
 
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
-export const DynamicTextContainer: React.FC<{
+const DynamicTextContainer: React.FC<{
   fontRatio: number;
   isPreview?: boolean;
 }> = ({ children, fontRatio, isPreview }) => {
@@ -85,9 +53,20 @@ export const DynamicTextContainer: React.FC<{
     };
   }, [container.current?.offsetWidth, isMountedVal.current]);
 
+  const fontSizeStyles: React.CSSProperties = {
+    display: fontSize ? "inherit" : "none",
+    fontSize: fontSize ? `${fontSize}px` : "inherit",
+  };
+
   return (
-    <Container fontSize={fontSize} isPreview={isPreview} ref={container}>
+    <div
+      className={classnames("dynamic-text-container", { preview: isPreview })}
+      style={fontSizeStyles}
+      ref={container}
+    >
       {children}
-    </Container>
+    </div>
   );
 };
+
+export default DynamicTextContainer;

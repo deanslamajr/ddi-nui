@@ -6,12 +6,17 @@ import { getCellImageUrl } from "~/utils/urls";
 import { getClientVariable } from "~/utils/environment-variables";
 import isServerContext from "~/utils/isServerContext";
 
-import { DynamicTextContainer } from "../DynamicTextContainer";
+import DynamicTextContainer, {
+  links as dynamicTextContainerStylesUrl,
+} from "~/components/DynamicTextContainer";
 
 import stylesUrl from "~/styles/components/CellsThumb.css";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...dynamicTextContainerStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 const ThumbSchema1: FC<{
@@ -37,7 +42,7 @@ const ThumbSchema1: FC<{
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
       {caption && (
-        <DynamicTextContainer fontRatio={14} isPreview={isPreview}>
+        <DynamicTextContainer fontRatio={16} isPreview={isPreview}>
           {/* {caption} */}
           {isPreview ? captionWithBreaks[0] : captionWithBreaks}
         </DynamicTextContainer>
