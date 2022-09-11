@@ -34,6 +34,9 @@ import PublishPreviewModal, {
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
+import ReachedDirtyCellLimitModal, {
+  links as reachedDirtyCellLimitModalStylesUrl,
+} from "~/components/ReachedDirtyCellLimitModal";
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
@@ -48,6 +51,7 @@ export const links: LinksFunction = () => {
     ...comicActionsModalStylesUrl(),
     ...publishPreviewModalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
+    ...reachedDirtyCellLimitModalStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -100,7 +104,7 @@ export default function ComicStudioRoute() {
   const [showComicActionsModal, setShowComicActionsModal] = useState(false);
   const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
-    useState(false);
+    useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const comicUrlId = params.comicUrlId!;
@@ -174,7 +178,7 @@ export default function ComicStudioRoute() {
     // if this cell is pristine but we've reached the limit of dirty cells
     // don't allow edits to this cell
     if (!activeCell.isDirty && !canAddMoreCells()) {
-      // this.showReachedDirtyCellLimitModal()
+      setShowCellAddLimitReachedModal(true);
     } else {
       setActiveCell(activeCell);
     }
@@ -284,16 +288,15 @@ export default function ComicStudioRoute() {
         />
       )}
 
-      {/* {this.state.showReachedDirtyCellLimitModal && (
-            <ReachedDirtyCellLimitModal
-              onCancelClick={() => this.hideReachedDirtyCellLimitModal()}
-              onPublishClick={() =>
-                this.handlePublishPreviewClick(() =>
-                  this.hideReachedDirtyCellLimitModal()
-                )
-              }
-            />
-          )} */}
+      {showCellAddLimitReachedModal && (
+        <ReachedDirtyCellLimitModal
+          onCancelClick={() => setShowCellAddLimitReachedModal(false)}
+          onPublishClick={() => {
+            setShowCellAddLimitReachedModal(false);
+            setShowPreviewModal(true);
+          }}
+        />
+      )}
 
       <UnstyledLink href={getExitNavLink()}>
         <div className="nav-button bottom-left larger-font">🔙</div>
