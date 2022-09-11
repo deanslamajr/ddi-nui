@@ -8,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useSearchParams,
   ErrorBoundaryComponent,
 } from "remix";
 import type { ShouldReloadFunction } from "@remix-run/react";
@@ -18,6 +19,9 @@ import cssThemePath from "~/styles/theme.css";
 
 import { theme } from "~/utils/stylesTheme";
 import { getClientVariable } from "~/utils/environment-variables";
+import { DEBUGGER_SEARCH_KEY } from "~/utils/constants";
+
+import Debugger from "~/components/Debugger";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
@@ -90,6 +94,9 @@ export async function loader() {
 
 export default function App() {
   const data = useLoaderData<{ ENV: ClientEnvironmentVariables }>();
+  const [searchParams] = useSearchParams();
+  const isDebuggerEnabled = Boolean(searchParams.has(DEBUGGER_SEARCH_KEY));
+
   return (
     <html lang="en">
       <head>
@@ -110,6 +117,7 @@ export default function App() {
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <body>
+        {isDebuggerEnabled && <Debugger />}
         <ThemeProvider theme={theme}>
           <Outlet />
         </ThemeProvider>
