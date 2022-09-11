@@ -3,16 +3,13 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  max-width: 500px;
+  /* max-width: 500px; */
 }
 
 .cells-container {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 80%;
   margin: 0;
-  width: 270px;
-  max-width: calc(100vw - var(--padding) px);
 }
 
 .cell-container {

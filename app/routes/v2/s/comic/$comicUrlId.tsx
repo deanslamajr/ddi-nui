@@ -14,7 +14,7 @@ import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";
 
-import Cell from "~/components/Cell";
+import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { PinkMenuButton } from "~/components/Button";
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
@@ -38,6 +38,7 @@ import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId.css";
 
 export const links: LinksFunction = () => {
   return [
+    ...cellStylesUrl(),
     ...unstyledLinkStylesUrl(),
     ...addCellModalStylesUrl(),
     ...cellActionsModalStylesUrl(),

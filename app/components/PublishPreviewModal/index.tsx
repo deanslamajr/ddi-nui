@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { LinksFunction } from "remix";
 
-import Cell from "~/components/Cell";
+import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import Modal, {
   CenteredContainer,
   MessageContainer,
@@ -31,7 +31,11 @@ import PublishFailModal from "./PublishFailModal";
 import stylesUrl from "~/styles/components/PublishPreviewModal.css";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...cellStylesUrl(),
+    ...modalStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 const StudioCell = styled(Cell)<{ widthOverride: number }>`
@@ -157,6 +161,7 @@ const PublishPreviewModal: React.FC<{
         {cells.map((cell) => (
           <div className="cell-container" key={cell.imageUrl}>
             <StudioCell
+              cellWidth={theme.cell.width}
               imageUrl={cell.imageUrl!}
               isImageUrlAbsolute={Boolean(cell.hasNewImage)}
               schemaVersion={cell.schemaVersion || SCHEMA_VERSION}

@@ -1,0 +1,29 @@
+.dynamic-text-container {
+  padding: 0.25vw;
+  line-height: 1;
+  overflow-wrap: break-word;
+  background: var(--white);
+
+  @media (max-width: 899px) {
+    padding: 1vw;
+  }
+}
+
+.dynamic-text-container.preview {
+  z-index: var(--toptop);
+  position: absolute;
+  bottom: 0.1rem;
+  left: 0.1rem;
+  right: 0.1rem;
+
+  opacity: 0.75;
+  background-color: var(--white);
+  color: var(--black);
+
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

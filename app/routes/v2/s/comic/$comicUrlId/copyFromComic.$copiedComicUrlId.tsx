@@ -5,12 +5,13 @@ import Modal, {
   links as modalStylesUrl,
   MessageContainer,
 } from "~/components/Modal";
-import Cell from "~/components/Cell";
+import Cell, { links as cellStylesUrl } from "~/components/Cell";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache";
 import { sortCellsV4 } from "~/utils/sortCells";
+import { theme } from "~/utils/stylesTheme";
 
 import useComic from "~/hooks/useComic";
 
@@ -19,7 +20,11 @@ import { StudioState } from "~/interfaces/studioState";
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/copyFromComic.$copiedComicUrlId.css";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...cellStylesUrl(),
+    ...modalStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 export default function CopyFromComicRoute() {
@@ -74,8 +79,9 @@ export default function CopyFromComicRoute() {
               isImageUrlAbsolute={Boolean(hasNewImage)}
               schemaVersion={schemaVersion ?? SCHEMA_VERSION}
               caption={studioState?.caption || ""}
-              cellWidth="250px"
+              cellWidth={theme.cell.width}
               clickable
+              removeBorders
             />
           </div>
         ))}

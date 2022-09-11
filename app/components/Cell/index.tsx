@@ -1,10 +1,17 @@
 import { FC } from "react";
 import styled from "styled-components";
+import { LinksFunction } from "remix";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
 import { tabletMax } from "~/components/breakpoints";
-import { DynamicTextContainer } from "~/components/DynamicTextContainer";
+import DynamicTextContainer, {
+  links as dynamicTextContainerStylesUrl,
+} from "~/components/DynamicTextContainer";
+
+export const links: LinksFunction = () => {
+  return [...dynamicTextContainerStylesUrl()];
+};
 
 const CellContainer = styled.div<{
   schemaVersion: number;
@@ -115,7 +122,7 @@ const Cell: FC<{
         <OldCellBorder width={resolvedWidth}>
           <CellImage cellWidth={resolvedWidth} src={cellUrl} />
           {caption && caption.length && (
-            <DynamicTextContainer fontRatio={17}>
+            <DynamicTextContainer fontRatio={16}>
               {caption}
             </DynamicTextContainer>
           )}
