@@ -10,18 +10,20 @@ import { SignedCells } from "~/interfaces/signedCells";
 import { State as CaptchaV3ContextState } from "~/contexts/CaptchaV3";
 
 const uploadImages = async ({
+  captchaV3ContextState,
   cells,
   cellUrlIdsThatRequireImageUploads,
   comicUrlId,
+  markTaskCompleted,
   onFail,
-  captchaV3ContextState,
   v2CaptchaToken,
 }: {
+  captchaV3ContextState: CaptchaV3ContextState;
   cells: CellFromClientCache[];
   cellUrlIdsThatRequireImageUploads: string[];
   comicUrlId: string;
+  markTaskCompleted: () => void;
   onFail: (isCaptchaFail: boolean) => void;
-  captchaV3ContextState: CaptchaV3ContextState;
   v2CaptchaToken?: string;
 }): Promise<{
   comicUrlId: string;
@@ -55,7 +57,7 @@ const uploadImages = async ({
 
   const { comicUrlId: comicUrlIdFromSignedRequest, signedCells } = response;
 
-  // this.props.markJobAsFinished();
+  markTaskCompleted();
 
   await Promise.all(
     signedCells.map(async ({ draftUrlId, filename, signData }) => {
@@ -71,7 +73,7 @@ const uploadImages = async ({
 
       await uploadImage(file, signData.signedRequest);
 
-      // this.props.markJobAsFinished()
+      markTaskCompleted();
     })
   );
 

@@ -31,3 +31,16 @@
   display: block;
   animation: spin 2s infinite;
 }
+
+.load-spinner-counter {
+  position: absolute;
+  top: 20%;
+  z-index: 999;
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--black);
+  text-shadow: 2px 2px var(--pink);
+  opacity: 0.7;
+  cursor: default;
+  user-select: none;
+}

@@ -9,6 +9,9 @@ import Modal, {
   links as modalStylesUrl,
 } from "~/components/Modal";
 import { PinkMenuButton } from "~/components/Button";
+import CellWithLoadSpinner, {
+  links as cellWithLoadSpinnerStylesUrl,
+} from "~/components/CellWithLoadSpinner";
 
 import { theme } from "~/utils/stylesTheme";
 import { SCHEMA_VERSION } from "~/utils/constants";
@@ -34,6 +37,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...modalStylesUrl(),
+    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -49,6 +53,9 @@ const PublishPreviewModal: React.FC<{
   initialCellUrlId: string;
   onCancelClick: () => void;
 }> = ({ cells, comicUrlId, initialCellUrlId, onCancelClick }) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [totalTasksCount, setTotalTasksCount] = React.useState(0);
+  const [completedTasksCount, setCompletedTasksCount] = React.useState(0);
   const [showPublishFailModal, setShowPublishFailModal] = React.useState(false);
   const [hasFailedCaptcha, setHasFailedCaptcha] = React.useState(false);
 
@@ -65,31 +72,46 @@ const PublishPreviewModal: React.FC<{
     setShowPublishFailModal(true);
   };
 
+  const markTaskCompleted = () => {
+    setCompletedTasksCount(
+      (prevCompletedTaskCount) => prevCompletedTaskCount + 1
+    );
+  };
+
+  const calculatePercentageCompleted = () => {
+    return Math.round((completedTasksCount / totalTasksCount) * 100);
+  };
+
   const publish = async (v2CaptchaToken?: string) => {
+    setCompletedTasksCount(0); // reset completed before showing load spinner
+    setIsLoading(true);
+
     let signedCells: SignedCells | undefined;
     // If the comic had a draftId at signing
     // this would be a new, non-draft comicUrlId
     let possiblyNewComicUrlId: string | undefined;
-    // minimum number of "jobs" required to finish a publish
-    // i.e. all jobs excluding uploads
-    let totalJobsCount = 1;
 
     const cellUrlIdsThatRequireImageUploads =
       getCellUrlIdsThatRequireImageUploads();
 
+    // minimum number of "jobs" required to finish a publish
+    // i.e. all jobs excluding uploads
+    let totalJobsCount = 1;
+    if (cellUrlIdsThatRequireImageUploads.length) {
+      // if image uploading is required:
+      // 1 + # of cells that require uploads
+      totalJobsCount += 1 + cellUrlIdsThatRequireImageUploads.length;
+    }
+    setTotalTasksCount(totalJobsCount);
+
     try {
       if (cellUrlIdsThatRequireImageUploads.length) {
-        // if image uploading is required:
-        // 1 + # of cells that require uploads
-        totalJobsCount += 1 + cellUrlIdsThatRequireImageUploads.length;
-
-        // this.props.showSpinner(totalJobsCount)
-
         const uploadImagesResponse = await uploadImages({
           captchaV3ContextState,
           cells,
           cellUrlIdsThatRequireImageUploads,
           comicUrlId,
+          markTaskCompleted,
           onFail: onPublishFail,
           v2CaptchaToken,
         });
@@ -97,13 +119,13 @@ const PublishPreviewModal: React.FC<{
         // captcha fail case,
         // do not continue
         if (!uploadImagesResponse) {
+          setIsLoading(false);
           return;
         }
 
         signedCells = uploadImagesResponse.signedCells;
         possiblyNewComicUrlId = uploadImagesResponse.comicUrlId;
       } else {
-        // this.props.showSpinner(totalJobsCount);
         possiblyNewComicUrlId = comicUrlId;
       }
 
@@ -112,10 +134,9 @@ const PublishPreviewModal: React.FC<{
         comicUrlIdToUpdate: possiblyNewComicUrlId,
         initialCellUrlId,
         isPublishedComic: !isDraftId(comicUrlId),
+        markTaskCompleted,
         signedCells,
       });
-
-      // this.props.markJobAsFinished();
 
       //delete comic from client cache
       removeComicAndCellsFromClientCache(comicUrlId);
@@ -126,8 +147,8 @@ const PublishPreviewModal: React.FC<{
       // @todo better logging
       console.error(e);
 
-      // this.props.hideSpinner();
       onPublishFail(false);
+      setIsLoading(false);
     }
   };
 
@@ -149,28 +170,40 @@ const PublishPreviewModal: React.FC<{
     />
   ) : (
     <Modal
-      header={<MessageContainer>Publish this comic?</MessageContainer>}
+      header={
+        isLoading ? undefined : (
+          <MessageContainer>Publish this comic?</MessageContainer>
+        )
+      }
       footer={
-        <CenteredContainer>
-          <PinkMenuButton onClick={() => publish()}>PUBLISH</PinkMenuButton>
-        </CenteredContainer>
+        isLoading ? undefined : (
+          <CenteredContainer>
+            <PinkMenuButton onClick={() => publish()}>PUBLISH</PinkMenuButton>
+          </CenteredContainer>
+        )
       }
       onCancelClick={onCancelClick}
     >
       <div className="cells-container">
-        {cells.map((cell) => (
-          <div className="cell-container" key={cell.imageUrl}>
-            <StudioCell
-              cellWidth={theme.cell.width}
-              imageUrl={cell.imageUrl!}
-              isImageUrlAbsolute={Boolean(cell.hasNewImage)}
-              schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-              caption={cell.studioState?.caption}
-              widthOverride={theme.layout.width}
-              removeBorders
-            />
-          </div>
-        ))}
+        {isLoading ? (
+          <CellWithLoadSpinner
+            percentCompleted={calculatePercentageCompleted()}
+          />
+        ) : (
+          cells.map((cell) => (
+            <div className="cell-container" key={cell.imageUrl}>
+              <StudioCell
+                cellWidth={theme.cell.width}
+                imageUrl={cell.imageUrl!}
+                isImageUrlAbsolute={Boolean(cell.hasNewImage)}
+                schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+                caption={cell.studioState?.caption}
+                widthOverride={theme.layout.width}
+                removeBorders
+              />
+            </div>
+          ))
+        )}
       </div>
     </Modal>
   );
