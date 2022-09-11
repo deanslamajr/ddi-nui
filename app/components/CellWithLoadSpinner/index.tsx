@@ -13,23 +13,15 @@ const spinnerUrlAsCssVariable = {
   )}/shaka.gif")`,
 } as React.CSSProperties;
 
-// const PercentageCompleteText = styled.span`
-//   position: absolute;
-//   top: 20%;
-//   z-index: 999;
-//   font-size: 4rem;
-//   font-weight: bold;
-//   color: ${theme.colors.white};
-//   opacity: .8;
-//   cursor: default;
-//   user-select: none;
-// `
-
-const LoadSpinner: React.FC<{}> = ({}) => {
+const LoadSpinner: React.FC<{
+  percentCompleted?: number;
+}> = ({ percentCompleted }) => {
   return (
     <span className="load-spinner-container">
       <div className="load-spinner" style={spinnerUrlAsCssVariable}>
-        {/* {Number.isInteger(percentCompleted) && <PercentageCompleteText>{percentCompleted}&#37;</PercentageCompleteText>} */}
+        {Number.isFinite(percentCompleted) && (
+          <span className="load-spinner-counter">{percentCompleted}&#37;</span>
+        )}
       </div>
     </span>
   );

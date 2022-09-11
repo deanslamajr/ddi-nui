@@ -10,12 +10,14 @@ const publishComicUpdate = async ({
   comicUrlIdToUpdate,
   initialCellUrlId,
   isPublishedComic,
+  markTaskCompleted,
   signedCells,
 }: {
   cells: CellFromClientCache[];
   comicUrlIdToUpdate: string;
   initialCellUrlId: string;
   isPublishedComic: boolean;
+  markTaskCompleted: () => void;
   signedCells?: SignedCells;
 }): Promise<void> => {
   const updatePayload = await createUpdatePayload({
@@ -40,6 +42,8 @@ const publishComicUpdate = async ({
   if (!response.ok) {
     throw response;
   }
+
+  markTaskCompleted();
 };
 
 export default publishComicUpdate;

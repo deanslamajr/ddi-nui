@@ -97,7 +97,7 @@ export default function ComicStudioRoute() {
   const [activeCell, setActiveCell] = useState<CellFromClientCache | null>(
     null
   );
-  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [showComicActionsModal, setShowComicActionsModal] = useState(false);
   const [showAddCellModal, setShowAddCellModal] = useState(false);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
     useState(false);
@@ -182,7 +182,7 @@ export default function ComicStudioRoute() {
 
   const handleDeleteComicClick = async () => {
     // this.props.showSpinner()
-    setShowActionsModal(false);
+    setShowComicActionsModal(false);
 
     try {
       if (!isDraftId(comicUrlId)) {
@@ -255,13 +255,13 @@ export default function ComicStudioRoute() {
         />
       )}
 
-      {showActionsModal && (
+      {showComicActionsModal && (
         <ComicActionsModal
           isComicDirty={isComicDirty()}
-          onCancelClick={() => setShowActionsModal(false)}
+          onCancelClick={() => setShowComicActionsModal(false)}
           onDeleteClick={() => handleDeleteComicClick()}
           onPublishClick={() => {
-            setShowActionsModal(false);
+            setShowComicActionsModal(false);
             setShowPreviewModal(true);
           }}
         />
@@ -301,7 +301,7 @@ export default function ComicStudioRoute() {
 
       {!isHydratingComic && (
         <div className="nav-button bottom-right accented larger-font">
-          <button onClick={() => setShowActionsModal(true)}>⚙️</button>
+          <button onClick={() => setShowComicActionsModal(true)}>⚙️</button>
         </div>
       )}
 
