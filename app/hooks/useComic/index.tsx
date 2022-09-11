@@ -78,10 +78,16 @@ const useComic = ({
   comicUrlId,
 }: {
   comicUrlId: string;
-}): HydratedComic | null => {
+}): {
+  comic: HydratedComic | null;
+  isLoading: boolean;
+} => {
+  const [isLoading, setIsLoading] = useState(true);
   const [comic, setComic] = useState<HydratedComic | null>(null);
 
   useEffect(() => {
+    setIsLoading(true);
+
     hydrateComic(comicUrlId)
       .then((hydratedComic) => {
         setComic(hydratedComic);
@@ -90,10 +96,13 @@ const useComic = ({
         // TODO - improve logging
         console.error(error);
         setComic(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [comicUrlId]);
+  }, [comicUrlId, setIsLoading]);
 
-  return comic;
+  return { comic, isLoading };
 };
 
 export default useComic;

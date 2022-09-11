@@ -31,6 +31,9 @@ import ComicActionsModal, {
 import PublishPreviewModal, {
   links as publishPreviewModalStylesUrl,
 } from "~/components/PublishPreviewModal";
+import CellWithLoadSpinner, {
+  links as cellWithLoadSpinnerStylesUrl,
+} from "~/components/CellWithLoadSpinner";
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
@@ -44,6 +47,7 @@ export const links: LinksFunction = () => {
     ...cellActionsModalStylesUrl(),
     ...comicActionsModalStylesUrl(),
     ...publishPreviewModalStylesUrl(),
+    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -101,7 +105,7 @@ export default function ComicStudioRoute() {
 
   const comicUrlId = params.comicUrlId!;
 
-  const comic = useHydrateComic({
+  const { comic, isHydrating: isHydratingComic } = useHydrateComic({
     comicUrlId,
     onError: () => {
       navigate(DDI_APP_PAGES.gallery(), { replace: true });
@@ -211,29 +215,34 @@ export default function ComicStudioRoute() {
   return (
     <>
       <div className="outer-container">
-        {/* CELLS */}
-        {sortedCells.map((cell) => (
-          <div key={cell.imageUrl} onClick={() => handleCellClick(cell)}>
-            {cell.isDirty && <UnpublishedChangesLabel />}
-            <StudioCell
-              clickable
-              imageUrl={cell.imageUrl || ""}
-              isImageUrlAbsolute={cell.hasNewImage || false}
-              schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-              caption={cell.studioState?.caption || ""}
-              cellWidth={cellWidth}
-            />
-          </div>
-        ))}
-        <AddCellButton
-          onClick={() =>
-            canAddMoreCells()
-              ? setShowAddCellModal(true)
-              : setShowCellAddLimitReachedModal(true)
-          }
-        >
-          +
-        </AddCellButton>
+        {isHydratingComic ? (
+          <CellWithLoadSpinner />
+        ) : (
+          <>
+            {sortedCells.map((cell) => (
+              <div key={cell.imageUrl} onClick={() => handleCellClick(cell)}>
+                {cell.isDirty && <UnpublishedChangesLabel />}
+                <StudioCell
+                  clickable
+                  imageUrl={cell.imageUrl || ""}
+                  isImageUrlAbsolute={cell.hasNewImage || false}
+                  schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+                  caption={cell.studioState?.caption || ""}
+                  cellWidth={cellWidth}
+                />
+              </div>
+            ))}
+            <AddCellButton
+              onClick={() =>
+                canAddMoreCells()
+                  ? setShowAddCellModal(true)
+                  : setShowCellAddLimitReachedModal(true)
+              }
+            >
+              +
+            </AddCellButton>
+          </>
+        )}
       </div>
 
       {showAddCellModal && (
@@ -290,9 +299,11 @@ export default function ComicStudioRoute() {
         <div className="nav-button bottom-left larger-font">🔙</div>
       </UnstyledLink>
 
-      <div className="nav-button bottom-right accented larger-font">
-        <button onClick={() => setShowActionsModal(true)}>⚙️</button>
-      </div>
+      {!isHydratingComic && (
+        <div className="nav-button bottom-right accented larger-font">
+          <button onClick={() => setShowActionsModal(true)}>⚙️</button>
+        </div>
+      )}
 
       <Outlet />
     </>

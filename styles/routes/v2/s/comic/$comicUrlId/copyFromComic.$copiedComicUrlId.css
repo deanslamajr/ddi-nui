@@ -9,6 +9,7 @@
 .cells-container {
   overflow-y: auto;
   overflow-x: hidden;
+  width: 100%;
   margin: 0;
 }
 

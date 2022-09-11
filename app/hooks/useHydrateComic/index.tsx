@@ -68,31 +68,37 @@ const useHydrateComic = ({
 }: {
   comicUrlId: string;
   onError: () => void;
-}): HydratedComic | null => {
+}): {
+  comic: HydratedComic | null;
+  isHydrating: boolean;
+} => {
+  const [isHydrating, setIsHydrating] = useState(true);
   const [comic, setComic] = useState<HydratedComic | null>(null);
 
   useEffect(() => {
+    if (!isHydrating) {
+      setIsHydrating(true);
+    }
+
     hydrateComic(comicUrlId)
       .then((hydratedComic) => {
         if (!hydratedComic) {
           // this.props.showSpinner()
           return location.replace(DDI_APP_PAGES.cellStudio());
         }
-        setComic(hydratedComic); /*, () => {
-          // hide spinner and scroll to bottom of comic
-          this.props.hideSpinner(() =>
-            window.scrollTo(0, document.body.scrollHeight)
-          );
-        });*/
+        setComic(hydratedComic);
       })
       .catch((error) => {
         // TODO - improve logging
         console.error(error);
         return onError();
+      })
+      .finally(() => {
+        setIsHydrating(false);
       });
   }, [comicUrlId]);
 
-  return comic;
+  return { comic, isHydrating };
 };
 
 export default useHydrateComic;

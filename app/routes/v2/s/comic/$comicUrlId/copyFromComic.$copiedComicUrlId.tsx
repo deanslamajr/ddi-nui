@@ -6,6 +6,9 @@ import Modal, {
   MessageContainer,
 } from "~/components/Modal";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
+import CellWithLoadSpinner, {
+  links as cellWithLoadSpinnerStylesUrl,
+} from "~/components/CellWithLoadSpinner";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
@@ -23,6 +26,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...modalStylesUrl(),
+    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -34,7 +38,7 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
-  const comic = useComic({
+  const { comic, isLoading: isLoadingComic } = useComic({
     comicUrlId: copiedComicUrlId,
   });
 
@@ -64,27 +68,35 @@ export default function CopyFromComicRoute() {
   return (
     <Modal
       className="copy-from-comic-modal"
-      header={<MessageContainer>Pick a cell to duplicate:</MessageContainer>}
+      header={
+        isLoadingComic ? undefined : (
+          <MessageContainer>Pick a cell to duplicate:</MessageContainer>
+        )
+      }
       onCancelClick={returnToParent}
     >
       <div className="cells-container">
-        {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
-          <div
-            className="cell-container"
-            key={imageUrl}
-            onClick={() => navigateToAddCellFromDuplicate(studioState)}
-          >
-            <Cell
-              imageUrl={imageUrl || ""}
-              isImageUrlAbsolute={Boolean(hasNewImage)}
-              schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-              caption={studioState?.caption || ""}
-              cellWidth={theme.cell.width}
-              clickable
-              removeBorders
-            />
-          </div>
-        ))}
+        {isLoadingComic ? (
+          <CellWithLoadSpinner />
+        ) : (
+          cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
+            <div
+              className="cell-container"
+              key={imageUrl}
+              onClick={() => navigateToAddCellFromDuplicate(studioState)}
+            >
+              <Cell
+                imageUrl={imageUrl || ""}
+                isImageUrlAbsolute={Boolean(hasNewImage)}
+                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                caption={studioState?.caption || ""}
+                cellWidth={theme.cell.width}
+                clickable
+                removeBorders
+              />
+            </div>
+          ))
+        )}
       </div>
     </Modal>
   );
