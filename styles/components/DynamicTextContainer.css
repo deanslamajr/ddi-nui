@@ -10,7 +10,7 @@
 }
 
 .dynamic-text-container.preview {
-  z-index: var(--toptop);
+  z-index: var(--top);
   position: absolute;
   bottom: 0.1rem;
   left: 0.1rem;
