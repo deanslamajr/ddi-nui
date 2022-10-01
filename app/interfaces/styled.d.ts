@@ -11,6 +11,7 @@ declare module "styled-components" {
       darkGray: string;
       lightGray: string;
       black: string;
+      lightBlack: string;
     };
     canvas: {
       width: number;

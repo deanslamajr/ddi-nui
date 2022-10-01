@@ -1,3 +1,8 @@
 .add-cell-modal {
   width: 315px;
 }
+
+.add-cell-modal .description {
+  color: var(--lightBlack);
+  text-align: center;
+}

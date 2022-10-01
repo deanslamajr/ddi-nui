@@ -9,6 +9,7 @@ export const theme: DefaultTheme = {
     darkGray: "#CECECF",
     lightGray: "#E7E7E7",
     black: "#464655",
+    lightBlack: "#575764",
   },
   canvas: {
     width: 250,

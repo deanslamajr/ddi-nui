@@ -12,15 +12,15 @@ export const links: LinksFunction = () => {
   return [...modalStylesUrl()];
 };
 
-type Props = {
+const ComicActionsModal: React.FC<{
   isComicDirty: boolean;
+  onAddCellClick: () => void;
   onCancelClick: () => void;
   onDeleteClick: () => void;
   onPublishClick: () => void;
-};
-
-const ComicActionsModal: React.FC<Props> = ({
+}> = ({
   isComicDirty,
+  onAddCellClick,
   onCancelClick,
   onDeleteClick,
   onPublishClick,
@@ -47,6 +47,9 @@ const ComicActionsModal: React.FC<Props> = ({
           </CenteredContainer>
         ) : (
           <div>
+            <CenteredContainer>
+              <MenuButton onClick={() => onAddCellClick()}>ADD CELL</MenuButton>
+            </CenteredContainer>
             <CenteredContainer>
               <MenuButton onClick={() => setCurrentView("DELETE_WARNING")}>
                 DELETE

@@ -33,9 +33,10 @@ const AddCellModal: React.FC<Props> = ({
   return (
     <Modal
       className="add-cell-modal"
-      header={<Message>Pick a template!</Message>}
+      header={<Message>Add a New Cell</Message>}
       footer={
         <>
+          <div className="description">choose a starter template</div>
           <CenteredContainer>
             <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
           </CenteredContainer>

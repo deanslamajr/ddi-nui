@@ -70,7 +70,7 @@ export default function CopyFromComicRoute() {
       className="copy-from-comic-modal"
       header={
         isLoadingComic ? undefined : (
-          <MessageContainer>Pick a cell to duplicate:</MessageContainer>
+          <MessageContainer>Pick a Cell to Copy</MessageContainer>
         )
       }
       onCancelClick={returnToParent}
