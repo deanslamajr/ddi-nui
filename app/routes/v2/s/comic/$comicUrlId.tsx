@@ -15,7 +15,7 @@ import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
-import { PinkMenuButton } from "~/components/Button";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
@@ -54,6 +54,7 @@ export const links: LinksFunction = () => {
     ...publishPreviewModalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...reachedDirtyCellLimitModalStylesUrl(),
+    ...buttonStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -87,11 +88,6 @@ const PinkLabel = styled.div`
 const UnpublishedChangesLabel = () => (
   <PinkLabel>Unpublished Changes</PinkLabel>
 );
-
-const AddCellButton = styled(PinkMenuButton)`
-  font-size: 2.5rem;
-  width: ${(props) => props.theme.layout.width}px;
-`;
 
 /**
  * MAIN
@@ -245,7 +241,13 @@ export default function ComicStudioRoute() {
                 />
               </div>
             ))}
-            <AddCellButton onClick={() => onAddCellClick()}>+</AddCellButton>
+            <MenuButton
+              accented={true}
+              className="add-cell-button"
+              onClick={() => onAddCellClick()}
+            >
+              +
+            </MenuButton>
           </>
         )}
       </div>

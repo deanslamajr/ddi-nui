@@ -6,10 +6,10 @@ import Modal, {
   MessageContainer,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { MenuButton, PinkMenuButton } from "~/components/Button";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl()];
+  return [...modalStylesUrl(), ...buttonStylesUrl()];
 };
 
 const ComicActionsModal: React.FC<{
@@ -57,9 +57,9 @@ const ComicActionsModal: React.FC<{
             </CenteredContainer>
             {isComicDirty && (
               <CenteredContainer>
-                <PinkMenuButton onClick={() => onPublishClick()}>
+                <MenuButton accented onClick={() => onPublishClick()}>
                   PUBLISH
-                </PinkMenuButton>
+                </MenuButton>
               </CenteredContainer>
             )}
           </div>

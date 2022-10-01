@@ -2,7 +2,7 @@ import { DefaultTheme } from "styled-components";
 
 export const theme: DefaultTheme = {
   colors: {
-    // https://coolors.co/fffaf9-f4364c-cececf-e7e7e7-464655
+    // https://coolors.co/fffaf9-f4364c-cececf-e7e7e7-464655-575764
     white: "#FFFAF9",
     pink: "#FF4C7F",
     pinkTran: "#FF4C7F50",

@@ -4,3 +4,8 @@
   width: var(--comicWidth);
   margin: 1rem auto;
 }
+
+.add-cell-button {
+  font-size: 2.5rem;
+  width: var(--comicWidth);
+}

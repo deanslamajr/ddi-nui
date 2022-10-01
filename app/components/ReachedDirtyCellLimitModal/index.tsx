@@ -6,12 +6,16 @@ import Modal, {
   MessageContainer,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { PinkMenuButton } from "~/components/Button";
+import { MenuButton, links as menuButtonStylesUrl } from "~/components/Button";
 
 import stylesUrl from "~/styles/components/ReachedDirtyCellLimitModal.css";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...modalStylesUrl(),
+    ...menuButtonStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 const ReachedDirtyCellLimitModal: React.FC<{
@@ -27,9 +31,9 @@ const ReachedDirtyCellLimitModal: React.FC<{
       }
       footer={
         <CenteredContainer>
-          <PinkMenuButton onClick={() => onPublishClick()}>
+          <MenuButton accented onClick={() => onPublishClick()}>
             PUBLISH
-          </PinkMenuButton>
+          </MenuButton>
         </CenteredContainer>
       }
       onCancelClick={onCancelClick}
