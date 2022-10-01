@@ -55,7 +55,11 @@ const Modal: React.FC<Props> = ({
       <div className={classNames(className, "modal-container")}>
         {header && <div className="modal-header">{header}</div>}
         {children}
-        {footer && <div className="modal-footer">{footer}</div>}
+        {footer ? (
+          <div className="modal-footer">{footer}</div>
+        ) : (
+          <div className="modal-footer empty" />
+        )}
       </div>
       {onCancelClick && (
         <div className="nav-button top-center larger-font">

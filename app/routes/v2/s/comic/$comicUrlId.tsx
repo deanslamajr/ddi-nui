@@ -40,6 +40,8 @@ import ReachedDirtyCellLimitModal, {
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
+import { StudioState } from "~/interfaces/studioState";
+
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId.css";
 
 export const links: LinksFunction = () => {
@@ -154,10 +156,11 @@ export default function ComicStudioRoute() {
     }
   };
 
-  const navigateToAddCellFromNew = () => {
-    const newCell = createNewCellInClientCache({ comicUrlId });
-
-    setShowAddCellModal(false);
+  const navigateToCellStudio = (studioState?: StudioState | null) => {
+    const newCell = createNewCellInClientCache({
+      comicUrlId,
+      initialStudioState: studioState,
+    });
 
     location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
@@ -214,6 +217,12 @@ export default function ComicStudioRoute() {
     }
   };
 
+  const onAddCellClick = () => {
+    canAddMoreCells()
+      ? setShowAddCellModal(true)
+      : setShowCellAddLimitReachedModal(true);
+  };
+
   const sortedCells = getCellsFromState();
 
   return (
@@ -236,15 +245,7 @@ export default function ComicStudioRoute() {
                 />
               </div>
             ))}
-            <AddCellButton
-              onClick={() =>
-                canAddMoreCells()
-                  ? setShowAddCellModal(true)
-                  : setShowCellAddLimitReachedModal(true)
-              }
-            >
-              +
-            </AddCellButton>
+            <AddCellButton onClick={() => onAddCellClick()}>+</AddCellButton>
           </>
         )}
       </div>
@@ -252,7 +253,7 @@ export default function ComicStudioRoute() {
       {showAddCellModal && (
         <AddCellModal
           onCancelClick={() => setShowAddCellModal(false)}
-          onAddCellFromNewClick={navigateToAddCellFromNew}
+          onAddCellFromNewClick={() => navigateToCellStudio()}
           onAddCellFromDuplicate={navigateToAddCellFromDuplicate}
           onAddCellFromAnotherComic={navigateToComicStudioGallery}
           cells={sortedCells}
@@ -262,6 +263,10 @@ export default function ComicStudioRoute() {
       {showComicActionsModal && (
         <ComicActionsModal
           isComicDirty={isComicDirty()}
+          onAddCellClick={() => {
+            setShowComicActionsModal(false);
+            onAddCellClick();
+          }}
           onCancelClick={() => setShowComicActionsModal(false)}
           onDeleteClick={() => handleDeleteComicClick()}
           onPublishClick={() => {
@@ -275,7 +280,7 @@ export default function ComicStudioRoute() {
         <CellActionsModal
           cell={activeCell}
           onCancelClick={() => setActiveCell(null)}
-          onDuplicateClick={navigateToAddCellFromDuplicate}
+          onDuplicateClick={() => navigateToCellStudio(activeCell.studioState)}
         />
       )}
 

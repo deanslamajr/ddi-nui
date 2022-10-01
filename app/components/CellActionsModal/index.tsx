@@ -53,7 +53,7 @@ const CellActionsModal: React.FC<Props> = ({
           </CenteredContainer>
           <CenteredContainer>
             <MenuButton onClick={() => onDuplicateClick(studioState)}>
-              DUPLICATE
+              COPY
             </MenuButton>
           </CenteredContainer>
         </>

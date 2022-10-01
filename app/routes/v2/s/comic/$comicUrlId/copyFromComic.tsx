@@ -38,7 +38,7 @@ export default function IndexRoute() {
   return (
     <>
       <Modal
-        header={<MessageContainer>Pick a comic:</MessageContainer>}
+        header={<MessageContainer>Pick a Comic</MessageContainer>}
         onCancelClick={returnToParent}
         className="within-modal"
       >
