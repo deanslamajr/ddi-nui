@@ -1,9 +1,18 @@
 import React from "react";
+import { LinksFunction } from "remix";
 import { getClientVariable } from "~/utils/environment-variables";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { PinkMenuButton } from "~/components/Button";
-import Modal, { CenteredContainer, MessageContainer } from "~/components/Modal";
+import { MenuButton, links as menuButtonStylesUrl } from "~/components/Button";
+import Modal, {
+  CenteredContainer,
+  MessageContainer,
+  links as modalStylesUrl,
+} from "~/components/Modal";
+
+export const links: LinksFunction = () => {
+  return [...menuButtonStylesUrl(), ...modalStylesUrl()];
+};
 
 const PublishFailModal: React.FC<{
   hasFailedCaptcha: boolean;
@@ -29,9 +38,9 @@ const PublishFailModal: React.FC<{
               }}
             />
           ) : (
-            <PinkMenuButton onClick={() => onRetryClick()}>
+            <MenuButton accented onClick={() => onRetryClick()}>
               TRY AGAIN
-            </PinkMenuButton>
+            </MenuButton>
           )}
         </CenteredContainer>
       }

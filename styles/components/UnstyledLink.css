@@ -3,6 +3,7 @@
   color: inherit;
   position: relative;
   background-color: var(--white);
+  will-change: contents;
 }
 
 .unstyled-link:visited {

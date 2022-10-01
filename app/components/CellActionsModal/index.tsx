@@ -7,7 +7,7 @@ import Modal, {
   MessageContainer,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { MenuButton, PinkMenuButton } from "~/components/Button";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { CellFromClientCache } from "~/utils/clientCache";
@@ -22,6 +22,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...modalStylesUrl(),
+    ...buttonStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -49,7 +50,14 @@ const CellActionsModal: React.FC<Props> = ({
       footer={
         <>
           <CenteredContainer>
-            <PinkMenuButton onClick={navigateToCellStudio}>EDIT</PinkMenuButton>
+            <MenuButton
+              accented
+              onClick={() => {
+                navigateToCellStudio();
+              }}
+            >
+              EDIT
+            </MenuButton>
           </CenteredContainer>
           <CenteredContainer>
             <MenuButton onClick={() => onDuplicateClick(studioState)}>

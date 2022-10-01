@@ -26,7 +26,7 @@
     "publish:patch": "npm version patch && npm run publish",
     "publish:minor": "npm version minor && npm run publish",
     "publish:major": "npm version major && npm run publish",
-    "webkit": "playwright wk localhost",
+    "webkit": "npx playwright install --with-deps webkit && playwright wk localhost",
     "test": "DEBUG=pw:webserver playwright test",
     "test:headed": "npm run test -- --headed --project=chromium",
     "test:inspect": "PWDEBUG=1 npm run test:headed",
@@ -55,7 +55,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.23.2",
+    "@playwright/test": "^1.26.1",
     "@remix-run/dev": "^1.7.0",
     "@remix-run/eslint-config": "^1.7.0",
     "@types/jest": "^28.1.6",

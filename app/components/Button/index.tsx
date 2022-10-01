@@ -1,31 +1,33 @@
-import styled from "styled-components";
+import React from "react";
+import { LinksFunction } from "remix";
+import classNames from "classnames";
 
-export const MenuButton = styled.span`
-  flex-grow: 1;
-  max-width: 250px;
-  height: 2.75rem;
-  margin: 2px auto;
-  cursor: pointer;
-  background-color: ${(props) => props.theme.colors.white};
-  color: ${(props) => props.theme.colors.black};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  user-select: none;
+import stylesUrl from "~/styles/components/Button.css";
 
-  &:hover {
-    background-color: ${(props) => props.theme.colors.black};
-    color: ${(props) => props.theme.colors.white};
-  }
-`;
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: stylesUrl }];
+};
 
-export const PinkMenuButton = styled(MenuButton)`
-  background-color: ${(props) => props.theme.colors.pink};
-  color: ${(props) => props.theme.colors.white};
-`;
+export const MenuButton: React.FC<{
+  accented?: boolean;
+  className?: string;
+  onClick?: () => void;
+}> = ({ children, className, accented, onClick }) => {
+  const [isLoading, setIsLoading] = React.useState(false);
 
-export const DisabledButton = styled(PinkMenuButton)`
-  cursor: not-allowed;
-  pointer-events: none;
-`;
+  return (
+    <span
+      onClick={() => {
+        setIsLoading(true);
+        setTimeout(() => setIsLoading(false), 1000);
+        onClick && setTimeout(onClick);
+      }}
+      className={classNames("button", {
+        accented,
+        [`${className}`]: className,
+      })}
+    >
+      {isLoading ? <span className="loading">🤙</span> : children}
+    </span>
+  );
+};

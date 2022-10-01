@@ -8,7 +8,7 @@ import Modal, {
   MessageContainer,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { PinkMenuButton } from "~/components/Button";
+import { MenuButton, links as menuButtonStylesUrl } from "~/components/Button";
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
@@ -29,7 +29,9 @@ import { SignedCells } from "~/interfaces/signedCells";
 import publishComicUpdate from "~/data/external/publishComicUpdate";
 
 import uploadImages from "./uploadImages";
-import PublishFailModal from "./PublishFailModal";
+import PublishFailModal, {
+  links as publishFailModalStylesUrl,
+} from "./PublishFailModal";
 
 import stylesUrl from "~/styles/components/PublishPreviewModal.css";
 
@@ -38,6 +40,8 @@ export const links: LinksFunction = () => {
     ...cellStylesUrl(),
     ...modalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
+    ...menuButtonStylesUrl(),
+    ...publishFailModalStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -178,7 +182,9 @@ const PublishPreviewModal: React.FC<{
       footer={
         isLoading ? undefined : (
           <CenteredContainer>
-            <PinkMenuButton onClick={() => publish()}>PUBLISH</PinkMenuButton>
+            <MenuButton accented onClick={() => publish()}>
+              PUBLISH
+            </MenuButton>
           </CenteredContainer>
         )
       }

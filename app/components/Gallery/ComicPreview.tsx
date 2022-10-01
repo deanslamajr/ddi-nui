@@ -42,7 +42,10 @@ const ComicPreview: FC<Props> = ({
     <UnstyledLink
       id={urlId}
       href={generateComicLink(urlId)}
-      onclick={() => setIsClicked(true)}
+      onclick={() => {
+        setIsClicked(true);
+        setInterval(() => setIsClicked(false), 1000);
+      }}
       isRemixLink={useRemixLinks}
     >
       {isClicked ? (

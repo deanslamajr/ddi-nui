@@ -8,12 +8,16 @@ import Modal, {
   MessageContainer as Message,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { MenuButton } from "~/components/Button";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import stylesUrl from "~/styles/components/AddCellModal.css";
 
 export const links: LinksFunction = () => {
-  return [...modalStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...modalStylesUrl(),
+    ...buttonStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 type Props = {
