@@ -32,9 +32,10 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
 const DynamicTextContainer: React.FC<{
+  captionCssWidth?: string;
   fontRatio: number;
   isPreview?: boolean;
-}> = ({ children, fontRatio, isPreview }) => {
+}> = ({ captionCssWidth, children, fontRatio, isPreview }) => {
   const [fontSize, setFontSize] = React.useState<null | number>(null);
   const container = React.useRef<HTMLDivElement>(null);
   const isMountedVal = React.useRef(1);
@@ -53,9 +54,13 @@ const DynamicTextContainer: React.FC<{
     };
   }, [container.current?.offsetWidth, isMountedVal.current]);
 
+  const captionPadding = "0.25vw";
+
   const fontSizeStyles: React.CSSProperties = {
-    display: fontSize ? "inherit" : "none",
+    display: fontSize ? undefined : "none",
     fontSize: fontSize ? `${fontSize}px` : "inherit",
+    padding: captionPadding,
+    width: `calc(${captionCssWidth || "100%"} - (2 * ${captionPadding}))`,
   };
 
   return (

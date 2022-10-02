@@ -42,7 +42,13 @@ const ThumbSchema1: FC<{
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
       {caption && (
-        <DynamicTextContainer fontRatio={16} isPreview={isPreview}>
+        <DynamicTextContainer
+          fontRatio={16}
+          isPreview={isPreview}
+          // This width is for gallery views, might break in other views
+          // 2px accounts for the grid-gap of 2px in gallery views
+          captionCssWidth="100% - 2px"
+        >
           {/* {caption} */}
           {isPreview ? captionWithBreaks[0] : captionWithBreaks}
         </DynamicTextContainer>
