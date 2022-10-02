@@ -21,19 +21,19 @@ export const links: LinksFunction = () => {
   return [...galleryStylesUrls()];
 };
 
-type Props = {
+const Gallery: FC<{
   data: LoaderData;
   generateComicLink: (comicUrlId: string) => string;
   shouldCollapseHeader?: boolean;
   shouldPollForUpdates?: boolean;
+  urlPathForGalleryData?: string;
   useRemixLinks?: boolean;
-};
-
-const Gallery: FC<Props> = ({
+}> = ({
   data,
   generateComicLink,
   shouldCollapseHeader,
   shouldPollForUpdates = true,
+  urlPathForGalleryData,
   useRemixLinks,
 }) => {
   const [comics, setComics] = useState<Comic[]>(
@@ -159,6 +159,7 @@ const Gallery: FC<Props> = ({
       newerCursor={newerCursor}
       olderCursor={olderCursor}
       shouldCollapseHeader={shouldCollapseHeader}
+      urlPathForGalleryData={urlPathForGalleryData}
       useRemixLinks={useRemixLinks}
     />
   );

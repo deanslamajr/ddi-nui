@@ -32,6 +32,7 @@ export default function IndexRoute() {
       <Gallery
         data={data}
         generateComicLink={(comicUrlId) => DDI_APP_PAGES.comic(comicUrlId)}
+        urlPathForGalleryData={DDI_APP_PAGES.gallery()}
       />
 
       <CreateNavButton />

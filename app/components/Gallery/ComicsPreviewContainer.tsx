@@ -21,7 +21,7 @@ export const links: LinksFunction = () => {
   ];
 };
 
-type Props = {
+const ComicsPreviewContainer: FC<{
   comics: Comic[];
   isNewComicsExistVisible: boolean;
   isShowMoreNewerVisible: boolean;
@@ -30,10 +30,9 @@ type Props = {
   newerCursor: string | null;
   olderCursor: string | null;
   shouldCollapseHeader?: boolean;
+  urlPathForGalleryData?: string;
   useRemixLinks?: boolean;
-};
-
-const ComicsPreviewContainer: FC<Props> = ({
+}> = ({
   comics,
   isNewComicsExistVisible,
   isShowMoreNewerVisible,
@@ -42,6 +41,7 @@ const ComicsPreviewContainer: FC<Props> = ({
   newerCursor,
   olderCursor,
   shouldCollapseHeader,
+  urlPathForGalleryData,
   useRemixLinks,
 }) => {
   const [width, setWidth] = useState<number>(0);
@@ -92,6 +92,7 @@ const ComicsPreviewContainer: FC<Props> = ({
             isNewer
             offset={newerCursor}
             onClick={saveScrollPosition}
+            urlPathForGalleryData={urlPathForGalleryData}
           />
           <NewComicsExistButton isVisible={isNewComicsExistVisible} />
         </div>
@@ -111,7 +112,11 @@ const ComicsPreviewContainer: FC<Props> = ({
         ))}
       </div>
 
-      <ShowMore isVisible={isShowMoreOlderVisible} offset={olderCursor} />
+      <ShowMore
+        isVisible={isShowMoreOlderVisible}
+        offset={olderCursor}
+        urlPathForGalleryData={urlPathForGalleryData}
+      />
     </>
   );
 };
