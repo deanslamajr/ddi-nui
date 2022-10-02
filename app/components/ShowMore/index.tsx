@@ -9,13 +9,6 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-type Props = {
-  offset: string | null;
-  isNewer?: boolean;
-  isVisible: boolean;
-  onClick?: () => void;
-};
-
 export const OLDER_OFFSET_QUERYSTRING = "oo";
 export const NEWER_OFFSET_QUERYSTRING = "no";
 
@@ -24,7 +17,14 @@ export default function ShowMore({
   isVisible,
   offset,
   onClick: onClickFromConsumer,
-}: Props) {
+  urlPathForGalleryData,
+}: {
+  isNewer?: boolean;
+  isVisible: boolean;
+  offset: string | null;
+  onClick?: () => void;
+  urlPathForGalleryData?: string;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const transition = useTransition();
   const isSomethingOnPageLoading = transition.state === "submitting";
@@ -59,7 +59,7 @@ export default function ShowMore({
         }
       )}
     >
-      <Form replace>
+      <Form replace action={urlPathForGalleryData}>
         {isNewer ? (
           <input
             type="checkbox"

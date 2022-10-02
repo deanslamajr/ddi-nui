@@ -52,6 +52,9 @@ export default function IndexRoute() {
           }
           shouldCollapseHeader
           shouldPollForUpdates={false}
+          urlPathForGalleryData={DDI_APP_PAGES.comicStudioCopyFromComic(
+            comicUrlId
+          )}
           useRemixLinks
         />
       </Modal>
