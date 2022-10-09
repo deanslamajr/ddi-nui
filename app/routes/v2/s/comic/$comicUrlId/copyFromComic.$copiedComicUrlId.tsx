@@ -1,4 +1,4 @@
-import type { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
 
 import Modal, {

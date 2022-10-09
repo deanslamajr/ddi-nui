@@ -1,4 +1,4 @@
-import type { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { FC, useState } from "react";
 
 import { Comic } from "~/interfaces/comic";

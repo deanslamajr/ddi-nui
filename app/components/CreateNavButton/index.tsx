@@ -1,4 +1,4 @@
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { useSearchParams } from "@remix-run/react";
 
 import { DDI_APP_PAGES } from "~/utils/urls";

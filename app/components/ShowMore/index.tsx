@@ -1,5 +1,5 @@
-import { Form, LinksFunction } from "remix";
-import { useTransition } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+import { Form, useTransition } from "@remix-run/react";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,8 @@ export const links: LinksFunction = () => {
 
 export const OLDER_OFFSET_QUERYSTRING = "oo";
 export const NEWER_OFFSET_QUERYSTRING = "no";
+export const CAPTION_FILTER_QUERYSTRING = "caption";
+export const EMOJI_FILTER_QUERYSTRING = "emoji";
 
 export default function ShowMore({
   isNewer,

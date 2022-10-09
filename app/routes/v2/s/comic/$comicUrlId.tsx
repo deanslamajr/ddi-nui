@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { Outlet, useParams, useNavigate } from "@remix-run/react";
 import styled from "styled-components";
 

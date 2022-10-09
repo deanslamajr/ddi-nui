@@ -1,4 +1,4 @@
-import { Link, LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import classnames from "classnames";
 
 import stylesUrl from "~/styles/components/NewComicsExistButton.css";

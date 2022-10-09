@@ -1,5 +1,5 @@
 import React from "react";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { getClientVariable } from "~/utils/environment-variables";
 import ReCAPTCHA from "react-google-recaptcha";
 

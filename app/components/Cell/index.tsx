@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";

@@ -1,6 +1,10 @@
-import type { LinksFunction } from "remix";
-import { useLoaderData } from "remix";
-import { Outlet, useParams, useNavigate } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+import {
+  Outlet,
+  useParams,
+  useNavigate,
+  useLoaderData,
+} from "@remix-run/react";
 
 import Modal, {
   links as modalStylesUrl,

@@ -1,5 +1,5 @@
 import React from "react";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import { CellFromClientCache } from "~/utils/clientCache";
 

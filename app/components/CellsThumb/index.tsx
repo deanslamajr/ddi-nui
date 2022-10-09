@@ -1,4 +1,4 @@
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { FC } from "react";
 import { Img } from "react-image";
 

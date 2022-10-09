@@ -1,4 +1,4 @@
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { MouseEventHandler, FC } from "react";
 import { Link } from "@remix-run/react";
 

@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
-import { RemixServer } from "remix";
-import type { EntryContext } from "remix";
+import { EntryContext } from "@remix-run/node";
+import { RemixServer } from "@remix-run/react";
 import { ServerStyleSheet } from "styled-components";
 
 export default async function handleRequest(

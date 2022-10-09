@@ -1,5 +1,5 @@
 import React from "react";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
 import { useHotkeys } from "react-hotkeys-hook";
 
