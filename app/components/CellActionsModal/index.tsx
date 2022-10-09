@@ -1,5 +1,5 @@
 import React from "react";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import Modal, {

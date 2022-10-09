@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import type { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import { Comic } from "~/interfaces/comic";
 

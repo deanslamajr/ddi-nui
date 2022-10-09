@@ -1,7 +1,5 @@
 import {
-  json,
   Links,
-  LinksFunction,
   LiveReload,
   Meta,
   Outlet,
@@ -9,9 +7,9 @@ import {
   ScrollRestoration,
   useLoaderData,
   useSearchParams,
-  ErrorBoundaryComponent,
-} from "remix";
-import type { ShouldReloadFunction } from "@remix-run/react";
+  ShouldReloadFunction,
+} from "@remix-run/react";
+import { ErrorBoundaryComponent, LinksFunction, json } from "@remix-run/node";
 import { ThemeProvider } from "styled-components";
 
 import rootStylesPath from "~/styles/root.css";

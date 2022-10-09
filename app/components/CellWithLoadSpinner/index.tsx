@@ -1,4 +1,4 @@
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { getClientVariable } from "~/utils/environment-variables";
 
 import stylesUrl from "~/styles/components/CellWithLoadSpinner.css";

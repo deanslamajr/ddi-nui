@@ -1,5 +1,5 @@
-import type { LinksFunction } from "remix";
-import { useLoaderData } from "remix";
+import type { LinksFunction } from "@remix-run/node";
+import { Outlet, useLoaderData, useSearchParams } from "@remix-run/react";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 
@@ -26,16 +26,27 @@ export const links: LinksFunction = () => {
 export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
 
-  return (
-    <div className="gallery-outer-container">
-      <Header text="draw draw ink" />
-      <Gallery
-        data={data}
-        generateComicLink={(comicUrlId) => DDI_APP_PAGES.comic(comicUrlId)}
-        urlPathForGalleryData={DDI_APP_PAGES.gallery()}
-      />
+  const [searchParams] = useSearchParams();
+  const queryString = searchParams.toString()
+    ? "?" + searchParams.toString()
+    : "";
 
-      <CreateNavButton />
-    </div>
+  return (
+    <>
+      <div className="gallery-outer-container">
+        <Header text="draw draw ink" />
+        <Gallery
+          data={data}
+          generateComicLink={(comicUrlId) =>
+            `${DDI_APP_PAGES.comic(comicUrlId)}${queryString}`
+          }
+          urlPathForGalleryData={DDI_APP_PAGES.gallery()}
+          useRemixLinks
+        />
+
+        <CreateNavButton />
+      </div>
+      <Outlet />
+    </>
   );
 }

@@ -20,12 +20,26 @@ export const DDI_API_ENDPOINTS = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/comic/${comicUrlId}`;
   },
-  getComics: (offset?: string) => {
+  getComics: ({
+    captionSearch,
+    emojiFilter,
+    offset,
+  }: {
+    captionSearch?: string;
+    emojiFilter?: string;
+    offset?: string;
+  }) => {
     const url = new URL(
       `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
     );
     if (offset !== undefined) {
       url.searchParams.append("offset", offset);
+    }
+    if (captionSearch !== undefined) {
+      url.searchParams.append("caption", captionSearch);
+    }
+    if (emojiFilter !== undefined) {
+      url.searchParams.append("emoji", emojiFilter);
     }
     return url.toString();
   },
@@ -46,8 +60,8 @@ export const DDI_API_ENDPOINTS = {
 export const DDI_APP_PAGES = {
   comic: (comidUrlId: string) => {
     return `${getClientVariable(
-      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-    )}/comic/${comidUrlId}`;
+      "APP_PATH_PREFIX"
+    )}/gallery/comic/${comidUrlId}`;
   },
   drafts: (searchParams?: string) => {
     return `${getClientVariable(

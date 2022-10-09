@@ -27,6 +27,7 @@ export const konvaCacheConfig = {
   //drawBorder: true /// set 'true' for debugging image drawing
 };
 
+// @ts-ignore
 export function createNewEmojiComponentState(emoji, currentEmojiId) {
   return {
     emoji,

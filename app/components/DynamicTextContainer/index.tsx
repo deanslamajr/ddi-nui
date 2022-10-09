@@ -1,6 +1,6 @@
 import React from "react";
 import classnames from "classnames";
-import { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import stylesUrl from "~/styles/components/DynamicTextContainer.css";
 

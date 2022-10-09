@@ -1,10 +1,11 @@
-import type { LoaderFunction } from "remix";
-import { json } from "remix";
+import { LoaderFunction, json } from "@remix-run/node";
 
 import { Comic } from "~/interfaces/comic";
 import {
   OLDER_OFFSET_QUERYSTRING,
   NEWER_OFFSET_QUERYSTRING,
+  CAPTION_FILTER_QUERYSTRING,
+  EMOJI_FILTER_QUERYSTRING,
 } from "~/components/ShowMore";
 
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
@@ -24,11 +25,14 @@ export type LoaderData = {
 
 const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
-  const path = url.pathname;
 
   return new Promise<Response>(async (resolve, reject) => {
     const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
     const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
+    const captionSearch = url.searchParams.getAll(
+      CAPTION_FILTER_QUERYSTRING
+    )[0];
+    const emojiFilter = url.searchParams.getAll(EMOJI_FILTER_QUERYSTRING)[0];
 
     const hasCursor = Boolean(olderOffset || newerOffset);
 
@@ -93,7 +97,11 @@ const loader: LoaderFunction = async ({ request }) => {
 
     try {
       const response: Response = await fetch(
-        DDI_API_ENDPOINTS.getComics(olderOffset)
+        DDI_API_ENDPOINTS.getComics({
+          captionSearch,
+          emojiFilter,
+          offset: olderOffset,
+        })
       );
 
       if (!response.ok) {

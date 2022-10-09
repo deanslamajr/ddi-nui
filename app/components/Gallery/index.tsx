@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { usePageVisibility } from "react-page-visibility";
-import type { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 
 import sortComics from "~/utils/sortComics";
 import {
