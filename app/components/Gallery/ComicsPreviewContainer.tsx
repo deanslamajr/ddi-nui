@@ -3,6 +3,9 @@ import type { LinksFunction } from "@remix-run/node";
 
 import { Comic } from "~/interfaces/comic";
 
+import SearchModal, {
+  links as searchModalStylesUrls,
+} from "~/components/SearchModal";
 import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
@@ -15,6 +18,7 @@ import stylesUrl from "~/styles/components/Gallery.css";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesUrl },
+    ...searchModalStylesUrls(),
     ...showMoreStylesUrls(),
     ...newComicsExistStylesUrl(),
     ...comicPreviewStylesUrl(),
@@ -97,6 +101,7 @@ const ComicsPreviewContainer: FC<{
           <NewComicsExistButton isVisible={isNewComicsExistVisible} />
         </div>
       )}
+      <SearchModal />
       {/* key on width to trigger a rerender of children
     when resize event occurs */}
       <div key={width} className="comics-container">
