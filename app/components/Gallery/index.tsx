@@ -36,22 +36,19 @@ const Gallery: FC<{
   urlPathForGalleryData,
   useRemixLinks,
 }) => {
-  const [comics, setComics] = useState<Comic[]>(
-    data.older?.comics || data.newer?.comics || []
-  );
-  const [olderCursor, setOlderCursor] = useState<string | null>(
-    comics.length > 0 ? comics[comics.length - 1].updatedAt : null
-  );
-  const [newerCursor, setNewerCursor] = useState<string | null>(
-    comics.length > 0 ? comics[0].updatedAt : null
-  );
-  const [hasMoreOlderComics, setHasMoreOlderComics] = useState<boolean>(
-    data.older?.hasMore
-  );
-  const [hasMoreNewerComics, setHasMoreNewerComics] = useState<boolean>(
-    data.hasCursor && // don't want to show the showMoreNewer button on root page loads that don't have querystrings
-      data.newer?.hasMore
-  );
+  const [state, setState] = useState<{
+    comics: Comic[];
+    hasMoreNewer: boolean;
+    hasMoreOlder: boolean;
+    newerCursor: string | null;
+    olderCursor: string | null;
+  }>({
+    comics: [],
+    hasMoreNewer: true,
+    hasMoreOlder: true,
+    newerCursor: null,
+    olderCursor: null,
+  });
 
   const [showNewComicsExistButton, setShowNewComicsExistButton] =
     useState<boolean>(false);
@@ -59,49 +56,59 @@ const Gallery: FC<{
   const isVisible = usePageVisibility();
 
   useEffect(() => {
-    const olderComics = data.older?.comics;
-    const newerComics = data.newer?.comics;
+    setState((prevState) => {
+      const olderComics = data.older?.comics;
+      const newerComics = data.newer?.comics;
 
-    let allComics: Comic[] | null = null;
+      let allComics: Comic[] | null = null;
+      let hasMoreOlderComics: boolean = prevState.hasMoreOlder;
+      let hasMoreNewerComics: boolean = prevState.hasMoreNewer;
 
-    // Handle older comics
-    if (olderComics) {
-      const latestOlderCursor = data.older.cursor;
+      // Handle older comics
+      if (olderComics) {
+        const latestOlderCursor = data.older.cursor;
 
-      if (latestOlderCursor !== olderCursor && olderComics.length) {
-        allComics = [...comics, ...olderComics];
+        if (data.isSearch) {
+          allComics = [...olderComics];
+        } else if (
+          latestOlderCursor !== prevState.olderCursor &&
+          olderComics.length
+        ) {
+          allComics = [...prevState.comics, ...olderComics];
+        }
+        hasMoreOlderComics = data.older.hasMore;
+      } else {
+        // Handle newer comics
+        const latestNewerCursor = data.newer.cursor;
+
+        if (
+          newerComics &&
+          latestNewerCursor !== prevState.newerCursor &&
+          newerComics.length
+        ) {
+          allComics = [...newerComics, ...prevState.comics];
+        }
+        hasMoreNewerComics = data.newer.hasMore;
       }
-      setHasMoreOlderComics(data.older.hasMore);
-    } else {
-      // Handle newer comics
-      const latestNewerCursor = data.newer.cursor;
 
-      if (
-        newerComics &&
-        latestNewerCursor !== newerCursor &&
-        newerComics.length
-      ) {
-        allComics = [...newerComics, ...comics];
-      }
-      setHasMoreNewerComics(data.newer.hasMore);
-    }
+      const sortedComics = allComics !== null ? sortComics(allComics) : [];
 
-    if (allComics !== null) {
-      const sortedComics = sortComics(allComics);
+      const latestNewerCursor = sortedComics.length
+        ? sortedComics[0].updatedAt
+        : null;
+      const latestOlderCursor = sortedComics.length
+        ? sortedComics[sortedComics.length - 1].updatedAt
+        : null;
 
-      const latestNewerCursor = sortedComics[0].updatedAt;
-      const latestOlderCursor = sortedComics[sortedComics.length - 1].updatedAt;
-
-      setComics(sortedComics);
-
-      if (latestNewerCursor !== newerCursor) {
-        setNewerCursor(latestNewerCursor);
-      }
-      if (latestOlderCursor !== olderCursor) {
-        setOlderCursor(latestOlderCursor);
-      }
-    }
-  }, [comics, setComics, data]);
+      return {
+        comics: sortedComics,
+        hasMoreNewer: hasMoreNewerComics,
+        hasMoreOlder: hasMoreOlderComics,
+        newerCursor: latestNewerCursor,
+        olderCursor: latestOlderCursor,
+      };
+    });
+  }, [setState, data]);
 
   useEffect(() => {
     const latestTimestamp = getLatestTimestamp();
@@ -151,13 +158,13 @@ const Gallery: FC<{
 
   return (
     <ComicsPreviewContainer
-      comics={comics}
+      comics={state.comics}
       isNewComicsExistVisible={showNewComicsExistButton}
-      isShowMoreNewerVisible={data.hasCursor && hasMoreNewerComics}
-      isShowMoreOlderVisible={hasMoreOlderComics}
+      isShowMoreNewerVisible={data.hasCursor && state.hasMoreNewer}
+      isShowMoreOlderVisible={state.hasMoreOlder}
       generateComicLink={generateComicLink}
-      newerCursor={newerCursor}
-      olderCursor={olderCursor}
+      newerCursor={state.newerCursor}
+      olderCursor={state.olderCursor}
       shouldCollapseHeader={shouldCollapseHeader}
       urlPathForGalleryData={urlPathForGalleryData}
       useRemixLinks={useRemixLinks}

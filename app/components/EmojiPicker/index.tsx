@@ -70,19 +70,6 @@ function _shuffleEmojis() {
 
 let initialEmojiSet = _shuffleEmojis();
 
-// const OuterContainer = styled.div`
-//   position: absolute;
-//   background-color: ${(props) => props.theme.colors.white};
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   z-index: 1000;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-// `;
-
 const SearchContainer = styled.div`
   overflow-x: hidden;
   margin-top: 0.5rem;
@@ -147,13 +134,8 @@ const EmojiPicker: FC<{
   onCancel: () => void;
   onSelect: (emoji: string) => void;
 }> = ({ onCancel, onSelect }) => {
-  // initialEmojiSet = initialEmojiSet
   const shuffledEmojiSet = useRef(initialEmojiSet);
 
-  // state = {
-  //   emojis: this.initialEmojiSet,
-  //   inputValue: ''
-  // }
   const [state, setState] = useState<{
     emojis: string[];
     inputValue: string;
@@ -161,7 +143,6 @@ const EmojiPicker: FC<{
     emojis: initialEmojiSet,
     inputValue: "",
   });
-  // const [initialEmojiSet, setInitialEmojiSet] = useState(initialEmojiSet)
 
   const shuffleEmojis = () => {
     shuffledEmojiSet.current = _shuffleEmojis();
@@ -172,9 +153,10 @@ const EmojiPicker: FC<{
   };
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value.trim();
+    const searchValue = event.target.value;
+
     const emojis: string[] = searchValue
-      ? await filterEmojisBySearch(event.target.value)
+      ? await filterEmojisBySearch(searchValue)
       : Array.isArray(shuffledEmojiSet.current)
       ? Array.from(shuffledEmojiSet.current)
       : [];
@@ -204,7 +186,7 @@ const EmojiPicker: FC<{
           </SearchContainer>
 
           <EmojisContainer>
-            {emojis.map((emoji) => (
+            {state.emojis.map((emoji) => (
               <Emoji key={emoji} emoji={emoji} onSelect={onSelect} />
             ))}
           </EmojisContainer>
@@ -218,19 +200,6 @@ const EmojiPicker: FC<{
       <div className="nav-button bottom-right">
         <button onClick={() => shuffleEmojis()}>🔀</button>
       </div>
-
-      {/* <NavButton
-          value={this.props.backButtonLabel}
-          cb={() => this.props.onCancel()}
-          position={BOTTOM_LEFT}
-          accented
-        /> */}
-
-      {/* <NavButton
-          value='SHUFFLE'
-          cb={() => shuffleEmojis()}
-          position={BOTTOM_RIGHT}
-        /> */}
     </>
   );
 };
