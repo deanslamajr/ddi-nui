@@ -31,10 +31,13 @@ export default function IndexRoute() {
     ? "?" + searchParams.toString()
     : "";
 
+  console.log("data", data);
+
   return (
     <>
       <div className="gallery-outer-container">
         <Header text="draw draw ink" />
+        <CreateNavButton />
         <Gallery
           data={data}
           generateComicLink={(comicUrlId) =>
@@ -43,8 +46,6 @@ export default function IndexRoute() {
           urlPathForGalleryData={DDI_APP_PAGES.gallery()}
           useRemixLinks
         />
-
-        <CreateNavButton />
       </div>
       <Outlet />
     </>
