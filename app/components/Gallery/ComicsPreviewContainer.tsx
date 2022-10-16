@@ -1,12 +1,17 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
+import { useSearchParams } from "@remix-run/react";
 
 import { Comic } from "~/interfaces/comic";
 
 import SearchModal, {
   links as searchModalStylesUrls,
 } from "~/components/SearchModal";
-import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
+import ShowMore, {
+  links as showMoreStylesUrls,
+  CAPTION_FILTER_QUERYSTRING,
+  EMOJI_FILTER_QUERYSTRING,
+} from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
 } from "~/components/NewComicsExistButton";
@@ -85,6 +90,12 @@ const ComicsPreviewContainer: FC<{
     }
   }, [setUrlIdToScrollTo, urlIdToScrollTo, comics.length]);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const onSearchEmoji = (emoji: string) => {
+    setSearchParams({ [EMOJI_FILTER_QUERYSTRING]: emoji });
+  };
+
   return (
     <>
       {(!shouldCollapseHeader ||
@@ -101,7 +112,6 @@ const ComicsPreviewContainer: FC<{
           <NewComicsExistButton isVisible={isNewComicsExistVisible} />
         </div>
       )}
-      <SearchModal />
       {/* key on width to trigger a rerender of children
     when resize event occurs */}
       <div key={width} className="comics-container">
@@ -122,6 +132,7 @@ const ComicsPreviewContainer: FC<{
         offset={olderCursor}
         urlPathForGalleryData={urlPathForGalleryData}
       />
+      <SearchModal onSearchEmoji={onSearchEmoji} />
     </>
   );
 };

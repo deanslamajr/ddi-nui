@@ -7,17 +7,24 @@ import Modal, {
   links as modalStylesUrl,
 } from "~/components/Modal";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import EmojiPicker, {
+  links as emojiPickerStylesUrl,
+} from "~/components/EmojiPicker";
 
 export const links: LinksFunction = () => {
   return [
     // { rel: "stylesheet", href: stylesUrl },
+    ...emojiPickerStylesUrl(),
     ...modalStylesUrl(),
     ...buttonStylesUrl(),
   ];
 };
 
-const SearchModal: FC<{}> = ({}) => {
+const SearchModal: FC<{
+  onSearchEmoji: (emoji: string) => void;
+}> = ({ onSearchEmoji }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   return (
     <>
@@ -32,7 +39,14 @@ const SearchModal: FC<{}> = ({}) => {
           footer={
             <>
               <CenteredContainer>
-                <MenuButton onClick={() => {}}>BY EMOJI</MenuButton>
+                <MenuButton
+                  onClick={() => {
+                    setShowEmojiPicker(true);
+                    setShowModal(false);
+                  }}
+                >
+                  BY EMOJI
+                </MenuButton>
               </CenteredContainer>
               <CenteredContainer>
                 <MenuButton onClick={() => {}}>BY CAPTION</MenuButton>
@@ -40,6 +54,19 @@ const SearchModal: FC<{}> = ({}) => {
             </>
           }
           onCancelClick={() => setShowModal(false)}
+        />
+      )}
+      {showEmojiPicker && (
+        <EmojiPicker
+          onCancel={() => {
+            setShowModal(true);
+            setShowEmojiPicker(false);
+          }}
+          onSelect={(emoji) => {
+            onSearchEmoji(emoji);
+            setShowModal(false);
+            setShowEmojiPicker(false);
+          }}
         />
       )}
     </>
