@@ -11,7 +11,7 @@ import { theme } from "~/utils/stylesTheme";
 
 import { StudioState } from "~/interfaces/studioState";
 
-import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/copyFromComic.$copiedComicUrlId.css";
+import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId.css";
 
 export const links: LinksFunction = () => {
   return [
@@ -74,7 +74,7 @@ export default function ComicViewRoute() {
   };
 
   return (
-    <Modal className="copy-from-comic-modal" onCancelClick={returnToParent}>
+    <Modal className="comic-view-modal" onCancelClick={returnToParent}>
       <div className="cells-container">
         {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
           <div

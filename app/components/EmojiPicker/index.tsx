@@ -3,7 +3,6 @@ import type { LinksFunction } from "@remix-run/node";
 import baseEmojiData from "@emoji-mart/data";
 // @ts-ignore
 import { init, SearchIndex } from "emoji-mart";
-import styled from "styled-components";
 
 import stylesUrl from "~/styles/components/EmojiPicker.css";
 
@@ -68,67 +67,7 @@ function _shuffleEmojis() {
   return shuffle(emojis);
 }
 
-let initialEmojiSet = _shuffleEmojis();
-
-const SearchContainer = styled.div`
-  overflow-x: hidden;
-  margin-top: 0.5rem;
-  position: fixed;
-  top: 1rem;
-  width: 50rem;
-  left: 50%;
-  margin-left: -400px;
-`;
-
-const SearchInput = styled.input`
-  display: inline-block;
-  font-size: 50px; /* To avoid iOS zoom on click */
-  width: 70%;
-  background: linear-gradient(#eee, #fff);
-  transition: all 0.3s ease-out;
-  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.4);
-  width: 100%;
-  text-align: center;
-
-  &::placeholder {
-    color: gray;
-    font-size: 50px;
-    opacity: 0.5;
-  }
-`;
-
-const EmojisContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  font-size: 2.5rem;
-  margin-top: 6rem;
-`;
-
-const InnerContainer = styled.div`
-  position: relative;
-  background-color: ${(props) => props.theme.colors.white};
-`;
-
-const EmojiContainer = styled.span`
-  width: 5rem;
-  height: 5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-`;
-
-const Emoji: FC<{
-  emoji: string;
-  onSelect: (emoji: string) => void;
-}> = ({ emoji, onSelect }) => {
-  return (
-    <EmojiContainer onClick={() => onSelect(emoji)}>{emoji}</EmojiContainer>
-  );
-};
+const initialEmojiSet = _shuffleEmojis();
 
 const EmojiPicker: FC<{
   onCancel: () => void;
@@ -174,23 +113,29 @@ const EmojiPicker: FC<{
   return (
     <>
       <div className="emoji-picker-outer-container">
-        <InnerContainer>
-          <SearchContainer>
-            <SearchInput
+        <div className="emoji-picker-inner-container">
+          <div className="emoji-picker-emojis-container">
+            {state.emojis.map((emoji) => (
+              <span
+                className="emoji-picker-emoji-container"
+                key={emoji}
+                onClick={() => onSelect(emoji)}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <div className="emoji-picker-search-container">
+            <input
+              className="emoji-picker-search-input"
               type="text"
               name="search"
               onChange={handleChange}
               placeholder="emoji search"
               value={state.inputValue}
             />
-          </SearchContainer>
-
-          <EmojisContainer>
-            {state.emojis.map((emoji) => (
-              <Emoji key={emoji} emoji={emoji} onSelect={onSelect} />
-            ))}
-          </EmojisContainer>
-        </InnerContainer>
+          </div>
+        </div>
       </div>
 
       <div className="nav-button accented bottom-left">

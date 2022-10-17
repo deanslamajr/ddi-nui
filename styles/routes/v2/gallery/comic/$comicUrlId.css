@@ -1,0 +1,38 @@
+.comic-view-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.comic-view-modal .modal-footer.empty {
+  padding: 0;
+}
+
+.cells-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+}
+
+.cell-container {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  margin: 1px;
+  width: 100%;
+}
+
+@media (max-width: 599px) {
+  .comic-view-modal {
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 899px) {
+  .comic-view-modal {
+    width: 100%;
+  }
+}
