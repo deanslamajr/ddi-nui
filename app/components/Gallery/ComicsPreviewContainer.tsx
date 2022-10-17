@@ -40,7 +40,6 @@ const ComicsPreviewContainer: FC<{
   olderCursor: string | null;
   shouldCollapseHeader?: boolean;
   urlPathForGalleryData?: string;
-  useRemixLinks?: boolean;
 }> = ({
   comics,
   isNewComicsExistVisible,
@@ -51,7 +50,6 @@ const ComicsPreviewContainer: FC<{
   olderCursor,
   shouldCollapseHeader,
   urlPathForGalleryData,
-  useRemixLinks,
 }) => {
   const [width, setWidth] = useState<number>(0);
   const [urlIdToScrollTo, setUrlIdToScrollTo] = useState<string | null>(null);
@@ -122,7 +120,6 @@ const ComicsPreviewContainer: FC<{
             initialCell={initialCell}
             generateComicLink={generateComicLink}
             urlId={urlId}
-            useRemixLinks={useRemixLinks}
           />
         ))}
       </div>

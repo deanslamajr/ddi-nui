@@ -4,7 +4,6 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
   useLoaderData,
   useSearchParams,
   ShouldReloadFunction,
@@ -20,6 +19,7 @@ import { getClientVariable } from "~/utils/environment-variables";
 import { DEBUGGER_SEARCH_KEY } from "~/utils/constants";
 
 import Debugger from "~/components/Debugger";
+import ConditionalScrollRestoration from "~/components/ConditionalScrollRestoration";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
@@ -119,7 +119,7 @@ export default function App() {
         <ThemeProvider theme={theme}>
           <Outlet />
         </ThemeProvider>
-        <ScrollRestoration />
+        <ConditionalScrollRestoration />
         <script
           dangerouslySetInnerHTML={{
             __html: `window.ENV = ${JSON.stringify(data.ENV)}`,

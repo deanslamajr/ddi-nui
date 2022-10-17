@@ -27,14 +27,12 @@ const Gallery: FC<{
   shouldCollapseHeader?: boolean;
   shouldPollForUpdates?: boolean;
   urlPathForGalleryData?: string;
-  useRemixLinks?: boolean;
 }> = ({
   data,
   generateComicLink,
   shouldCollapseHeader,
   shouldPollForUpdates = true,
   urlPathForGalleryData,
-  useRemixLinks,
 }) => {
   const [state, setState] = useState<{
     comics: Comic[];
@@ -167,7 +165,6 @@ const Gallery: FC<{
       olderCursor={state.olderCursor}
       shouldCollapseHeader={shouldCollapseHeader}
       urlPathForGalleryData={urlPathForGalleryData}
-      useRemixLinks={useRemixLinks}
     />
   );
 };

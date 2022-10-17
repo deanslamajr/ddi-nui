@@ -26,7 +26,6 @@ type Props = {
   initialCell: Comic["initialCell"];
   generateComicLink: (comicUrlId: string) => string;
   urlId: string;
-  useRemixLinks?: boolean;
 };
 
 const ComicPreview: FC<Props> = ({
@@ -34,7 +33,6 @@ const ComicPreview: FC<Props> = ({
   initialCell,
   generateComicLink,
   urlId,
-  useRemixLinks,
 }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -46,7 +44,8 @@ const ComicPreview: FC<Props> = ({
         setIsClicked(true);
         setInterval(() => setIsClicked(false), 1000);
       }}
-      isRemixLink={useRemixLinks}
+      isRemixLink
+      state={{ scroll: false }}
     >
       {isClicked ? (
         <CellWithLoadSpinner />
