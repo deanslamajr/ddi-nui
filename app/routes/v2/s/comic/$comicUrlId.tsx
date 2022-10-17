@@ -163,13 +163,16 @@ export default function ComicStudioRoute() {
 
   const navigateToAddCellFromDuplicate = () => {
     navigate(
-      DDI_APP_PAGES.comicStudioCopyFromComicCell(comicUrlId, comicUrlId)
+      DDI_APP_PAGES.comicStudioCopyFromComicCell(comicUrlId, comicUrlId),
+      { state: { scroll: false } }
     );
     setShowAddCellModal(false);
   };
 
   const navigateToComicStudioGallery = () => {
-    navigate(DDI_APP_PAGES.comicStudioCopyFromComic(comicUrlId));
+    navigate(DDI_APP_PAGES.comicStudioCopyFromComic(comicUrlId), {
+      state: { scroll: false },
+    });
     setShowAddCellModal(false);
   };
 

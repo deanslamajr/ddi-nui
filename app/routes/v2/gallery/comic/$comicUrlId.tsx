@@ -1,23 +1,13 @@
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useParams, useLoaderData, useNavigate } from "@remix-run/react";
+import { useSearchParams, useLoaderData, useNavigate } from "@remix-run/react";
 
-import Modal, {
-  links as modalStylesUrl,
-  MessageContainer,
-} from "~/components/Modal";
+import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
-import CellWithLoadSpinner, {
-  links as cellWithLoadSpinnerStylesUrl,
-} from "~/components/CellWithLoadSpinner";
 
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
-import { createNewCell } from "~/utils/clientCache";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
-
-import useComic from "~/hooks/useComic";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -27,9 +17,13 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...modalStylesUrl(),
-    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
+};
+
+const getCellsFromState = (comic: ComicFromGetComicApi) => {
+  const comicsCells = comic?.cells;
+  return comicsCells ? sortCellsV4(comicsCells, comic.initialCellUrlId) : [];
 };
 
 type ComicFromGetComicApi = {
@@ -44,7 +38,7 @@ type ComicFromGetComicApi = {
     imageUrl: string;
     order: null;
     schemaVersion: number;
-    studioState: object;
+    studioState: StudioState;
     caption: string;
     previousCellUrlId: string | null;
   }>;
@@ -66,24 +60,17 @@ export default function ComicViewRoute() {
 
   const navigate = useNavigate();
 
-  // const params = useParams();
-  // const comicUrlId = params.comicUrlId!;
-  // const { comic, isLoading: isLoadingComic } = useComic({
-  //   comicUrlId,
-  // });
+  const [searchParams] = useSearchParams();
+  const queryString = searchParams.toString()
+    ? "?" + searchParams.toString()
+    : "";
 
-  const getCellsFromState = () => {
-    const comicsCells = comic?.cells;
-
-    return comicsCells
-      ? sortCellsV4(Object.values(comicsCells), comic.initialCellUrlId)
-      : [];
-  };
-
-  const cells = getCellsFromState();
+  const cells = getCellsFromState(comic);
 
   const returnToParent = () => {
-    navigate("..");
+    navigate(`${DDI_APP_PAGES.gallery()}${queryString}`, {
+      state: { scroll: false },
+    });
   };
 
   return (

@@ -3,6 +3,7 @@ import {
   Outlet,
   useParams,
   useNavigate,
+  useSearchParams,
   useLoaderData,
 } from "@remix-run/react";
 
@@ -33,10 +34,17 @@ export default function IndexRoute() {
 
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const queryString = searchParams.toString()
+    ? "?" + searchParams.toString()
+    : "";
+
   const data = useLoaderData<LoaderData>();
 
   const returnToParent = () => {
-    navigate("..");
+    navigate(`${DDI_APP_PAGES.comicStudio(comicUrlId)}${queryString}`, {
+      state: { scroll: false },
+    });
   };
 
   return (
@@ -59,7 +67,6 @@ export default function IndexRoute() {
           urlPathForGalleryData={DDI_APP_PAGES.comicStudioCopyFromComic(
             comicUrlId
           )}
-          useRemixLinks
         />
       </Modal>
       <Outlet />

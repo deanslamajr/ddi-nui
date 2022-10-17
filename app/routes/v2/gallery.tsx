@@ -31,8 +31,6 @@ export default function IndexRoute() {
     ? "?" + searchParams.toString()
     : "";
 
-  console.log("data", data);
-
   return (
     <>
       <div className="gallery-outer-container">
@@ -44,7 +42,6 @@ export default function IndexRoute() {
             `${DDI_APP_PAGES.comic(comicUrlId)}${queryString}`
           }
           urlPathForGalleryData={DDI_APP_PAGES.gallery()}
-          useRemixLinks
         />
       </div>
       <Outlet />

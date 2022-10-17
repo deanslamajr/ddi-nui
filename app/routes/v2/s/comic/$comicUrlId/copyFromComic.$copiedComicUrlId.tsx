@@ -53,7 +53,9 @@ export default function CopyFromComicRoute() {
   const cells = getCellsFromState();
 
   const returnToParent = () => {
-    navigate("..");
+    navigate("..", {
+      state: { scroll: false },
+    });
   };
 
   const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
