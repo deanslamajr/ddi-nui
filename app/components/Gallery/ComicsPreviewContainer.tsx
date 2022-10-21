@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { useSearchParams } from "@remix-run/react";
+import { useSearchParams, Link } from "@remix-run/react";
 
 import { Comic } from "~/interfaces/comic";
 
@@ -9,7 +9,6 @@ import SearchModal, {
 } from "~/components/SearchModal";
 import ShowMore, {
   links as showMoreStylesUrls,
-  CAPTION_FILTER_QUERYSTRING,
   EMOJI_FILTER_QUERYSTRING,
 } from "~/components/ShowMore";
 import NewComicsExistButton, {
@@ -110,19 +109,28 @@ const ComicsPreviewContainer: FC<{
           <NewComicsExistButton isVisible={isNewComicsExistVisible} />
         </div>
       )}
-      {/* key on width to trigger a rerender of children
-    when resize event occurs */}
-      <div key={width} className="comics-container">
-        {comics.map(({ cellsCount, initialCell, urlId }) => (
-          <ComicPreview
-            key={urlId}
-            cellsCount={cellsCount}
-            initialCell={initialCell}
-            generateComicLink={generateComicLink}
-            urlId={urlId}
-          />
-        ))}
-      </div>
+
+      {comics.length > 0 ? (
+        <>
+          {/* key on width to trigger a rerender of children
+            when resize event occurs */}
+          <div key={width} className="comics-container">
+            {comics.map(({ cellsCount, initialCell, urlId }) => (
+              <ComicPreview
+                key={urlId}
+                cellsCount={cellsCount}
+                initialCell={initialCell}
+                generateComicLink={generateComicLink}
+                urlId={urlId}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <Link className="nav-button top-center" to=".">
+          <button>↻</button>
+        </Link>
+      )}
 
       <ShowMore
         isVisible={isShowMoreOlderVisible}
