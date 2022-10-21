@@ -62,7 +62,7 @@ const Modal: React.FC<Props> = ({
         )}
       </div>
       {onCancelClick && (
-        <div className="nav-button top-center larger-font">
+        <div className="nav-button top-center close-button">
           <button
             onClick={() => {
               onCancelClick && onCancelClick();
