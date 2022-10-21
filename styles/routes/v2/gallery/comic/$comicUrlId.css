@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
+  background-color: transparent;
 }
 
 .comic-view-modal .modal-footer.empty {
@@ -23,16 +23,4 @@
   cursor: pointer;
   margin: 1px;
   width: 100%;
-}
-
-@media (max-width: 599px) {
-  .comic-view-modal {
-    max-width: 100vw;
-  }
-}
-
-@media (max-width: 899px) {
-  .comic-view-modal {
-    width: 100%;
-  }
 }

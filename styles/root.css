@@ -41,6 +41,7 @@ body {
 .nav-button button {
   all: unset;
   width: var(--buttonDiameter);
+  height: var(--buttonDiameter);
 }
 
 .nav-button:hover {

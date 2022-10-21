@@ -14,14 +14,25 @@
 .modal-container {
   background-color: var(--lightGray);
   border-radius: 1px;
-  max-height: calc(100% - var(--buttonDiameter) - 2rem);
-  margin-top: calc(var(--buttonDiameter) + 2rem);
+  /* always allow space for top and bottom navbutton, each w/ top & bottom margins */
+  max-height: calc(100% - (2 * (var(--buttonDiameter) + (2 * 0.5rem))));
+  margin-top: calc(var(--buttonDiameter) + (2 * 0.5rem));
+  margin-bottom: calc(var(--buttonDiameter) + (2 * 0.5rem));
   min-width: 315px;
   overflow: auto;
   border-radius: 2px;
 
   &:last-of-type {
     margin-bottom: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .modal-container {
+    /* always allow space for top and bottom navbutton, each w/ top & bottom margins */
+    max-height: calc(100% - (2 * (var(--buttonDiameter) + (2 * 4px))));
+    margin-top: calc(var(--buttonDiameter) + (2 * 4px));
+    margin-bottom: calc(var(--buttonDiameter) + (2 * 4px));
   }
 }
 
@@ -60,4 +71,8 @@
   &.empty {
     padding: 0.5rem;
   }
+}
+
+.nav-button.close-button button {
+  font-size: 1rem;
 }
