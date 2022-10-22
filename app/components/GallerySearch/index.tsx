@@ -14,12 +14,7 @@ import EmojiPicker, {
 import { EMOJI_FILTER_QUERYSTRING } from "~/components/ShowMore";
 
 export const links: LinksFunction = () => {
-  return [
-    // { rel: "stylesheet", href: stylesUrl },
-    ...emojiPickerStylesUrl(),
-    ...modalStylesUrl(),
-    ...buttonStylesUrl(),
-  ];
+  return [...emojiPickerStylesUrl(), ...modalStylesUrl(), ...buttonStylesUrl()];
 };
 
 const GallerySearchContext = createContext<{
@@ -85,8 +80,6 @@ const GallerySearch: FC<{}> = ({}) => {
                   <MenuButton
                     onClick={() => {
                       setShowEmojiPicker(true);
-                      // setShowGallerySearchModal &&
-                      //   setShowGallerySearchModal(false);
                     }}
                   >
                     BY EMOJI

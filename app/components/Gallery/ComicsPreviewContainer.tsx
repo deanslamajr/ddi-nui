@@ -1,13 +1,10 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { useSearchParams, Link } from "@remix-run/react";
+import { Link } from "@remix-run/react";
+import classNames from "classnames";
 
 import { Comic } from "~/interfaces/comic";
 
-// import {
-//   GallerySearchNavButton,
-//   links as searchModalStylesUrls,
-// } from "~/components/GallerySearch";
 import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
@@ -20,7 +17,6 @@ import stylesUrl from "~/styles/components/Gallery.css";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesUrl },
-    // ...searchModalStylesUrls(),
     ...showMoreStylesUrls(),
     ...newComicsExistStylesUrl(),
     ...comicPreviewStylesUrl(),
@@ -102,34 +98,36 @@ const ComicsPreviewContainer: FC<{
         </div>
       )}
 
-      {comics.length > 0 ? (
-        <>
-          {/* key on width to trigger a rerender of children
+      {/* key on width to trigger a rerender of children
             when resize event occurs */}
-          <div key={width} className="comics-container">
-            {comics.map(({ cellsCount, initialCell, urlId }) => (
-              <ComicPreview
-                key={urlId}
-                cellsCount={cellsCount}
-                initialCell={initialCell}
-                generateComicLink={generateComicLink}
-                urlId={urlId}
-              />
-            ))}
-          </div>
-        </>
-      ) : (
-        <Link className="nav-button top-center" to=".">
-          <button>↻</button>
-        </Link>
-      )}
+      <div
+        key={width}
+        className={classNames("comics-container", {
+          "no-results": comics.length === 0,
+        })}
+      >
+        {comics.length > 0 ? (
+          comics.map(({ cellsCount, initialCell, urlId }) => (
+            <ComicPreview
+              key={urlId}
+              cellsCount={cellsCount}
+              initialCell={initialCell}
+              generateComicLink={generateComicLink}
+              urlId={urlId}
+            />
+          ))
+        ) : (
+          <Link className="nav-button reset-search-button" to=".">
+            <button>↻</button>
+          </Link>
+        )}
+      </div>
 
       <ShowMore
         isVisible={isShowMoreOlderVisible}
         offset={olderCursor}
         urlPathForGalleryData={urlPathForGalleryData}
       />
-      {/* <GallerySearchNavButton /> */}
     </>
   );
 };

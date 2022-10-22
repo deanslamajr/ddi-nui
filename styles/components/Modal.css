@@ -53,11 +53,20 @@
 
 .modal-header {
   position: sticky;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   will-change: transform;
   top: 0;
   background-color: var(--lightGray);
-  padding: 1rem;
+  height: calc(var(--buttonDiameter) + (2 * 0.5rem));
   z-index: var(--toptop);
+}
+
+@media (max-width: 599px) {
+  .modal-header {
+    height: calc(var(--buttonDiameter) + (2 * 4px));
+  }
 }
 
 .modal-footer {
