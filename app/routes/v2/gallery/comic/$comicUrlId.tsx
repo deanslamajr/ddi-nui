@@ -1,7 +1,16 @@
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ErrorBoundaryComponent,
+  LinksFunction,
+  LoaderFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useSearchParams, useLoaderData, useNavigate } from "@remix-run/react";
+import classNames from "classnames";
 
-import Modal, { links as modalStylesUrl } from "~/components/Modal";
+import Modal, {
+  MessageContainer,
+  links as modalStylesUrl,
+} from "~/components/Modal";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
@@ -50,22 +59,31 @@ export const loader: LoaderFunction = async ({ params }) => {
   const comicDataResponse = await fetch(
     DDI_API_ENDPOINTS.getComic(comicUrlId!)
   );
+
+  if (!comicDataResponse.ok) {
+    if (comicDataResponse.status === 404) {
+      throw new Error(
+        `404: Could not find comic with comicUrlId:${comicUrlId}`
+      );
+    }
+    throw new Error(`HTTP error! Status: ${comicDataResponse.status}`);
+  }
+
   const comicData = await comicDataResponse.json();
 
-  return comicData;
+  return json(comicData);
 };
 
-export default function ComicViewRoute() {
-  const comic = useLoaderData<ComicFromGetComicApi>();
-
+const ThisPagesModal: React.FC<{ isError?: boolean }> = ({
+  children,
+  isError,
+}) => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const queryString = searchParams.toString()
     ? "?" + searchParams.toString()
     : "";
-
-  const cells = getCellsFromState(comic);
 
   const returnToParent = () => {
     navigate(`${DDI_APP_PAGES.gallery()}${queryString}`, {
@@ -74,7 +92,34 @@ export default function ComicViewRoute() {
   };
 
   return (
-    <Modal className="comic-view-modal" onCancelClick={returnToParent}>
+    <Modal
+      className={classNames({ "comic-view-modal": !isError })}
+      onCancelClick={returnToParent}
+      header={isError && children}
+    >
+      {!isError && children}
+    </Modal>
+  );
+};
+
+export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
+  console.error(error);
+  return (
+    <ThisPagesModal isError>
+      <MessageContainer>
+        Sorry, the requested comic does not seem to exist.
+      </MessageContainer>
+    </ThisPagesModal>
+  );
+};
+
+export default function ComicViewRoute() {
+  const comic = useLoaderData<ComicFromGetComicApi>();
+
+  const cells = getCellsFromState(comic);
+
+  return (
+    <ThisPagesModal>
       <div className="cells-container">
         {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
           <div
@@ -96,6 +141,6 @@ export default function ComicViewRoute() {
           </div>
         ))}
       </div>
-    </Modal>
+    </ThisPagesModal>
   );
 }

@@ -1,13 +1,3 @@
 .within-modal {
   width: 100%;
 }
-
-.within-modal .modal-header {
-  height: calc(var(--buttonDiameter) + (2 * 0.5rem));
-}
-
-@media (max-width: 599px) {
-  .within-modal .modal-header {
-    height: calc(var(--buttonDiameter) + (2 * 4px));
-  }
-}

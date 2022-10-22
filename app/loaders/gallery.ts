@@ -1,4 +1,5 @@
-import { LoaderFunction, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
 
 import { Comic } from "~/interfaces/comic";
 import {
@@ -137,34 +138,30 @@ const fetchOlderComics = async ({
 const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
 
-  return new Promise<Response>(async (resolve, reject) => {
-    const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
-    const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
-    const captionSearch = url.searchParams.getAll(
-      CAPTION_FILTER_QUERYSTRING
-    )[0];
-    const emojiFilter = url.searchParams.getAll(EMOJI_FILTER_QUERYSTRING)[0];
+  const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
+  const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
+  const captionSearch = url.searchParams.getAll(CAPTION_FILTER_QUERYSTRING)[0];
+  const emojiFilter = url.searchParams.getAll(EMOJI_FILTER_QUERYSTRING)[0];
 
-    const hasCursor = Boolean(olderOffset || newerOffset);
+  const hasCursor = Boolean(olderOffset || newerOffset);
 
-    if (newerOffset) {
-      const newerComicsResponse = await fetchNewerComics({
-        hasCursor,
-        newerOffset,
-      });
-
-      return resolve(json(newerComicsResponse));
-    }
-
-    const olderComicsResponse = await fetchOlderComics({
-      captionSearch,
-      emojiFilter,
+  if (newerOffset) {
+    const newerComicsResponse = await fetchNewerComics({
       hasCursor,
-      offset: olderOffset,
+      newerOffset,
     });
 
-    return resolve(json(olderComicsResponse));
+    return json(newerComicsResponse);
+  }
+
+  const olderComicsResponse = await fetchOlderComics({
+    captionSearch,
+    emojiFilter,
+    hasCursor,
+    offset: olderOffset,
   });
+
+  return json(olderComicsResponse);
 };
 
 export default loader;
