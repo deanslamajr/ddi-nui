@@ -3,9 +3,13 @@ import { RemixBrowser } from "@remix-run/react";
 
 import { CaptchaV3Provider } from "~/contexts/CaptchaV3";
 
+import { GallerySearchProvider } from "~/components/GallerySearch";
+
 hydrate(
   <CaptchaV3Provider>
-    <RemixBrowser />
+    <GallerySearchProvider>
+      <RemixBrowser />
+    </GallerySearchProvider>
   </CaptchaV3Provider>,
   document
 );

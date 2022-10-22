@@ -8,6 +8,10 @@ import CreateNavButton, {
 } from "~/components/CreateNavButton";
 import Header, { links as headerStylesUrl } from "~/components/Header";
 import Gallery, { links as galleryStylesUrls } from "~/components/Gallery";
+import GallerySearchModal, {
+  GallerySearchNavButton,
+  links as searchModalStylesUrls,
+} from "~/components/GallerySearch";
 
 import stylesUrl from "~/styles/routes/v2/gallery.css";
 
@@ -16,6 +20,7 @@ export { default as loader } from "~/loaders/gallery";
 
 export const links: LinksFunction = () => {
   return [
+    ...searchModalStylesUrls(),
     ...createNavButtonStylesUrl(),
     ...headerStylesUrl(),
     ...galleryStylesUrls(),
@@ -42,8 +47,10 @@ export default function IndexRoute() {
           }
           urlPathForGalleryData={DDI_APP_PAGES.gallery()}
         />
-        <CreateNavButton />
       </div>
+      <CreateNavButton />
+      <GallerySearchNavButton />
+      <GallerySearchModal />
       <Outlet />
     </>
   );

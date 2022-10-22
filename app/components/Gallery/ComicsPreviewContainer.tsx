@@ -4,13 +4,11 @@ import { useSearchParams, Link } from "@remix-run/react";
 
 import { Comic } from "~/interfaces/comic";
 
-import SearchModal, {
-  links as searchModalStylesUrls,
-} from "~/components/SearchModal";
-import ShowMore, {
-  links as showMoreStylesUrls,
-  EMOJI_FILTER_QUERYSTRING,
-} from "~/components/ShowMore";
+// import {
+//   GallerySearchNavButton,
+//   links as searchModalStylesUrls,
+// } from "~/components/GallerySearch";
+import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
 } from "~/components/NewComicsExistButton";
@@ -22,7 +20,7 @@ import stylesUrl from "~/styles/components/Gallery.css";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesUrl },
-    ...searchModalStylesUrls(),
+    // ...searchModalStylesUrls(),
     ...showMoreStylesUrls(),
     ...newComicsExistStylesUrl(),
     ...comicPreviewStylesUrl(),
@@ -87,12 +85,6 @@ const ComicsPreviewContainer: FC<{
     }
   }, [setUrlIdToScrollTo, urlIdToScrollTo, comics.length]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const onSearchEmoji = (emoji: string) => {
-    setSearchParams({ [EMOJI_FILTER_QUERYSTRING]: emoji });
-  };
-
   return (
     <>
       {(!shouldCollapseHeader ||
@@ -137,7 +129,7 @@ const ComicsPreviewContainer: FC<{
         offset={olderCursor}
         urlPathForGalleryData={urlPathForGalleryData}
       />
-      <SearchModal onSearchEmoji={onSearchEmoji} />
+      {/* <GallerySearchNavButton /> */}
     </>
   );
 };
