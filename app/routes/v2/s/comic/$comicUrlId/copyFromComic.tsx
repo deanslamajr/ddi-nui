@@ -12,6 +12,10 @@ import Modal, {
   MessageContainer,
 } from "~/components/Modal";
 import Gallery, { links as galleryStylesUrl } from "~/components/Gallery";
+import GallerySearchModal, {
+  GallerySearchNavButton,
+  links as searchModalStylesUrls,
+} from "~/components/GallerySearch";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 
@@ -22,6 +26,7 @@ export { default as loader } from "~/loaders/gallery";
 
 export const links: LinksFunction = () => {
   return [
+    ...searchModalStylesUrls(),
     ...modalStylesUrl(),
     ...galleryStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
@@ -50,7 +55,14 @@ export default function IndexRoute() {
   return (
     <>
       <Modal
-        header={<MessageContainer>Pick a Comic</MessageContainer>}
+        header={
+          <>
+            <GallerySearchNavButton />
+            <MessageContainer>
+              <></>Pick a Comic
+            </MessageContainer>
+          </>
+        }
         onCancelClick={returnToParent}
         className="within-modal"
       >
@@ -70,6 +82,7 @@ export default function IndexRoute() {
         />
       </Modal>
       <Outlet />
+      <GallerySearchModal />
     </>
   );
 }
