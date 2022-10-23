@@ -53,7 +53,11 @@ const Modal: React.FC<Props> = ({
   return (
     <div className="background-mask">
       <div className={classNames(className, "modal-container")}>
-        {header && <div className="modal-header">{header}</div>}
+        {header ? (
+          <div className="modal-header">{header}</div>
+        ) : (
+          <div className="modal-footer empty" />
+        )}
         {children}
         {footer ? (
           <div className="modal-footer">{footer}</div>
