@@ -1,6 +1,6 @@
 import React, { createContext, FC, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { useSearchParams } from "@remix-run/react";
+import { useSearchParams, useNavigate } from "@remix-run/react";
 
 import Modal, {
   CenteredContainer,
@@ -40,19 +40,41 @@ export const GallerySearchProvider: FC<{}> = ({ children }) => {
 };
 
 export const GallerySearchNavButton: FC<{}> = ({}) => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const emojiFilters = searchParams.getAll(EMOJI_FILTER_QUERYSTRING);
+
+  // console.log("emojiFilters", emojiFilters);
+  const isFilterActive = emojiFilters.length > 0;
+
   const { showGallerySearchModal, setShowGallerySearchModal } =
     React.useContext(GallerySearchContext);
 
   return !showGallerySearchModal ? (
-    <div className="nav-button top-right">
-      <button
-        onClick={() =>
-          setShowGallerySearchModal && setShowGallerySearchModal(true)
-        }
-      >
-        🕹️
-      </button>
-    </div>
+    <>
+      {isFilterActive && (
+        <div className="nav-button top-right secondary">
+          <button
+            onClick={() =>
+              navigate(".", {
+                state: { scroll: false },
+              })
+            }
+          >
+            🔝
+          </button>
+        </div>
+      )}
+      <div className="nav-button top-right">
+        <button
+          onClick={() =>
+            setShowGallerySearchModal && setShowGallerySearchModal(true)
+          }
+        >
+          {isFilterActive ? emojiFilters[0] : "🕹️"}
+        </button>
+      </div>
+    </>
   ) : null;
 };
 
