@@ -85,7 +85,10 @@ const GallerySearch: FC<{}> = ({}) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const onSearchEmoji = (emoji: string) => {
-    setSearchParams({ [EMOJI_FILTER_QUERYSTRING]: emoji });
+    setSearchParams(
+      { [EMOJI_FILTER_QUERYSTRING]: emoji },
+      { state: { scroll: false } }
+    );
   };
 
   return (
