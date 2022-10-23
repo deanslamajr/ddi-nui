@@ -70,6 +70,7 @@ const GallerySearch: FC<{}> = ({}) => {
     <>
       {showGallerySearchModal && (
         <Modal
+          className="emoji-picker-modal"
           header={
             !showEmojiPicker && <MessageContainer>Search</MessageContainer>
           }

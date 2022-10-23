@@ -1,29 +1,40 @@
+.modal-container.emoji-picker-modal {
+  background-color: transparent;
+}
+
 .emoji-picker-outer-container {
-  position: absolute;
-  background-color: var(--white);
-  top: 0;
+  /* position: absolute; */
+  background-color: transparent;
+  /* top: 0;
   bottom: 0;
   left: 0;
-  right: 0;
+  right: 0; */
   z-index: var(--top);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.emoji-picker-inner-container {
+  /* position: relative; */
+  background-color: transparent;
+}
+
 .emoji-picker-search-container {
   overflow-x: hidden;
   margin-top: 0.5rem;
-  position: fixed;
-  top: 1rem;
+  position: absolute;
+  /* top: 1rem; */
+  top: calc(var(--buttonDiameter) + (2 * 0.5rem));
   width: 50rem;
   left: 50%;
   margin-left: -400px;
 }
 
-.emoji-picker-inner-container {
-  position: relative;
-  background-color: var(--white);
+@media (max-width: 599px) {
+  .emoji-picker-search-container {
+    top: calc(var(--buttonDiameter) + (2 * 4px));
+  }
 }
 
 .emoji-picker-search-input {
@@ -44,6 +55,7 @@
 }
 
 .emoji-picker-emoji-container {
+  background-color: var(--white);
   width: 5rem;
   height: 5rem;
   cursor: pointer;
@@ -52,6 +64,7 @@
   justify-content: center;
   white-space: nowrap;
   overflow: hidden;
+  margin: 1px;
 
   &:hover {
     opacity: 0.5;
