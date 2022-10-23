@@ -118,7 +118,7 @@ const ComicsPreviewContainer: FC<{
           ))
         ) : (
           <Link className="nav-button reset-search-button" to=".">
-            <button>↻</button>
+            <button>🔝</button>
           </Link>
         )}
       </div>

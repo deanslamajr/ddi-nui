@@ -138,10 +138,6 @@ const EmojiPicker: FC<{
         </div>
       </div>
 
-      <div className="nav-button accented bottom-left">
-        <button onClick={() => onCancel()}>🔙</button>
-      </div>
-
       <div className="nav-button bottom-right">
         <button onClick={() => shuffleEmojis()}>🔀</button>
       </div>
