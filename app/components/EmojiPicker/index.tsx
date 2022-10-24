@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import baseEmojiData from "@emoji-mart/data";
 // @ts-ignore
@@ -70,44 +70,40 @@ function _shuffleEmojis() {
 const initialEmojiSet = _shuffleEmojis();
 
 const EmojiPicker: FC<{
-  onCancel: () => void;
+  initialValue: string;
   onSelect: (emoji: string) => void;
-}> = ({ onCancel, onSelect }) => {
+}> = ({ initialValue, onSelect }) => {
   const shuffledEmojiSet = useRef(initialEmojiSet);
 
-  const [state, setState] = useState<{
-    emojis: string[];
-    inputValue: string;
-  }>({
-    emojis: initialEmojiSet,
-    inputValue: "",
-  });
+  const [emojis, setEmojis] = useState(initialEmojiSet);
+  const [searchValue, setSearchValue] = useState(initialValue);
+
+  useEffect(() => {
+    const filterEmojis = async () => {
+      const emojis: string[] = searchValue
+        ? await filterEmojisBySearch(searchValue)
+        : Array.isArray(shuffledEmojiSet.current)
+        ? Array.from(shuffledEmojiSet.current)
+        : [];
+
+      if (!emojis.find((emoji) => searchValue === emoji)) {
+        emojis.unshift(searchValue);
+      }
+      return emojis;
+    };
+
+    filterEmojis().then((emojis) => {
+      setEmojis(emojis);
+    });
+  }, [searchValue]);
 
   const shuffleEmojis = () => {
     shuffledEmojiSet.current = _shuffleEmojis();
-    setState((prevState) => ({
-      ...prevState,
-      emojis: shuffledEmojiSet.current,
-    }));
+    setEmojis(shuffledEmojiSet.current);
   };
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
-
-    const emojis: string[] = searchValue
-      ? await filterEmojisBySearch(searchValue)
-      : Array.isArray(shuffledEmojiSet.current)
-      ? Array.from(shuffledEmojiSet.current)
-      : [];
-
-    if (searchValue) {
-      emojis.unshift(searchValue);
-    }
-
-    setState({
-      inputValue: searchValue,
-      emojis,
-    });
+    setSearchValue(event.target.value);
   };
 
   return (
@@ -115,7 +111,7 @@ const EmojiPicker: FC<{
       <div className="emoji-picker-outer-container">
         <div className="emoji-picker-inner-container">
           <div className="emoji-picker-emojis-container">
-            {state.emojis.map((emoji) => (
+            {emojis.map((emoji) => (
               <span
                 className="emoji-picker-emoji-container"
                 key={emoji}
@@ -132,7 +128,7 @@ const EmojiPicker: FC<{
               name="search"
               onChange={handleChange}
               placeholder="emoji search"
-              value={state.inputValue}
+              value={searchValue}
             />
           </div>
         </div>

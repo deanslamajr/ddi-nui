@@ -21,3 +21,12 @@
     opacity: 0.5;
   }
 }
+
+.nav-button.search {
+  overflow-wrap: anywhere;
+  overflow: hidden;
+}
+
+.nav-button.search.text-search button {
+  font-size: 1rem;
+}
