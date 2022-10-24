@@ -55,9 +55,9 @@ const Modal: React.FC<Props> = ({
       <div className={classNames(className, "modal-container")}>
         {header ? (
           <div className="modal-header">{header}</div>
-        ) : (
+        ) : header !== null ? (
           <div className="modal-footer empty" />
-        )}
+        ) : null}
         {children}
         {footer ? (
           <div className="modal-footer">{footer}</div>

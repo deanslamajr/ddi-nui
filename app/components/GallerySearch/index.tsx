@@ -1,6 +1,7 @@
 import React, { createContext, FC, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
+import classNames from "classnames";
 
 import Modal, {
   CenteredContainer,
@@ -51,48 +52,48 @@ export const GallerySearchProvider: FC<{}> = ({ children }) => {
 
 export const GallerySearchNavButton: FC<{}> = ({}) => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const emojiFilters = searchParams.getAll(EMOJI_FILTER_QUERYSTRING);
+  const captionFilters = searchParams.getAll(CAPTION_FILTER_QUERYSTRING);
 
-  // console.log("emojiFilters", emojiFilters);
-  const isFilterActive = emojiFilters.length > 0;
+  const isFilterActive = emojiFilters.length > 0 || captionFilters.length > 0;
 
   const { showGallerySearchModal, setShowGallerySearchModal } =
     React.useContext(GallerySearchContext);
 
   return !showGallerySearchModal ? (
-    <>
-      {isFilterActive && (
-        <div className="nav-button top-right secondary">
-          <button
-            onClick={() =>
-              navigate(".", {
-                state: { scroll: false },
-              })
-            }
-          >
-            🔝
-          </button>
-        </div>
+    <div
+      className={classNames(
+        "nav-button",
+        "top-right",
+        "search",
+        {
+          accented: isFilterActive,
+        },
+        { "text-search": captionFilters.length > 0 }
       )}
-      <div className="nav-button top-right">
-        <button
-          onClick={() =>
-            setShowGallerySearchModal && setShowGallerySearchModal(true)
-          }
-        >
-          {isFilterActive ? emojiFilters[0] : "🕹️"}
-        </button>
-      </div>
-    </>
+    >
+      <button
+        onClick={() =>
+          setShowGallerySearchModal && setShowGallerySearchModal(true)
+        }
+      >
+        {emojiFilters.length > 0
+          ? emojiFilters[0]
+          : captionFilters.length > 0
+          ? captionFilters[0]
+          : "🕹️"}
+      </button>
+    </div>
   ) : null;
 };
 
 const GallerySearch: FC<{}> = ({}) => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const captionSearchValueFromUrl = searchParams.get(
     CAPTION_FILTER_QUERYSTRING
   );
+  const emojiFilterValueFromUrl = searchParams.get(EMOJI_FILTER_QUERYSTRING);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCaptionSearch, setShowCaptionSearch] = useState(false);
@@ -113,7 +114,6 @@ const GallerySearch: FC<{}> = ({}) => {
     e
   ) => {
     const value = e.target.value;
-    console.log(value);
     setCaptionSearchValue(value);
   };
 
@@ -124,18 +124,47 @@ const GallerySearch: FC<{}> = ({}) => {
     );
   };
 
+  const isFilterActive = Boolean(
+    emojiFilterValueFromUrl || captionSearchValueFromUrl
+  );
+
+  const closeModal = () => {
+    setShowEmojiPicker(false);
+    setShowCaptionSearch(false);
+    setShowGallerySearchModal && setShowGallerySearchModal(false);
+  };
+
   return (
     <>
       {showGallerySearchModal && (
         <Modal
           className="emoji-picker-modal"
           header={
-            !showEmojiPicker &&
-            !showCaptionSearch && <MessageContainer>Search</MessageContainer>
+            showEmojiPicker
+              ? null
+              : !showEmojiPicker &&
+                !showCaptionSearch && (
+                  <MessageContainer>Search</MessageContainer>
+                )
           }
           footer={
             !showEmojiPicker && !showCaptionSearch ? (
               <>
+                {isFilterActive && (
+                  <CenteredContainer>
+                    <MenuButton
+                      accented
+                      onClick={() => {
+                        navigate("./", { state: { scroll: false } });
+                        closeModal();
+                        setCaptionSearchValue("");
+                      }}
+                    >
+                      CLEAR:{" "}
+                      {emojiFilterValueFromUrl || captionSearchValueFromUrl}
+                    </MenuButton>
+                  </CenteredContainer>
+                )}
                 <CenteredContainer>
                   <MenuButton
                     onClick={() => {
@@ -154,21 +183,15 @@ const GallerySearch: FC<{}> = ({}) => {
             ) : !showCaptionSearch ? null : undefined // Show modal footer for caption search but not for emoji search
           }
           onCancelClick={() => {
-            setShowEmojiPicker(false);
-            setShowCaptionSearch(false);
-            setShowGallerySearchModal && setShowGallerySearchModal(false);
+            closeModal();
           }}
         >
           {showEmojiPicker && (
             <EmojiPicker
-              onCancel={() => {
-                setShowGallerySearchModal && setShowGallerySearchModal(false);
-                setShowEmojiPicker(false);
-              }}
+              initialValue={emojiFilterValueFromUrl || ""}
               onSelect={(emoji) => {
                 onSearchEmoji(emoji);
-                setShowGallerySearchModal && setShowGallerySearchModal(false);
-                setShowEmojiPicker(false);
+                closeModal();
               }}
             />
           )}
@@ -179,33 +202,21 @@ const GallerySearch: FC<{}> = ({}) => {
                 type="text"
                 id="captionSearch"
                 name={CAPTION_FILTER_QUERYSTRING}
-                value={captionSearchValue}
+                value={captionSearchValue || ""}
                 onChange={onCaptionSearchInput}
-                // defaultChecked
-                // hidden
+                defaultValue={captionSearchValueFromUrl || ""}
               />
               <CenteredContainer>
                 <MenuButton
                   accented
                   onClick={() => {
                     onCaptionSearchSubmit();
-                    setShowGallerySearchModal &&
-                      setShowGallerySearchModal(false);
-                    setShowCaptionSearch(false);
+                    closeModal();
                   }}
                 >
                   SEARCH CAPTIONS
                 </MenuButton>
               </CenteredContainer>
-              {/* <button
-                disabled={!captionSearchValue}
-                onClick={() => {
-                  onCaptionSearchSubmit();
-                  setShowGallerySearchModal && setShowGallerySearchModal(false);
-                  setShowCaptionSearch(false);
-                }}
-                value="SEARCH"
-              /> */}
             </div>
           )}
         </Modal>
