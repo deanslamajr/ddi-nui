@@ -1,4 +1,5 @@
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -29,7 +30,8 @@ export const get = async (
 
   try {
     const response: Response = await fetch(
-      DDI_API_ENDPOINTS.getComic(comicUrlId)
+      DDI_API_ENDPOINTS.getComic(comicUrlId),
+      getClientCookies()
     );
 
     if (!response.ok) {

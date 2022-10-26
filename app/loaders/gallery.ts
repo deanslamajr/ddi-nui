@@ -11,6 +11,7 @@ import {
 
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import sortComics from "~/utils/sortComics";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 type ComicsPagination = {
   cursor: string | null;
@@ -28,9 +29,11 @@ export type LoaderData = {
 const fetchNewerComics = async ({
   hasCursor,
   newerOffset,
+  request,
 }: {
   hasCursor: boolean;
   newerOffset: string;
+  request: Request;
 }): Promise<LoaderData> => {
   let getNewerComicsResponse: {
     comics: Comic[];
@@ -39,7 +42,8 @@ const fetchNewerComics = async ({
 
   try {
     const response: Response = await fetch(
-      DDI_API_ENDPOINTS.getPreviousComics(newerOffset)
+      DDI_API_ENDPOINTS.getPreviousComics(newerOffset),
+      getClientCookies(request)
     );
 
     if (!response.ok) {
@@ -80,11 +84,13 @@ const fetchOlderComics = async ({
   emojiFilter,
   hasCursor,
   offset,
+  request,
 }: {
   captionSearch?: string;
   emojiFilter?: string;
   hasCursor: boolean;
   offset?: string;
+  request: Request;
 }): Promise<LoaderData> => {
   let getComicsResponse: {
     comics: Comic[];
@@ -98,7 +104,8 @@ const fetchOlderComics = async ({
         captionSearch,
         emojiFilter,
         offset,
-      })
+      }),
+      getClientCookies(request)
     );
 
     if (!response.ok) {
@@ -149,6 +156,7 @@ const loader: LoaderFunction = async ({ request }) => {
     const newerComicsResponse = await fetchNewerComics({
       hasCursor,
       newerOffset,
+      request,
     });
 
     return json(newerComicsResponse);
@@ -159,6 +167,7 @@ const loader: LoaderFunction = async ({ request }) => {
     emojiFilter,
     hasCursor,
     offset: olderOffset,
+    request,
   });
 
   return json(olderComicsResponse);

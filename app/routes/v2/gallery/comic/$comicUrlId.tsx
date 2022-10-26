@@ -17,6 +17,7 @@ import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -53,11 +54,12 @@ type ComicFromGetComicApi = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const comicUrlId = params.comicUrlId;
 
   const comicDataResponse = await fetch(
-    DDI_API_ENDPOINTS.getComic(comicUrlId!)
+    DDI_API_ENDPOINTS.getComic(comicUrlId!),
+    getClientCookies(request)
   );
 
   if (!comicDataResponse.ok) {
@@ -114,8 +116,7 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
 };
 
 export default function ComicViewRoute() {
-  const comic = useLoaderData<ComicFromGetComicApi>();
-
+  const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
   const cells = getCellsFromState(comic);
 
   return (
@@ -141,6 +142,11 @@ export default function ComicViewRoute() {
           </div>
         ))}
       </div>
+      {comic.userCanEdit && (
+        <div className="nav-button bottom-right">
+          <button onClick={() => console.log("edit clicked")}>✍️</button>
+        </div>
+      )}
     </ThisPagesModal>
   );
 }
