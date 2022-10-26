@@ -13,6 +13,7 @@ import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -194,6 +195,7 @@ export default function ComicStudioRoute() {
       if (!isDraftId(comicUrlId)) {
         await fetch(DDI_API_ENDPOINTS.deleteComic(comicUrlId), {
           method: "DELETE",
+          ...getClientCookies(),
         });
 
         // TODO: remove this comic from the gallery cache (when there is a gallery cache in v2)

@@ -8,6 +8,7 @@ import {
   setLatestTimestamp,
 } from "~/utils/__clientCache/latestTimestamp";
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { LoaderData } from "~/loaders/gallery";
 
@@ -140,7 +141,8 @@ const Gallery: FC<{
           );
         } else {
           const response: Response = await fetch(
-            DDI_API_ENDPOINTS.getPreviousComics(`${latestTimestamp}`)
+            DDI_API_ENDPOINTS.getPreviousComics(`${latestTimestamp}`),
+            getClientCookies()
           );
           if (response.ok) {
             const getNewerComicsResponse = await response.json();

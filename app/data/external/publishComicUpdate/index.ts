@@ -1,5 +1,6 @@
 import { CellFromClientCache } from "~/utils/clientCache";
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { SignedCells } from "~/interfaces/signedCells";
 
@@ -36,6 +37,7 @@ const publishComicUpdate = async ({
       headers: {
         "Content-Type": "application/json",
       },
+      ...getClientCookies(),
     }
   );
 

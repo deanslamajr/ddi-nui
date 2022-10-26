@@ -1,4 +1,5 @@
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
+import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { SignedCells } from "~/interfaces/signedCells";
 
@@ -41,6 +42,7 @@ const signCells = async ({
       headers: {
         "Content-Type": "application/json",
       },
+      ...getClientCookies(),
     }
   );
 
