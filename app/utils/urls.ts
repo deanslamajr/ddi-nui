@@ -58,6 +58,11 @@ export const DDI_API_ENDPOINTS = {
 };
 
 export const DDI_APP_PAGES = {
+  cell: (comidUrlId: string, cellUrlId: string) => {
+    return `${getClientVariable(
+      "APP_PATH_PREFIX"
+    )}/gallery/comic/${comidUrlId}#${cellUrlId}`;
+  },
   comic: (comidUrlId: string) => {
     return `${getClientVariable(
       "APP_PATH_PREFIX"
