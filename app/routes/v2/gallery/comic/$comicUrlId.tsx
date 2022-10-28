@@ -4,7 +4,13 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useSearchParams, useLoaderData, useNavigate } from "@remix-run/react";
+import {
+  useParams,
+  useSearchParams,
+  useLoaderData,
+  useNavigate,
+  useLocation,
+} from "@remix-run/react";
 import classNames from "classnames";
 
 import Modal, {
@@ -116,35 +122,60 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
 };
 
 export default function ComicViewRoute() {
+  const params = useParams();
+  const comicUrlId = params.comicUrlId!;
+
+  const navigate = useNavigate();
+
   const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
   const cells = getCellsFromState(comic);
+
+  const { hash } = useLocation();
+  const isCellSelected = Boolean(hash);
+  console.log("hash", hash);
+  console.log("isCellSelected", isCellSelected);
 
   return (
     <ThisPagesModal>
       <div className="cells-container">
-        {cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
-          <div
-            className="cell-container"
-            key={imageUrl}
-            onClick={() => {
-              console.log("cell clicked");
-            }}
-          >
-            <Cell
-              imageUrl={imageUrl || ""}
-              isImageUrlAbsolute={Boolean(hasNewImage)}
-              schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-              caption={studioState?.caption || ""}
-              cellWidth={theme.cell.width}
-              clickable
-              removeBorders
-            />
-          </div>
-        ))}
+        {cells.map(
+          ({
+            hasNewImage,
+            imageUrl,
+            schemaVersion,
+            studioState,
+            urlId: cellUrlId,
+          }) => (
+            <div
+              id={cellUrlId}
+              className={classNames("cell-container", {
+                "not-selected": isCellSelected && "#" + cellUrlId !== hash,
+              })}
+              key={imageUrl}
+              onClick={() => {
+                navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId));
+              }}
+            >
+              <Cell
+                imageUrl={imageUrl || ""}
+                isImageUrlAbsolute={Boolean(hasNewImage)}
+                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                caption={studioState?.caption || ""}
+                cellWidth={theme.cell.width}
+                clickable
+                removeBorders
+              />
+            </div>
+          )
+        )}
       </div>
       {comic.userCanEdit && (
         <div className="nav-button bottom-right">
-          <button onClick={() => console.log("edit clicked")}>✍️</button>
+          <button
+            onClick={() => navigate(DDI_APP_PAGES.comicStudio(comicUrlId))}
+          >
+            ✍️
+          </button>
         </div>
       )}
     </ThisPagesModal>

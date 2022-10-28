@@ -24,3 +24,7 @@
   margin: 1px;
   width: 100%;
 }
+
+.cell-container.not-selected {
+  opacity: 0.5;
+}
