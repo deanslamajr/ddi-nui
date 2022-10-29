@@ -31,7 +31,7 @@ export const links: LinksFunction = () => {
 export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
 
-  console.log("gallery comics from loader:", data);
+  console.log("comics from gallery loader:", data);
 
   const [searchParams] = useSearchParams();
   const queryString = searchParams.toString()
