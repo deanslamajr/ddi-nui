@@ -1,0 +1,12 @@
+node_modules
+
+/.cache
+/build
+/public/v2/build
+/app/styles
+
+.env
+
+/test-results/
+/playwright-report/
+/playwright/.cache/
