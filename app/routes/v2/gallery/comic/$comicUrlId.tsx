@@ -19,13 +19,14 @@ import Modal, {
 } from "~/components/Modal";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 
-import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
+import { DDI_APP_PAGES, DDI_API_ENDPOINTS, isUrlAbsolute } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
-import { sortCellsV4 } from "~/utils/sortCells";
+import { sortCellsFromGetComic } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
-import { StudioState } from "~/interfaces/studioState";
+import { ComicFromGetComicApi } from "~/interfaces/comic";
+import { StudioStateFromGetComic } from "~/interfaces/studioState";
 
 import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId.css";
 
@@ -37,27 +38,9 @@ export const links: LinksFunction = () => {
   ];
 };
 
-const getCellsFromState = (comic: ComicFromGetComicApi) => {
+const getSortedCells = (comic: ComicFromGetComicApi) => {
   const comicsCells = comic?.cells;
-  return comicsCells ? sortCellsV4(comicsCells, comic.initialCellUrlId) : [];
-};
-
-type ComicFromGetComicApi = {
-  comicUpdatedAt: string;
-  isActive: boolean;
-  initialCellUrlId: string;
-  title: string;
-  urlId: string;
-  userCanEdit: boolean;
-  cells: Array<{
-    urlId: string;
-    imageUrl: string;
-    order: null;
-    schemaVersion: number;
-    studioState: StudioState;
-    caption: string;
-    previousCellUrlId: string | null;
-  }>;
+  return comicsCells ? sortCellsFromGetComic(comic) : [];
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -128,46 +111,38 @@ export default function ComicViewRoute() {
   const navigate = useNavigate();
 
   const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
-  const cells = getCellsFromState(comic);
+  console.log("comic from loader:", comic);
+
+  const cells = getSortedCells(comic);
 
   const { hash } = useLocation();
   const isCellSelected = Boolean(hash);
-  console.log("hash", hash);
-  console.log("isCellSelected", isCellSelected);
 
   return (
     <ThisPagesModal>
       <div className="cells-container">
-        {cells.map(
-          ({
-            hasNewImage,
-            imageUrl,
-            schemaVersion,
-            studioState,
-            urlId: cellUrlId,
-          }) => (
-            <div
-              id={cellUrlId}
-              className={classNames("cell-container", {
-                "not-selected": isCellSelected && "#" + cellUrlId !== hash,
-              })}
-              key={imageUrl}
-              onClick={() => {
-                navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId));
-              }}
-            >
-              <Cell
-                imageUrl={imageUrl || ""}
-                isImageUrlAbsolute={Boolean(hasNewImage)}
-                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-                caption={studioState?.caption || ""}
-                cellWidth={theme.cell.width}
-                clickable
-                removeBorders
-              />
-            </div>
-          )
-        )}
+        {cells.map(({ caption, imageUrl, schemaVersion, urlId: cellUrlId }) => (
+          <div
+            id={cellUrlId}
+            className={classNames("cell-container", {
+              "not-selected": isCellSelected && "#" + cellUrlId !== hash,
+            })}
+            key={imageUrl}
+            onClick={() => {
+              navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId));
+            }}
+          >
+            <Cell
+              imageUrl={imageUrl || ""}
+              isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
+              schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+              caption={caption || ""}
+              cellWidth={theme.cell.width}
+              clickable
+              removeBorders
+            />
+          </div>
+        ))}
       </div>
       {comic.userCanEdit && (
         <div className="nav-button bottom-right">

@@ -12,7 +12,7 @@ import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { LoaderData } from "~/loaders/gallery";
 
-import { Comic } from "~/interfaces/comic";
+import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
 import ComicsPreviewContainer, {
   links as galleryStylesUrls,
@@ -36,7 +36,7 @@ const Gallery: FC<{
   urlPathForGalleryData,
 }) => {
   const [state, setState] = useState<{
-    comics: Comic[];
+    comics: ComicFromGalleryQueries[];
     hasMoreNewer: boolean;
     hasMoreOlder: boolean;
     newerCursor: string | null;
@@ -59,7 +59,7 @@ const Gallery: FC<{
       const olderComics = data.older?.comics;
       const newerComics = data.newer?.comics;
 
-      let allComics: Comic[] | null = null;
+      let allComics: ComicFromGalleryQueries[] | null = null;
       let hasMoreOlderComics: boolean = prevState.hasMoreOlder;
       let hasMoreNewerComics: boolean = prevState.hasMoreNewer;
 

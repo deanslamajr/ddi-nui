@@ -1,6 +1,8 @@
-import { Comic } from "~/interfaces/comic";
+import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
-const sortComics = (comics: Comic[]): Comic[] => {
+const sortComics = (
+  comics: ComicFromGalleryQueries[]
+): ComicFromGalleryQueries[] => {
   const comicUrlIdsForFilteringDuplicates: string[] = [];
   return comics
     .slice() // to avoid mutating the array from the next line's in-place sort

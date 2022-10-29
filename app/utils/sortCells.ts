@@ -1,10 +1,16 @@
 import { CellFromClientCache } from "~/utils/clientCache";
+import { ComicFromGetComicApi, isOlderComic } from "~/interfaces/comic";
 
-export const sortCellsV4 = (
-  cells: CellFromClientCache[],
+export const sortCellsV4 = <
+  T extends {
+    previousCellUrlId?: string | null | undefined;
+    urlId: string;
+  }
+>(
+  cells: T[],
   initialCellUrlId?: string | null
-) => {
-  const sortedCells = [] as CellFromClientCache[];
+): T[] => {
+  const sortedCells = [] as T[];
 
   if (!initialCellUrlId) {
     return sortedCells;
@@ -33,4 +39,18 @@ export const sortByOrder = ({ order: orderA }: any, { order: orderB }: any) => {
     return 1;
   }
   return orderA - orderB;
+};
+
+export const sortCellsFromGetComic = (
+  comicFromGetComic: ComicFromGetComicApi
+): ComicFromGetComicApi["cells"] => {
+  if (isOlderComic(comicFromGetComic)) {
+    const cells = Array.from(comicFromGetComic.cells); // create new array ref for sort
+    return cells.sort(sortByOrder);
+  }
+
+  return sortCellsV4(
+    comicFromGetComic.cells,
+    comicFromGetComic.initialCellUrlId
+  );
 };

@@ -9,6 +9,12 @@ export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
   return cellUrl;
 };
 
+// From https://www.geeksforgeeks.org/javascript-check-whether-a-url-string-is-absolute-or-relative/
+export const isUrlAbsolute = (url: string): boolean => {
+  const RgExp = new RegExp("^(?:[a-z]+:)?//", "i");
+  return RgExp.test(url);
+};
+
 export const DDI_API_ENDPOINTS = {
   deleteComic: (comicUrlId: string) => {
     return `${getClientVariable(

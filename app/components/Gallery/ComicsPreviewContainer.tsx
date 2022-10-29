@@ -3,7 +3,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import classNames from "classnames";
 
-import { Comic } from "~/interfaces/comic";
+import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
 import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
 import NewComicsExistButton, {
@@ -24,7 +24,7 @@ export const links: LinksFunction = () => {
 };
 
 const ComicsPreviewContainer: FC<{
-  comics: Comic[];
+  comics: ComicFromGalleryQueries[];
   isNewComicsExistVisible: boolean;
   isShowMoreNewerVisible: boolean;
   isShowMoreOlderVisible: boolean;
