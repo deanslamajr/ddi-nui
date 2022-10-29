@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 
-import { Comic } from "~/interfaces/comic";
+import { ComicFromGalleryQueries } from "~/interfaces/comic";
 import {
   OLDER_OFFSET_QUERYSTRING,
   NEWER_OFFSET_QUERYSTRING,
@@ -15,7 +15,7 @@ import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 type ComicsPagination = {
   cursor: string | null;
-  comics?: Array<Comic>;
+  comics?: Array<ComicFromGalleryQueries>;
   hasMore: boolean;
 };
 
@@ -36,7 +36,7 @@ const fetchNewerComics = async ({
   request: Request;
 }): Promise<LoaderData> => {
   let getNewerComicsResponse: {
-    comics: Comic[];
+    comics: ComicFromGalleryQueries[];
     hasMoreNewer: boolean;
   } | null = null;
 
@@ -56,7 +56,8 @@ const fetchNewerComics = async ({
     console.error(error);
   }
 
-  const comics: Comic[] = getNewerComicsResponse?.comics || [];
+  const comics: ComicFromGalleryQueries[] =
+    getNewerComicsResponse?.comics || [];
   const hasComics = comics.length > 0;
   const sortedComics = sortComics(comics);
 
@@ -93,7 +94,7 @@ const fetchOlderComics = async ({
   request: Request;
 }): Promise<LoaderData> => {
   let getComicsResponse: {
-    comics: Comic[];
+    comics: ComicFromGalleryQueries[];
     cursor: string;
     hasMoreOlder: boolean;
   } | null = null;
@@ -119,7 +120,7 @@ const fetchOlderComics = async ({
   }
 
   let earliestComicUpdatedAt;
-  const comics: Comic[] = getComicsResponse?.comics || [];
+  const comics: ComicFromGalleryQueries[] = getComicsResponse?.comics || [];
   if (comics.length > 0) {
     const earliestComic = comics[0];
     earliestComicUpdatedAt = earliestComic.updatedAt;

@@ -1,7 +1,7 @@
 import type { LinksFunction } from "@remix-run/node";
 import { FC, useState } from "react";
 
-import { Comic } from "~/interfaces/comic";
+import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
 import CellsThumb, {
   links as cellsThumbStylesUrl,
@@ -23,7 +23,7 @@ export const links: LinksFunction = () => {
 
 type Props = {
   cellsCount: number;
-  initialCell: Comic["initialCell"];
+  initialCell: ComicFromGalleryQueries["initialCell"];
   generateComicLink: (comicUrlId: string) => string;
   urlId: string;
 };

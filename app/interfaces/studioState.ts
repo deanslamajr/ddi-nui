@@ -7,8 +7,6 @@ type EmojiConfigBase = {
   y: number;
   scaleX: number;
   scaleY: number;
-  skewX: number;
-  skewY: number;
   rotation: number;
   alpha: number;
   red: number;
@@ -16,18 +14,13 @@ type EmojiConfigBase = {
   blue: number;
 };
 
-// This version is for storing in DB/client cache
-export type EmojiConfigSerialized = EmojiConfigBase & {
-  emoji: string;
-  filters?: [typeof RGBA];
-  id: number;
-  opacity?: number;
-  order: number;
-  size: number;
+type LatestEmojiConfigBase = EmojiConfigBase & {
+  skewX: number;
+  skewY: number;
 };
 
 // This version is for rendering comics
-export type EmojiConfigJs = EmojiConfigBase & {
+export type EmojiConfigJs = LatestEmojiConfigBase & {
   "data-id": number | string;
   filters?: Array<typeof Filters.RGA>;
   fontSize: number;
@@ -36,10 +29,54 @@ export type EmojiConfigJs = EmojiConfigBase & {
   useCache: boolean;
 };
 
+// This version is for storing in DB/client cache
+export type EmojiConfigSerialized = LatestEmojiConfigBase & {
+  emoji: string;
+  filters?: [typeof RGBA];
+  id: number;
+  opacity?: number;
+  order: number;
+  size: number;
+};
+
 export type StudioState = {
   activeEmojiId: number;
   backgroundColor: string;
   caption: string;
   currentEmojiId: number;
   emojis: Record<string, EmojiConfigSerialized>;
+};
+
+// This version is returned from GET comic/:comicUrlId
+export type StudioStateFromGetComic = {
+  activeEmojiId: number;
+  backgroundColor: string;
+  caption: string;
+  currentEmojiId: number;
+  emojis: Record<
+    string,
+    {
+      emoji: string;
+      id: number;
+      opacity: number;
+      order: number;
+      size: number;
+    } & LatestEmojiConfigBase
+  >;
+};
+
+export type OlderStudioStateFromGetComic = {
+  activeEmojiId: number;
+  currentEmojiId: number;
+  emojis: Record<
+    string,
+    {
+      emoji: string;
+      id: number;
+      order: number;
+      size: number;
+      showEmojiPicker: boolean;
+      title: string;
+    } & EmojiConfigBase
+  >;
 };
