@@ -1,5 +1,9 @@
 import { CellFromClientCache } from "~/utils/clientCache";
-import { ComicFromGetComicApi, isOlderComic } from "~/interfaces/comic";
+import {
+  ComicFromGetComicApi,
+  isOlderComic,
+  isCellOrderOnCell,
+} from "~/interfaces/comic";
 
 export const sortCellsV4 = <
   T extends {
@@ -49,8 +53,12 @@ export const sortCellsFromGetComic = (
     return cells.sort(sortByOrder);
   }
 
-  return sortCellsV4(
-    comicFromGetComic.cells,
-    comicFromGetComic.initialCellUrlId
-  );
+  const cellsFromComic = comicFromGetComic.cells;
+
+  if (isCellOrderOnCell(cellsFromComic)) {
+    const cells = Array.from(cellsFromComic); // create new array ref for sort
+    return cells.sort(sortByOrder);
+  }
+
+  return sortCellsV4(cellsFromComic, comicFromGetComic.initialCellUrlId);
 };
