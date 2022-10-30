@@ -111,7 +111,6 @@ export default function ComicViewRoute() {
   const navigate = useNavigate();
 
   const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
-  console.log("comic from loader:", comic);
 
   const cells = getSortedCells(comic);
 

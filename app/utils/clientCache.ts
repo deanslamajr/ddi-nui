@@ -376,30 +376,20 @@ export const createNewCell = ({
 //   setCellStudioState(cellUrlId, newStudioState);
 // };
 
-// export const getComics = () => {
-//   const cache = getCache();
+export const getComics = (): Record<string, ComicFromClientCache> => {
+  return getCache().comics;
+};
 
-//   if (!cache || !cache.comics) {
-//     return null;
-//   }
+export const getDirtyComics = () => {
+  const comics = getComics();
 
-//   return cache.comics;
-// };
+  const dirtyComics = Object.values(comics).filter(({ urlId }) => {
+    const cells = getCellsByComicUrlId(urlId);
+    return Object.values(cells).some(({ isDirty }) => isDirty);
+  });
 
-// export const getDirtyComics = () => {
-//   const comics = getComics();
-
-//   if (!comics) {
-//     return [];
-//   }
-
-//   const dirtyComics = Object.values(comics).filter(({ urlId }) => {
-//     const cells = getCellsByComicUrlId(urlId);
-//     return Object.values(cells).some(({ isDirty }) => isDirty);
-//   });
-
-//   return dirtyComics;
-// };
+  return dirtyComics;
+};
 
 // // comicFromApi (v4) = {
 // //   cells: [
