@@ -1,18 +1,15 @@
 import type { LinksFunction } from "@remix-run/node";
-import { Form, useTransition } from "@remix-run/react";
+import { Form, Link, useTransition } from "@remix-run/react";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
+
+import { SEARCH_PARAMS } from "~/utils/constants";
 
 import stylesUrl from "~/styles/components/ShowMore.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
-
-export const OLDER_OFFSET_QUERYSTRING = "oo";
-export const NEWER_OFFSET_QUERYSTRING = "no";
-export const CAPTION_FILTER_QUERYSTRING = "caption";
-export const EMOJI_FILTER_QUERYSTRING = "emoji";
 
 export default function ShowMore({
   isNewer,
@@ -44,8 +41,17 @@ export default function ShowMore({
     setIsLoading(true);
   };
 
+  const getLink = (): string => {
+    const searchParamKey = isNewer
+      ? SEARCH_PARAMS.NEWER_OFFSET_QUERYSTRING
+      : SEARCH_PARAMS.OLDER_OFFSET_QUERYSTRING;
+    return `${urlPathForGalleryData}?${searchParamKey}=${offset}`;
+  };
+
   return typeof offset === "string" ? (
-    <div
+    <Link
+      prefetch="render"
+      replace={true}
       className={classnames(
         "nav-button",
         "show-more",
@@ -60,35 +66,11 @@ export default function ShowMore({
           absolute: !isNewer,
         }
       )}
+      onClick={onClick}
+      to={getLink()}
+      state={{ scroll: false }}
     >
-      <Form replace action={urlPathForGalleryData}>
-        {isNewer ? (
-          <input
-            type="checkbox"
-            id="showmore"
-            name={NEWER_OFFSET_QUERYSTRING}
-            value={offset}
-            defaultChecked
-            hidden
-          />
-        ) : (
-          <input
-            type="checkbox"
-            id="showmore"
-            name={OLDER_OFFSET_QUERYSTRING}
-            value={offset}
-            defaultChecked
-            hidden
-          />
-        )}
-        <button
-          disabled={!isVisible || isSomethingOnPageLoading}
-          type="submit"
-          onClick={onClick}
-        >
-          {isLoading ? "🤙" : isNewer ? "↑" : "↓"}
-        </button>
-      </Form>
-    </div>
+      {isLoading ? "🤙" : isNewer ? "↑" : "↓"}
+    </Link>
   ) : null;
 }

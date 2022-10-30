@@ -2,16 +2,11 @@ import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 
 import { ComicFromGalleryQueries } from "~/interfaces/comic";
-import {
-  OLDER_OFFSET_QUERYSTRING,
-  NEWER_OFFSET_QUERYSTRING,
-  CAPTION_FILTER_QUERYSTRING,
-  EMOJI_FILTER_QUERYSTRING,
-} from "~/components/ShowMore";
 
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import sortComics from "~/utils/sortComics";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
+import { SEARCH_PARAMS } from "~/utils/constants";
 
 type ComicsPagination = {
   cursor: string | null;
@@ -146,10 +141,18 @@ const fetchOlderComics = async ({
 const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
 
-  const olderOffset = url.searchParams.getAll(OLDER_OFFSET_QUERYSTRING)[0];
-  const newerOffset = url.searchParams.getAll(NEWER_OFFSET_QUERYSTRING)[0];
-  const captionSearch = url.searchParams.getAll(CAPTION_FILTER_QUERYSTRING)[0];
-  const emojiFilter = url.searchParams.getAll(EMOJI_FILTER_QUERYSTRING)[0];
+  const olderOffset = url.searchParams.getAll(
+    SEARCH_PARAMS.OLDER_OFFSET_QUERYSTRING
+  )[0];
+  const newerOffset = url.searchParams.getAll(
+    SEARCH_PARAMS.NEWER_OFFSET_QUERYSTRING
+  )[0];
+  const captionSearch = url.searchParams.getAll(
+    SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING
+  )[0];
+  const emojiFilter = url.searchParams.getAll(
+    SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
+  )[0];
 
   const hasCursor = Boolean(olderOffset || newerOffset);
 
