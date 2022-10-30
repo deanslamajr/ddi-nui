@@ -90,7 +90,8 @@ const Gallery: FC<{
         hasMoreNewerComics = data.newer.hasMore;
       }
 
-      const sortedComics = allComics !== null ? sortComics(allComics) : [];
+      const sortedComics =
+        allComics !== null ? sortComics(allComics) : [...prevState.comics];
 
       const latestNewerCursor = sortedComics.length
         ? sortedComics[0].updatedAt

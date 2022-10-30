@@ -12,10 +12,8 @@ import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import EmojiPicker, {
   links as emojiPickerStylesUrl,
 } from "~/components/EmojiPicker";
-import {
-  EMOJI_FILTER_QUERYSTRING,
-  CAPTION_FILTER_QUERYSTRING,
-} from "~/components/ShowMore";
+
+import { SEARCH_PARAMS } from "~/utils/constants";
 
 import stylesUrl from "~/styles/components/GallerySearch.css";
 
@@ -52,8 +50,12 @@ export const GallerySearchProvider: FC<{}> = ({ children }) => {
 
 export const GallerySearchNavButton: FC<{}> = ({}) => {
   const [searchParams] = useSearchParams();
-  const emojiFilters = searchParams.getAll(EMOJI_FILTER_QUERYSTRING);
-  const captionFilters = searchParams.getAll(CAPTION_FILTER_QUERYSTRING);
+  const emojiFilters = searchParams.getAll(
+    SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
+  );
+  const captionFilters = searchParams.getAll(
+    SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING
+  );
 
   const isFilterActive = emojiFilters.length > 0 || captionFilters.length > 0;
 
@@ -81,7 +83,7 @@ export const GallerySearchNavButton: FC<{}> = ({}) => {
           ? emojiFilters[0]
           : captionFilters.length > 0
           ? captionFilters[0]
-          : "🕹️"}
+          : "🔎"}
       </button>
     </div>
   ) : null;
@@ -91,9 +93,11 @@ const GallerySearch: FC<{}> = ({}) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const captionSearchValueFromUrl = searchParams.get(
-    CAPTION_FILTER_QUERYSTRING
+    SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING
   );
-  const emojiFilterValueFromUrl = searchParams.get(EMOJI_FILTER_QUERYSTRING);
+  const emojiFilterValueFromUrl = searchParams.get(
+    SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
+  );
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCaptionSearch, setShowCaptionSearch] = useState(false);
@@ -105,7 +109,7 @@ const GallerySearch: FC<{}> = ({}) => {
 
   const onSearchEmoji = (emoji: string) => {
     setSearchParams(
-      { [EMOJI_FILTER_QUERYSTRING]: emoji },
+      { [SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING]: emoji },
       { state: { scroll: false } }
     );
   };
@@ -119,7 +123,7 @@ const GallerySearch: FC<{}> = ({}) => {
 
   const onCaptionSearchSubmit = () => {
     setSearchParams(
-      { [CAPTION_FILTER_QUERYSTRING]: captionSearchValue },
+      { [SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING]: captionSearchValue },
       { state: { scroll: false } }
     );
   };
@@ -201,7 +205,7 @@ const GallerySearch: FC<{}> = ({}) => {
                 className="caption-search-input"
                 type="text"
                 id="captionSearch"
-                name={CAPTION_FILTER_QUERYSTRING}
+                name={SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING}
                 value={captionSearchValue || ""}
                 onChange={onCaptionSearchInput}
                 defaultValue={captionSearchValueFromUrl || ""}

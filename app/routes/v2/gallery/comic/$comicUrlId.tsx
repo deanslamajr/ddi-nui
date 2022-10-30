@@ -128,7 +128,9 @@ export default function ComicViewRoute() {
             })}
             key={imageUrl}
             onClick={() => {
-              navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId));
+              navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
+                state: { scroll: false },
+              });
             }}
           >
             <Cell

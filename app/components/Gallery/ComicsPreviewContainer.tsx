@@ -76,6 +76,9 @@ const ComicsPreviewContainer: FC<{
           comicPreviewToScrollTo.scrollIntoView();
           // add a little hint that comics were added above
           window.scrollBy(0, -50);
+
+          // prevent subsequent "show older" actions from scrolling to the top of page
+          setUrlIdToScrollTo(null);
         }, 100);
       }
     }
@@ -118,9 +121,10 @@ const ComicsPreviewContainer: FC<{
           ))
         ) : (
           <Link
-            className="nav-button reset-search-button"
             to="."
+            replace={true}
             state={{ scroll: false }}
+            className="nav-button reset-search-button"
           >
             <button>🔝</button>
           </Link>

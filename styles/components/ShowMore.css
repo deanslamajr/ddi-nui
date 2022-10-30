@@ -2,7 +2,7 @@
   position: relative;
 }
 
-.nav-button button {
+.nav-button.show-more {
   font-size: 3rem;
 }
 
