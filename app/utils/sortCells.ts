@@ -2,7 +2,10 @@ import { CellFromClientCache } from "~/utils/clientCache";
 import {
   ComicFromGetComicApi,
   isOlderComic,
-  isCellOrderOnCell,
+  isCellWithoutOrderFieldOnCell,
+  NewerCellWithOrderFieldFromGetComicApi,
+  Newer2CellWithOrderFieldFromGetComicApi,
+  AllCellsFromGetComicApi,
 } from "~/interfaces/comic";
 
 export const sortCellsV4 = <
@@ -47,7 +50,7 @@ export const sortByOrder = ({ order: orderA }: any, { order: orderB }: any) => {
 
 export const sortCellsFromGetComic = (
   comicFromGetComic: ComicFromGetComicApi
-): ComicFromGetComicApi["cells"] => {
+): AllCellsFromGetComicApi[] => {
   if (isOlderComic(comicFromGetComic)) {
     const cells = Array.from(comicFromGetComic.cells); // create new array ref for sort
     return cells.sort(sortByOrder);
@@ -55,10 +58,14 @@ export const sortCellsFromGetComic = (
 
   const cellsFromComic = comicFromGetComic.cells;
 
-  if (isCellOrderOnCell(cellsFromComic)) {
-    const cells = Array.from(cellsFromComic); // create new array ref for sort
-    return cells.sort(sortByOrder);
+  if (isCellWithoutOrderFieldOnCell(cellsFromComic)) {
+    return sortCellsV4(cellsFromComic, comicFromGetComic.initialCellUrlId);
   }
 
-  return sortCellsV4(cellsFromComic, comicFromGetComic.initialCellUrlId);
+  const cells = Array.from<
+    | NewerCellWithOrderFieldFromGetComicApi
+    | Newer2CellWithOrderFieldFromGetComicApi
+  >(cellsFromComic); // create new array ref for sort
+
+  return cells.sort(sortByOrder);
 };
