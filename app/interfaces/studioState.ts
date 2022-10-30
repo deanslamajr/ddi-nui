@@ -68,6 +68,8 @@ export type StudioStateFromGetComic = {
 export type OlderStudioStateFromGetComic = {
   activeEmojiId: number;
   currentEmojiId: number;
+  showEmojiPicker: boolean;
+  title: string;
   emojis: Record<
     string,
     {
@@ -75,8 +77,6 @@ export type OlderStudioStateFromGetComic = {
       id: number;
       order: number;
       size: number;
-      showEmojiPicker: boolean;
-      title: string;
     } & EmojiConfigBase
   >;
 };

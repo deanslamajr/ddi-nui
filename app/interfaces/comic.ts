@@ -30,7 +30,9 @@ type LatestComicFromGetComicApi = {
   title: string;
   urlId: string;
   userCanEdit: boolean;
-  cells: Array<CellFromGetComicApiV4>;
+  cells:
+    | Array<CellFromGetComicApiV4>
+    | Array<NewerCellWithOrderFieldFromGetComicApi>;
 };
 
 type CellFromGetComicApiV4 = {
@@ -41,6 +43,12 @@ type CellFromGetComicApiV4 = {
   studioState: StudioStateFromGetComic;
   caption: string;
   previousCellUrlId: string | null;
+};
+
+export const isCellOrderOnCell = (
+  cells: CellFromGetComicApiV4[] | NewerCellWithOrderFieldFromGetComicApi[]
+): cells is NewerCellWithOrderFieldFromGetComicApi[] => {
+  return Boolean(cells.length && cells[0].schemaVersion === null);
 };
 
 export const isOlderComic = (
@@ -58,20 +66,28 @@ export const isOlderComic = (
  */
 type OlderComicFromGetComicApi = {
   comicUpdatedAt: string;
-  cells: Array<OlderCellFromGetComicApi>;
+  cells: Array<OlderCellWithOrderFieldFromGetComicApi>;
   isActive: boolean;
   title: string;
   urlId: string;
   userCanEdit: boolean;
 };
 
-// https://app.drawdraw.ink/v2/gallery/comic/Bvdpd6CSPb?emoji=%F0%9F%9A%A6
-type OlderCellFromGetComicApi = {
-  urlId: string;
+type CellWithOrderFieldFromGetComicApiBase = {
+  caption: string;
   imageUrl: string; // https://ddi-cells-local.s3.amazonaws.com/LL5AVwK5r.png
-  order: number | null; // first cell has null, second and later cells have number starting at 2
   previousCellId: null;
   schemaVersion: null;
   studioState: OlderStudioStateFromGetComic;
-  caption: string;
+  urlId: string;
 };
+
+// https://app.drawdraw.ink/v2/gallery/comic/v5S_Wew1r
+type NewerCellWithOrderFieldFromGetComicApi = {
+  order: number;
+} & CellWithOrderFieldFromGetComicApiBase;
+
+// https://app.drawdraw.ink/v2/gallery/comic/Bvdpd6CSPb?emoji=%F0%9F%9A%A6
+type OlderCellWithOrderFieldFromGetComicApi = {
+  order: number | null; // first cell has null, second and later cells have number starting at 2
+} & CellWithOrderFieldFromGetComicApiBase;
