@@ -1,39 +1,17 @@
 import { useEffect, useState } from "react";
 
 import {
-  copyComicFromPublishedComic,
-  createComicFromPublishedComic,
   doesComicUrlIdExist,
   hydrateComicFromClientCache,
   HydratedComic,
 } from "~/utils/clientCache";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
-import { DDI_APP_PAGES } from "~/utils/urls";
 
-import { get as getComicFromNetwork } from "~/data/external/getComics";
-
-const hydrateComicFromNetwork = async (
-  comicUrlId: string
-): Promise<HydratedComic | null> => {
-  let comicFromNetwork = await getComicFromNetwork(comicUrlId);
-
-  if (!comicFromNetwork) {
-    console.error(`Comic not found. comicUrlId:${comicUrlId}`);
-    return null;
-  } else if (!comicFromNetwork.isActive) {
-    console.error(
-      `Comic cannot be edited as it is not active. comicUrlId:${comicUrlId}`
-    );
-    return null;
-  } else if (!comicFromNetwork.userCanEdit) {
-    return Promise.resolve(copyComicFromPublishedComic(comicFromNetwork));
-  } else {
-    return Promise.resolve(createComicFromPublishedComic(comicFromNetwork));
-  }
-};
+import { hydrateFromNetwork as hydrateComicFromNetwork } from "~/data/client/comic";
 
 const hydrateComic = async (
-  comicUrlId: string
+  comicUrlId: string,
+  shouldUpdateCache?: boolean
 ): Promise<HydratedComic | null> => {
   let hydratedComic: HydratedComic | null = null;
 
@@ -43,7 +21,10 @@ const hydrateComic = async (
     // hydrate the cells and comic from client cache and return formatted data
     hydratedComic = hydrateComicFromClientCache(comicUrlId);
   } else {
-    hydratedComic = await hydrateComicFromNetwork(comicUrlId);
+    hydratedComic = await hydrateComicFromNetwork(
+      comicUrlId,
+      shouldUpdateCache
+    );
   }
 
   if (!hydratedComic) {
@@ -65,9 +46,11 @@ const hydrateComic = async (
 const useHydrateComic = ({
   comicUrlId,
   onError,
+  shouldUpdateCache,
 }: {
   comicUrlId: string;
   onError: () => void;
+  shouldUpdateCache?: boolean;
 }): {
   comic: HydratedComic | null;
   isHydrating: boolean;
@@ -76,15 +59,12 @@ const useHydrateComic = ({
   const [comic, setComic] = useState<HydratedComic | null>(null);
 
   useEffect(() => {
-    if (!isHydrating) {
-      setIsHydrating(true);
-    }
+    setIsHydrating(true);
 
-    hydrateComic(comicUrlId)
+    hydrateComic(comicUrlId, shouldUpdateCache)
       .then((hydratedComic) => {
         if (!hydratedComic) {
-          // this.props.showSpinner()
-          return location.replace(DDI_APP_PAGES.cellStudio());
+          return null;
         }
         setComic(hydratedComic);
       })
@@ -96,7 +76,7 @@ const useHydrateComic = ({
       .finally(() => {
         setIsHydrating(false);
       });
-  }, [comicUrlId]);
+  }, [comicUrlId, setIsHydrating]);
 
   return { comic, isHydrating };
 };

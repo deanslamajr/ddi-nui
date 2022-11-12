@@ -5,7 +5,7 @@ import { generateCellImage as createCellImageFromKonva } from "~/utils/konva";
 
 import { S3_ASSET_FILETYPE } from "~/utils/constants";
 
-import { CellFromClientCache } from "~/utils/clientCache";
+import type { CellFromClientCache } from "~/utils/clientCache";
 
 import { EmojiConfigSerialized } from "~/interfaces/studioState";
 

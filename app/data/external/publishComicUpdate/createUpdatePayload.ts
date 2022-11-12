@@ -1,12 +1,11 @@
-import { CellFromClientCache } from "~/utils/clientCache";
+import type { CellFromClientCache, HydratedComic } from "~/utils/clientCache";
 import { isDraftId } from "~/utils/draftId";
 import { SCHEMA_VERSION } from "~/utils/constants";
 
-import {
-  ComicFromLegacyGetComicApi,
-  get as getPublishedComic,
-} from "~/data/external/getComics";
+import { get as getPublishedComic } from "~/data/external/getComics";
+import { hydrateFromNetwork } from "~/data/client/comic";
 
+import { ComicFromGetComicApi } from "~/interfaces/comic";
 import { SignedCells } from "~/interfaces/signedCells";
 import { StudioState } from "~/interfaces/studioState";
 
@@ -23,7 +22,7 @@ type CellForApiUpdate = {
 function transformCellFromClientStateForApiUpdate(
   cellFromState: CellFromClientCache,
   signedCells?: SignedCells,
-  publishedComic?: ComicFromLegacyGetComicApi
+  publishedComic?: HydratedComic
 ) {
   const transformedCell: CellForApiUpdate = {
     urlId: getUrlId(cellFromState, signedCells),
@@ -89,7 +88,7 @@ function transformCellFromClientStateForApiUpdate(
 
 function getStudioState(
   cellFromState: CellFromClientCache,
-  publishedComic?: ComicFromLegacyGetComicApi
+  publishedComic?: HydratedComic
 ) {
   const studioState = cellFromState.studioState;
 
@@ -118,7 +117,7 @@ function getStudioState(
 function getPreviousCellUrlId(
   cellFromState: CellFromClientCache,
   signedCells?: SignedCells,
-  publishedComic?: ComicFromLegacyGetComicApi
+  publishedComic?: HydratedComic
 ) {
   if (
     isDraftId(cellFromState.urlId) &&
@@ -166,7 +165,7 @@ function getPreviousCellUrlId(
 
 function getCaption(
   cellFromState: CellFromClientCache,
-  publishedComic?: ComicFromLegacyGetComicApi
+  publishedComic?: HydratedComic
 ) {
   const caption = cellFromState.studioState?.caption;
 
@@ -207,9 +206,14 @@ function getUrlId(
 
 function getPublishedCell(
   cellUrlId: string,
-  publishedCells: ComicFromLegacyGetComicApi["cells"]
+  publishedCells: HydratedComic["cells"]
 ) {
-  const publishedCell = publishedCells.find(({ urlId }) => cellUrlId === urlId);
+  // @ts-ignore not sure why find has trouble with this union type
+  const publishedCell = publishedCells.find(
+    (publishedCell: ComicFromGetComicApi["cells"][number]) =>
+      cellUrlId === publishedCell.urlId
+  );
+
   if (!publishedCell) {
     throw new Error(`Published cell does not exist for cellUrlId ${cellUrlId}`);
   }
@@ -274,7 +278,7 @@ const createUpdatePayload = async ({
       type: "NEW",
     };
   } else {
-    const publishedComic = await getPublishedComic(comicUrlIdToUpdate);
+    const publishedComic = await hydrateFromNetwork(comicUrlIdToUpdate);
 
     if (!publishedComic) {
       throw new Error(

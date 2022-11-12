@@ -26,7 +26,6 @@ import { theme } from "~/utils/stylesTheme";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import { ComicFromGetComicApi } from "~/interfaces/comic";
-import { StudioStateFromGetComic } from "~/interfaces/studioState";
 
 import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId.css";
 

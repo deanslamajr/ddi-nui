@@ -1,4 +1,3 @@
-import { CellFromClientCache } from "~/utils/clientCache";
 import {
   ComicFromGetComicApi,
   isOlderComic,

@@ -16,7 +16,7 @@ import { createNewCell } from "~/utils/clientCache";
 import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 
-import useComic from "~/hooks/useComic";
+import useComic from "~/hooks/useHydrateComic";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -38,8 +38,10 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
-  const { comic, isLoading: isLoadingComic } = useComic({
+  const { comic, isHydrating: isLoadingComic } = useComic({
     comicUrlId: copiedComicUrlId,
+    shouldUpdateCache: false,
+    onError: () => console.log("There was an error loading this comic!"),
   });
 
   const getCellsFromState = () => {
