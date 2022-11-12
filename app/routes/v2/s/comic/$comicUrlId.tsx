@@ -41,7 +41,7 @@ import ReachedDirtyCellLimitModal, {
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
-import { StudioState } from "~/interfaces/studioState";
+import type { StudioState } from "~/interfaces/studioState";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId.css";
 
@@ -136,7 +136,6 @@ export default function ComicStudioRoute() {
   };
 
   const getExitNavLink = () => {
-    // this.props.showSpinner()
     if (isDraftId(comicUrlId)) {
       // if (this.props.searchParams) {
       //   window.location = DDI_APP_PAGES.getGalleryPageUrl({
@@ -145,10 +144,7 @@ export default function ComicStudioRoute() {
       // } else {
       const withoutSuffix = removeSuffix(comicUrlId);
       return DDI_APP_PAGES.comic(withoutSuffix);
-      // Router.pushRoute(`/comic/${withoutSuffix}`);
-      // }
     } else {
-      // Router.pushRoute(`/comic/${this.props.comicUrlId}`)
       return DDI_APP_PAGES.comic(comicUrlId);
     }
   };
@@ -158,7 +154,6 @@ export default function ComicStudioRoute() {
       comicUrlId,
       initialStudioState: studioState,
     });
-
     location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
   };
 

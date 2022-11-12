@@ -57,8 +57,6 @@ const signCells = async ({
 
   const data = await response.json();
 
-  console.log("data", data);
-
   return {
     comicUrlId: data.comicUrlId,
     signedCells: data.cells,

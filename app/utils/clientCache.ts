@@ -1,19 +1,25 @@
 import store from "store2";
 import shortid from "shortid";
 
-import { theme } from "~/utils/stylesTheme";
-// import theme from "../helpers/theme";
-import { sortByOrder, sortCellsV4 } from "~/utils/sortCells";
+import {
+  sortByOrder,
+  sortCellsV4,
+  sortCellsFromGetComic,
+} from "~/utils/sortCells";
 import {
   DRAFT_SUFFIX,
   SCHEMA_VERSION,
   STORAGEKEY_STUDIO,
 } from "~/utils/constants";
-// import { DRAFT_SUFFIX, STORAGEKEY_STUDIO } from "../config/constants.json";
+
+import { validateStudioState } from "./validators";
 
 import { StudioState } from "~/interfaces/studioState";
 
-import { ComicFromLegacyGetComicApi } from "~/data/external/getComics";
+import {
+  AllCellsFromGetComicApi,
+  ComicFromGetComicApi,
+} from "~/interfaces/comic";
 
 const getCache = (): ClientCache => {
   const cacheFromStore: ClientCache | null = store(STORAGEKEY_STUDIO);
@@ -39,31 +45,7 @@ const generateDraftUrlId = () => {
 
 // CACHE SCHEMA
 //
-// const cache = {
-//   cells: {
-//     "someCellUrlId": {
-//       hasNewImage: true,
-//       urlId: 'someCellUrlId',
-//       imageUrl: null,
-//       comicUrlId: 'someComicUrlId',
-//       previousCellUrlId: null,
-//       studioState: {}
-//     },
-//     "anotherCellUrlId": {
-//       hasNewImage: true,
-//       urlId: 'anotherCellUrlId',
-//       imageUrl: null,
-//       comicUrlId: 'someComicUrlId',
-//       previousCellUrlId: 'someCellUrlId,
-//       studioState: {}
-//     }
-//   },
-//   comics: {
-//     "someComicUrlId": {
-//       initialCellUrlId: 'someCellUrlId'
-//     }
-//   }
-// }
+
 export type CellFromClientCache = {
   hasNewImage?: boolean;
   urlId: string;
@@ -81,14 +63,24 @@ export type ComicFromClientCache = {
   urlId: string;
 };
 
+export type HydratedComic = ComicFromClientCache & {
+  cells: Record<string, CellFromClientCache> | null;
+};
+
 export type ClientCache = {
   cells: Record<string, CellFromClientCache>;
   comics: Record<string, ComicFromClientCache>;
 };
 
-export type HydratedComic = {
-  initialCellUrlId: string | null;
-  cells: Record<string, CellFromClientCache> | null;
+const LATEST_TIMESTAMP_CACHE_KEY = "LATEST_TIMESTAMP";
+
+export const setLatestTimestamp = (latestTimestamp: number) => {
+  store.session(LATEST_TIMESTAMP_CACHE_KEY, latestTimestamp);
+};
+
+export const getLatestTimestamp = (): number => {
+  const latestTimestamp = store.session(LATEST_TIMESTAMP_CACHE_KEY);
+  return latestTimestamp;
 };
 
 const getInitializedCache = (): ClientCache => {
@@ -116,7 +108,21 @@ const getInitializedCell = ({
   previousCellUrlId,
   studioState,
   urlId,
-}: Partial<CellFromClientCache>): CellFromClientCache => {
+}: {
+  comicUrlId?:
+    | CellFromClientCache["comicUrlId"]
+    | ComicFromGetComicApi["urlId"];
+  hasNewImage?: boolean;
+  imageUrl?:
+    | CellFromClientCache["imageUrl"]
+    | AllCellsFromGetComicApi["imageUrl"];
+  isDirty?: boolean;
+  previousCellUrlId?: CellFromClientCache["previousCellUrlId"];
+  studioState?:
+    | CellFromClientCache["studioState"]
+    | AllCellsFromGetComicApi["studioState"];
+  urlId?: CellFromClientCache["urlId"] | null;
+}): CellFromClientCache => {
   return {
     comicUrlId: comicUrlId || null,
     hasNewImage: hasNewImage || false,
@@ -124,18 +130,8 @@ const getInitializedCell = ({
     isDirty: isDirty || false,
     previousCellUrlId,
     schemaVersion: SCHEMA_VERSION,
-    studioState: studioState || getInitializedStudioState(),
+    studioState: validateStudioState(studioState),
     urlId: urlId || generateDraftUrlId(),
-  };
-};
-
-export const getInitializedStudioState = (): StudioState => {
-  return {
-    activeEmojiId: 1,
-    backgroundColor: theme.colors.white,
-    caption: "",
-    currentEmojiId: 1,
-    emojis: {},
   };
 };
 
@@ -313,13 +309,8 @@ export const createNewCell = ({
 
   // conditionally: create new comic
   if (!comicUrlId || !doesComicUrlIdExist(comicUrlId, localCache)) {
-    // comicUrlId = generateComicUrlId();
-    // if (!localCache.comics) {
-    //   localCache.comics = {};
-    // }
     comic = createNewComic();
     localCache.comics[comic.urlId] = comic;
-    // localCache.comics[comicUrlId].urlId = comicUrlId;
   } else {
     updateComicLastModified(comicUrlId, localCache);
     comic = getComic(comicUrlId, localCache)!;
@@ -391,155 +382,110 @@ export const getDirtyComics = () => {
   return dirtyComics;
 };
 
-// // comicFromApi (v4) = {
-// //   cells: [
-// //     {
-// //       urlId: "Q4stQsMvHu",
-// //       imageUrl: "Z7OV_dklyB.png",
-// //       caption: "",
-// //       order: null,
-// //       previousCellUrlId: null
-// //       schemaVersion: 4,
-// //       studioState: {}
-// //     }
-// //   ],
-// //   initialCellUrlId: "Q4stQsMvHu",
-// //   isActive: true,
-// //   title: "",
-// //   urlId: "knwg8fySZ",
-// //   userCanEdit: true
-// // }
 export const copyComicFromPublishedComic = (
-  publishedComic: ComicFromLegacyGetComicApi
-): HydratedComic => createComicFromPublishedComic(publishedComic, true);
+  publishedComic: ComicFromGetComicApi,
+  shouldUpdateCache?: boolean
+): HydratedComic =>
+  createComicFromPublishedComic({
+    comicFromGetApi: publishedComic,
+    shouldDuplicateComic: true,
+    shouldUpdateCache,
+  });
 
-export const createComicFromPublishedComic = (
-  { cells: cellsToCopy, initialCellUrlId, urlId }: ComicFromLegacyGetComicApi,
-  shouldDuplicateComic?: boolean
-): HydratedComic => {
-  const cache = getCache();
+export const createComicFromPublishedComic = ({
+  comicFromGetApi,
+  shouldDuplicateComic,
+  shouldUpdateCache,
+}: {
+  comicFromGetApi: ComicFromGetComicApi;
+  shouldDuplicateComic?: boolean;
+  shouldUpdateCache?: boolean;
+}): HydratedComic => {
+  const cache = shouldUpdateCache && getCache();
 
-  const comicUrlId = shouldDuplicateComic ? generateDraftUrlId() : urlId;
+  const comicUrlId = shouldDuplicateComic
+    ? generateDraftUrlId()
+    : comicFromGetApi.urlId;
 
-  if (cellsToCopy[0].schemaVersion && cellsToCopy[0].schemaVersion >= 4) {
-    let comic;
+  const sortedCellsToCopy = sortCellsFromGetComic(comicFromGetApi);
 
-    if (shouldDuplicateComic) {
-      const sortedCellsToCopy = sortCellsV4(cellsToCopy, initialCellUrlId);
+  let comic;
+  const cells: Record<string, CellFromClientCache> = {};
 
-      let newComicInitialUrlId;
-      for (
-        let currentCellIndex = 0;
-        currentCellIndex < sortedCellsToCopy.length;
-        currentCellIndex++
-      ) {
-        const currentCell = sortedCellsToCopy[currentCellIndex];
+  if (shouldDuplicateComic) {
+    let newComicInitialCellUrlId;
+    for (
+      let currentCellIndex = 0;
+      currentCellIndex < sortedCellsToCopy.length;
+      currentCellIndex++
+    ) {
+      const currentCell = sortedCellsToCopy[currentCellIndex];
 
-        const newCellUrlId = generateDraftUrlId();
-        if (currentCellIndex === 0) {
-          newComicInitialUrlId = newCellUrlId;
-        }
-
-        cache.cells[newCellUrlId] = getInitializedCell({
-          comicUrlId: comicUrlId,
-          urlId: newCellUrlId,
-          studioState: currentCell.studioState,
-          previousCellUrlId:
-            currentCellIndex > 0
-              ? sortedCellsToCopy[currentCellIndex - 1].urlId
-              : null,
-          imageUrl: currentCell.imageUrl,
-        });
+      const newCellUrlId = generateDraftUrlId();
+      if (currentCellIndex === 0) {
+        newComicInitialCellUrlId = newCellUrlId;
       }
 
-      comic = createNewComic({
-        initialCellUrlId: newComicInitialUrlId,
-        urlId: comicUrlId,
-      });
-    } else {
-      cellsToCopy.forEach((cell) => {
-        cache.cells[cell.urlId] = getInitializedCell({
-          comicUrlId,
-          urlId: cell.urlId,
-          studioState: cell.studioState,
-          previousCellUrlId: cell.previousCellUrlId,
-          imageUrl: cell.imageUrl,
-        });
+      const cell = getInitializedCell({
+        comicUrlId,
+        urlId: newCellUrlId,
+        studioState: currentCell.studioState,
+        previousCellUrlId:
+          currentCellIndex > 0
+            ? sortedCellsToCopy[currentCellIndex - 1].urlId
+            : null,
+        imageUrl: currentCell.imageUrl,
       });
 
-      comic = createNewComic({ initialCellUrlId, urlId: comicUrlId });
+      if (cache) {
+        cache.cells[newCellUrlId] = cell;
+      }
+
+      cells[newCellUrlId] = cell;
     }
 
-    cache.comics[comicUrlId] = comic;
+    comic = createNewComic({
+      initialCellUrlId: newComicInitialCellUrlId,
+      urlId: comicUrlId,
+    });
   } else {
-    const sortedCells = cellsToCopy.sort(sortByOrder) as any as CellPreV4[];
+    const initialCellUrlId = sortedCellsToCopy[0].urlId;
+    let previousCellUrlId: CellFromClientCache["previousCellUrlId"] = null;
 
-    type CellPreV4 = {
-      caption: string;
-      imageUrl: string;
-      order: number;
-      previousCellId: null | string;
-      schemaVersion: 1 | 2 | 3;
-      studioState: {
-        activeEmojiId: number;
-        backgroundColor: string;
-        currentEmojiId: number;
-        showEmojiPicker: boolean;
-        title: string;
-        emojis: {};
-      };
-      urlId: string;
-    };
-
-    let comic;
-    if (shouldDuplicateComic) {
-      throw new Error("need to implement prev4 version of this!");
-    } else {
-      function transformStudioStateToV4(
-        studioStatePreV4: CellPreV4["studioState"]
-      ) {
-        return {
-          ...studioStatePreV4,
-          caption: studioStatePreV4.title,
-        };
-      }
-
-      // create cells
-      for (let cur = 0; cur < sortedCells.length; cur++) {
-        const currentCell = sortedCells[cur];
-        const previousCell = cur > 0 ? sortedCells[cur - 1] : null;
-
-        cache.cells[currentCell.urlId] = getInitializedCell({
-          comicUrlId,
-          urlId: currentCell.urlId,
-          studioState: transformStudioStateToV4(currentCell.studioState),
-          previousCellUrlId: previousCell ? previousCell.urlId : null,
-          imageUrl: currentCell.imageUrl,
-          // need to create a new image to get the imageUrl to correspond to
-          // the latest schemaVersion pattern
-          // e.g. schemaVersion < 3 is in a different s3 bucket and if an update bumps
-          // schemaVersion to the latest, components won't know to treat imageUrl as
-          // an absolute URL
-          hasNewImage: true,
-          isDirty: true, // set as dirty so that the next publish action will update the schema
-        });
-      }
-
-      comic = createNewComic({
-        initialCellUrlId: sortedCells[0].urlId,
-        urlId: comicUrlId,
+    sortedCellsToCopy.forEach((cell) => {
+      const initializedCell = getInitializedCell({
+        comicUrlId,
+        urlId: cell.urlId,
+        studioState: cell.studioState,
+        previousCellUrlId,
+        imageUrl: cell.imageUrl,
       });
-    }
 
-    cache.comics[comicUrlId] = comic;
+      if (cache) {
+        cache.cells[cell.urlId] = initializedCell;
+      }
+      cells[cell.urlId] = initializedCell;
+
+      previousCellUrlId = cell.urlId;
+    });
+
+    comic = createNewComic({ initialCellUrlId, urlId: comicUrlId });
   }
 
-  setCache(cache);
+  if (cache) {
+    cache.comics[comicUrlId] = comic;
+    setCache(cache);
+  }
 
-  return hydrateComicFromClientCache(comicUrlId);
+  return {
+    ...comic,
+    cells,
+  };
 };
 
-export const hydrateComicFromClientCache = (comicUrlId: string) => {
+export const hydrateComicFromClientCache = (
+  comicUrlId: string
+): HydratedComic => {
   const comic = getComic(comicUrlId) || ({} as ComicFromClientCache);
   const cells = getCellsByComicUrlId(comicUrlId);
 

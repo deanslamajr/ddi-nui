@@ -1,32 +1,12 @@
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
-import { StudioState } from "~/interfaces/studioState";
-
-type ComicCellLegacy = {
-  urlId: string;
-  imageUrl: string;
-  order: number | null;
-  schemaVersion: number | null;
-  studioState: StudioState | null;
-  caption: string | null;
-  previousCellUrlId: string | null;
-};
-
-export type ComicFromLegacyGetComicApi = {
-  cells: ComicCellLegacy[];
-  comicUpdatedAt: string;
-  isActive: boolean;
-  initialCellUrlId: string;
-  title: string;
-  urlId: string;
-  userCanEdit: true;
-};
+import { ComicFromGetComicApi } from "~/interfaces/comic";
 
 export const get = async (
   comicUrlId: string
-): Promise<ComicFromLegacyGetComicApi | null> => {
-  let comicFromApi: ComicFromLegacyGetComicApi;
+): Promise<ComicFromGetComicApi | null> => {
+  let comicFromApi: ComicFromGetComicApi;
 
   try {
     const response: Response = await fetch(

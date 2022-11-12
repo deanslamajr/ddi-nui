@@ -139,42 +139,47 @@ const fetchOlderComics = async ({
 };
 
 const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
+  try {
+    const url = new URL(request.url);
 
-  const olderOffset = url.searchParams.getAll(
-    SEARCH_PARAMS.OLDER_OFFSET_QUERYSTRING
-  )[0];
-  const newerOffset = url.searchParams.getAll(
-    SEARCH_PARAMS.NEWER_OFFSET_QUERYSTRING
-  )[0];
-  const captionSearch = url.searchParams.getAll(
-    SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING
-  )[0];
-  const emojiFilter = url.searchParams.getAll(
-    SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
-  )[0];
+    const olderOffset = url.searchParams.getAll(
+      SEARCH_PARAMS.OLDER_OFFSET_QUERYSTRING
+    )[0];
+    const newerOffset = url.searchParams.getAll(
+      SEARCH_PARAMS.NEWER_OFFSET_QUERYSTRING
+    )[0];
+    const captionSearch = url.searchParams.getAll(
+      SEARCH_PARAMS.CAPTION_FILTER_QUERYSTRING
+    )[0];
+    const emojiFilter = url.searchParams.getAll(
+      SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
+    )[0];
 
-  const hasCursor = Boolean(olderOffset || newerOffset);
+    const hasCursor = Boolean(olderOffset || newerOffset);
 
-  if (newerOffset) {
-    const newerComicsResponse = await fetchNewerComics({
+    if (newerOffset) {
+      const newerComicsResponse = await fetchNewerComics({
+        hasCursor,
+        newerOffset,
+        request,
+      });
+
+      return json(newerComicsResponse);
+    }
+
+    const olderComicsResponse = await fetchOlderComics({
+      captionSearch,
+      emojiFilter,
       hasCursor,
-      newerOffset,
+      offset: olderOffset,
       request,
     });
 
-    return json(newerComicsResponse);
+    return json(olderComicsResponse);
+  } catch (error) {
+    console.error(error);
+    throw new Response("Server Failure.", { status: 500 });
   }
-
-  const olderComicsResponse = await fetchOlderComics({
-    captionSearch,
-    emojiFilter,
-    hasCursor,
-    offset: olderOffset,
-    request,
-  });
-
-  return json(olderComicsResponse);
 };
 
 export default loader;

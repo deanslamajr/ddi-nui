@@ -29,6 +29,11 @@ export type EmojiConfigJs = LatestEmojiConfigBase & {
   useCache: boolean;
 };
 
+export type AllEmojiConfigs =
+  | EmojiConfigSerialized
+  | EmojiConfigFromGetComic
+  | EmojiConfigFromOlderGetComic;
+
 // This version is for storing in DB/client cache
 export type EmojiConfigSerialized = LatestEmojiConfigBase & {
   emoji: string;
@@ -39,44 +44,46 @@ export type EmojiConfigSerialized = LatestEmojiConfigBase & {
   size: number;
 };
 
-export type StudioState = {
+export type AllStudioStateVersions =
+  | StudioState
+  | StudioStateFromGetComic
+  | OlderStudioStateFromGetComic;
+
+type StudioStateBase = {
   activeEmojiId: number;
+  currentEmojiId: number;
+};
+
+export type StudioState = StudioStateBase & {
   backgroundColor: string;
   caption: string;
-  currentEmojiId: number;
   emojis: Record<string, EmojiConfigSerialized>;
 };
 
+type EmojiConfigFromGetComic = {
+  emoji: string;
+  id: number;
+  opacity: number;
+  order: number;
+  size: number;
+} & LatestEmojiConfigBase;
+
 // This version is returned from GET comic/:comicUrlId
-export type StudioStateFromGetComic = {
-  activeEmojiId: number;
+export type StudioStateFromGetComic = StudioStateBase & {
   backgroundColor: string;
   caption: string;
-  currentEmojiId: number;
-  emojis: Record<
-    string,
-    {
-      emoji: string;
-      id: number;
-      opacity: number;
-      order: number;
-      size: number;
-    } & LatestEmojiConfigBase
-  >;
+  emojis: Record<string, EmojiConfigFromGetComic>;
 };
 
-export type OlderStudioStateFromGetComic = {
-  activeEmojiId: number;
-  currentEmojiId: number;
+type EmojiConfigFromOlderGetComic = {
+  emoji: string;
+  id: number;
+  order: number;
+  size: number;
+} & EmojiConfigBase;
+
+export type OlderStudioStateFromGetComic = StudioStateBase & {
   showEmojiPicker: boolean;
   title: string;
-  emojis: Record<
-    string,
-    {
-      emoji: string;
-      id: number;
-      order: number;
-      size: number;
-    } & EmojiConfigBase
-  >;
+  emojis: Record<string, EmojiConfigFromOlderGetComic>;
 };

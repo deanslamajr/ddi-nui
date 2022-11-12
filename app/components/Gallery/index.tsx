@@ -3,10 +3,7 @@ import { usePageVisibility } from "react-page-visibility";
 import type { LinksFunction } from "@remix-run/node";
 
 import sortComics from "~/utils/sortComics";
-import {
-  getLatestTimestamp,
-  setLatestTimestamp,
-} from "~/utils/__clientCache/latestTimestamp";
+import { getLatestTimestamp, setLatestTimestamp } from "~/utils/clientCache";
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
