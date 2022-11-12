@@ -13,7 +13,6 @@ import CellWithLoadSpinner, {
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache";
-import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 
 import useComic from "~/hooks/useHydrateComic";
@@ -45,11 +44,7 @@ export default function CopyFromComicRoute() {
   });
 
   const getCellsFromState = () => {
-    const comicsCells = comic?.cells;
-
-    return comicsCells
-      ? sortCellsV4(Object.values(comicsCells), comic.initialCellUrlId)
-      : [];
+    return Object.values(comic?.cells || {}) || [];
   };
 
   const cells = getCellsFromState();

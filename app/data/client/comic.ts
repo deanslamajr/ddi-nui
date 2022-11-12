@@ -3,8 +3,10 @@ import {
   copyComicFromPublishedComic,
   createComicFromPublishedComic,
 } from "~/utils/clientCache";
+import { sortCellsFromGetComic } from "~/utils/sortCells";
 
 import { get as getComicFromNetwork } from "~/data/external/getComics";
+import { CellFromGetComicApiV4 } from "~/interfaces/comic";
 
 export const hydrateFromNetwork = async (
   comicUrlId: string,
@@ -20,7 +22,12 @@ export const hydrateFromNetwork = async (
       `Comic cannot be edited as it is not active. comicUrlId:${comicUrlId}`
     );
     return null;
-  } else if (!comicFromNetwork.userCanEdit) {
+  }
+
+  const sortedCells = sortCellsFromGetComic(comicFromNetwork);
+  comicFromNetwork.cells = sortedCells as CellFromGetComicApiV4[];
+
+  if (!comicFromNetwork.userCanEdit) {
     return Promise.resolve(
       copyComicFromPublishedComic(comicFromNetwork, shouldUpdateCache)
     );

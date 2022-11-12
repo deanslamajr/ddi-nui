@@ -6,6 +6,7 @@ import {
   HydratedComic,
 } from "~/utils/clientCache";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
+import { sortCellsV4 } from "~/utils/sortCells";
 
 import { hydrateFromNetwork as hydrateComicFromNetwork } from "~/data/client/comic";
 
@@ -20,6 +21,18 @@ const hydrateComic = async (
   if (doesComicUrlIdExist(comicUrlId)) {
     // hydrate the cells and comic from client cache and return formatted data
     hydratedComic = hydrateComicFromClientCache(comicUrlId);
+    const unsortedCells = Object.values(hydratedComic.cells || {});
+    const sortedCellsArray = sortCellsV4(
+      unsortedCells,
+      hydratedComic.initialCellUrlId
+    );
+    const sortedCells = sortedCellsArray.reduce((acc, cell) => {
+      return {
+        ...acc,
+        [cell.urlId]: cell,
+      };
+    }, {});
+    hydratedComic.cells = sortedCells;
   } else {
     hydratedComic = await hydrateComicFromNetwork(
       comicUrlId,
