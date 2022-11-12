@@ -75,7 +75,7 @@ export type AllCellsFromGetComicApi =
   | Newer2CellWithOrderFieldFromGetComicApi
   | OlderCellWithOrderFieldFromGetComicApi;
 
-type CellFromGetComicApiV4 = {
+export type CellFromGetComicApiV4 = {
   urlId: string;
   imageUrl: string; // 3Zb4al5Uoi.png
   order: null;

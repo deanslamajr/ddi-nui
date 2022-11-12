@@ -116,11 +116,7 @@ export default function ComicStudioRoute() {
   });
 
   const getCellsFromState = () => {
-    const comicsCells = comic?.cells;
-
-    return comicsCells
-      ? sortCellsV4(Object.values(comicsCells), comic.initialCellUrlId)
-      : [];
+    return Object.values(comic?.cells || {}) || [];
   };
 
   const canAddMoreCells = () => {
