@@ -208,10 +208,8 @@ function getPublishedCell(
   cellUrlId: string,
   publishedCells: HydratedComic["cells"]
 ) {
-  // @ts-ignore not sure why find has trouble with this union type
-  const publishedCell = publishedCells.find(
-    (publishedCell: ComicFromGetComicApi["cells"][number]) =>
-      cellUrlId === publishedCell.urlId
+  const publishedCell = Object.values(publishedCells || {}).find(
+    (publishedCell: CellFromClientCache) => cellUrlId === publishedCell.urlId
   );
 
   if (!publishedCell) {
@@ -286,7 +284,7 @@ const createUpdatePayload = async ({
       );
     }
 
-    const transformedCells = Object.values(cells)
+    const transformedCells = cells
       .filter(({ isDirty }) => isDirty)
       .map((cell) =>
         transformCellFromClientStateForApiUpdate(
