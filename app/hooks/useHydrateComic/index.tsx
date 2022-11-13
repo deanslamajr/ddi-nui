@@ -59,7 +59,7 @@ const hydrateComic = async (
 const useHydrateComic = ({
   comicUrlId,
   onError,
-  shouldUpdateCache,
+  shouldUpdateCache = true,
 }: {
   comicUrlId: string;
   onError: () => void;
