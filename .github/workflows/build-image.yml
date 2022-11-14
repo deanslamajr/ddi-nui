@@ -24,7 +24,7 @@ jobs:
         with:
           registry: gcr.io
           project_id: development-262721
-          image_name: ddi-nui
+          image_name: draw-draw-ink/ddi-nui
           image_tag: ${{ github.sha }}
           dockerfile: ./Dockerfile
           context: .
