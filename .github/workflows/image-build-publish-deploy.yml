@@ -10,7 +10,7 @@ jobs:
     name: Image Build, Push, and Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/docker-build-push-gcr-update-gke-deployment-action@v1.4
+      - uses: budtendr/docker-build-push-gcr-update-gke-deployment-action@v1.4
         with:
           service_account: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_B64_GITHUB_ACTION_DDI_PLAYWRIGHT}}
           zone: "us-central1-a"
