@@ -22,7 +22,7 @@ jobs:
       - name: Building and pushing the image
         uses: RafikFarhad/push-to-gcr-github-action@v5-beta
         with:
-          registry: gcr.io
+          registry: us-central1-docker.pkg.dev
           project_id: development-262721
           image_name: draw-draw-ink/ddi-nui
           image_tag: ${{ github.sha }}
