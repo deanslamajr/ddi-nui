@@ -1,0 +1,24 @@
+name: Image Build, Push, and Deploy
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  # From https://github.com/marketplace/actions/docker-build-push-gcr-update-gke-deployment-action
+  build-and-push-to-gcr-service-account:
+    name: Image Build, Push, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: budtendr/docker-build-push-gcr-update-gke-deployment-action@1.4
+        with:
+          service_account: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_B64_GITHUB_ACTION_DDI_PLAYWRIGHT}}
+          zone: "us-central1-a"
+          project_id: "development-262721"
+          registry: "us-central1-docker.pkg.dev"
+          image_name: "draw-draw-ink/ddi-nui"
+          cluster: "development-cluster"
+          namespace: "default"
+          deployment: "ddi-nui-qa-deployment"
+          container: "ddi-nui-qa-pod"
