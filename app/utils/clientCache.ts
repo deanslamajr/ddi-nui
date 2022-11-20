@@ -1,11 +1,7 @@
 import store from "store2";
 import shortid from "shortid";
 
-import {
-  sortByOrder,
-  sortCellsV4,
-  sortCellsFromGetComic,
-} from "~/utils/sortCells";
+import { sortCellsV4, sortCellsFromGetComic } from "~/utils/sortCells";
 import {
   DRAFT_SUFFIX,
   SCHEMA_VERSION,
@@ -371,7 +367,7 @@ export const getComics = (): Record<string, ComicFromClientCache> => {
   return getCache().comics;
 };
 
-export const getDirtyComics = () => {
+export const getDirtyComics = (): HydratedComic[] => {
   const comics = getComics();
 
   const dirtyComics = Object.values(comics).filter(({ urlId }) => {
@@ -379,7 +375,16 @@ export const getDirtyComics = () => {
     return Object.values(cells).some(({ isDirty }) => isDirty);
   });
 
-  return dirtyComics;
+  return dirtyComics.reduce((acc, dirtyComic) => {
+    const cells = getCellsByComicUrlId(dirtyComic.urlId);
+    return [
+      ...acc,
+      {
+        ...dirtyComic,
+        cells,
+      },
+    ];
+  }, [] as HydratedComic[]);
 };
 
 export const copyComicFromPublishedComic = (
