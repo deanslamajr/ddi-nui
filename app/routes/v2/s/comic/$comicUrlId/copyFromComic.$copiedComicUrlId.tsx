@@ -1,5 +1,6 @@
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
+import React from "react";
 
 import Modal, {
   links as modalStylesUrl,
@@ -31,6 +32,9 @@ export const links: LinksFunction = () => {
 };
 
 export default function CopyFromComicRoute() {
+  const [selectedCellUrlId, setSelectedCellUrlId] = React.useState<
+    string | null
+  >(null);
   const navigate = useNavigate();
 
   const params = useParams();
@@ -78,23 +82,32 @@ export default function CopyFromComicRoute() {
         {isLoadingComic ? (
           <CellWithLoadSpinner />
         ) : (
-          cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) => (
-            <div
-              className="cell-container"
-              key={imageUrl}
-              onClick={() => navigateToAddCellFromDuplicate(studioState)}
-            >
-              <Cell
-                imageUrl={imageUrl || ""}
-                isImageUrlAbsolute={Boolean(hasNewImage)}
-                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-                caption={studioState?.caption || ""}
-                cellWidth={theme.cell.width}
-                clickable
-                removeBorders
-              />
-            </div>
-          ))
+          cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) =>
+            selectedCellUrlId === imageUrl ? (
+              <CellWithLoadSpinner />
+            ) : (
+              <div
+                className="cell-container"
+                key={imageUrl}
+                onClick={() => {
+                  if (selectedCellUrlId === null) {
+                    setSelectedCellUrlId(imageUrl || "");
+                    navigateToAddCellFromDuplicate(studioState);
+                  }
+                }}
+              >
+                <Cell
+                  imageUrl={imageUrl || ""}
+                  isImageUrlAbsolute={Boolean(hasNewImage)}
+                  schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                  caption={studioState?.caption || ""}
+                  cellWidth={theme.cell.width}
+                  clickable
+                  removeBorders
+                />
+              </div>
+            )
+          )
         )}
       </div>
     </Modal>
