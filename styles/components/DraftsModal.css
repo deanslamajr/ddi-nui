@@ -1,0 +1,30 @@
+.cells-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+}
+
+.cell-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  margin: auto;
+  cursor: pointer;
+}
+
+.add-cell-button {
+  width: 100%;
+}
+
+@media (max-width: 599px) {
+  .drafts-modal {
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 899px) {
+  .drafts-modal {
+    width: 100%;
+  }
+}

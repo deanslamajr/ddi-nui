@@ -123,11 +123,10 @@ const Cell: FC<{
           <CellImage cellWidth={resolvedWidth} src={cellUrl} />
           {caption && caption.length && (
             <DynamicTextContainer
+              caption={caption}
               captionCssWidth={resolvedWidth}
               fontRatio={16}
-            >
-              {caption}
-            </DynamicTextContainer>
+            />
           )}
         </OldCellBorder>
       )}

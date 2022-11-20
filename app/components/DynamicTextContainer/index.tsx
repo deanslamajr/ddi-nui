@@ -32,10 +32,11 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
 const DynamicTextContainer: React.FC<{
+  caption: string;
   captionCssWidth?: string;
   fontRatio: number;
   isPreview?: boolean;
-}> = ({ captionCssWidth, children, fontRatio, isPreview }) => {
+}> = ({ captionCssWidth, caption, fontRatio, isPreview }) => {
   const [fontSize, setFontSize] = React.useState<null | number>(null);
   const container = React.useRef<HTMLDivElement>(null);
   const isMountedVal = React.useRef(1);
@@ -63,13 +64,24 @@ const DynamicTextContainer: React.FC<{
     width: `calc(${captionCssWidth || "100%"} - (2 * ${captionPadding}))`,
   };
 
+  const captionWithBreaks = caption
+    ? caption.split("\n").map((item) => {
+        return (
+          <span key={item}>
+            {item}
+            <br />
+          </span>
+        );
+      })
+    : [null];
+
   return (
     <div
       className={classnames("dynamic-text-container", { preview: isPreview })}
       style={fontSizeStyles}
       ref={container}
     >
-      {children}
+      {isPreview ? captionWithBreaks[0] : captionWithBreaks}
     </div>
   );
 };

@@ -9,7 +9,6 @@ import {
   deleteComic as removeComicAndCellsFromClientCache,
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
-import { sortCellsV4 } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";

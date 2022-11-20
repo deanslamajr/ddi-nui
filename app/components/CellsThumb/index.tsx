@@ -27,31 +27,18 @@ const ThumbSchema1: FC<{
   const isPreview = true;
   const showLoader = isServerContext();
 
-  const captionWithBreaks = caption
-    ? caption.split("\n").map((item, key) => {
-        return (
-          <span key={key}>
-            {item}
-            <br />
-          </span>
-        );
-      })
-    : [null];
-
   return (
     <>
       {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
       {caption && (
         <DynamicTextContainer
+          caption={caption}
           fontRatio={16}
           isPreview={isPreview}
           // This width is for gallery views, might break in other views
           // 2px accounts for the grid-gap of 2px in gallery views
           captionCssWidth="100% - 2px"
-        >
-          {/* {caption} */}
-          {isPreview ? captionWithBreaks[0] : captionWithBreaks}
-        </DynamicTextContainer>
+        />
       )}
       {showLoader ? (
         <img
