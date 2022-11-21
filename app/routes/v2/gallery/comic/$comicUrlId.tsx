@@ -1,3 +1,4 @@
+import React from "react";
 import type {
   ErrorBoundaryComponent,
   LinksFunction,
@@ -5,11 +6,11 @@ import type {
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
+  Outlet,
   useParams,
   useSearchParams,
   useLoaderData,
   useNavigate,
-  useLocation,
 } from "@remix-run/react";
 import classNames from "classnames";
 
@@ -103,47 +104,59 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
   );
 };
 
+type RefsMap = Record<string, React.RefObject<HTMLDivElement>>;
+
+export type ContextType = {
+  refsMap: RefsMap;
+};
+
 export default function ComicViewRoute() {
-  const params = useParams();
-  const comicUrlId = params.comicUrlId!;
-
-  const navigate = useNavigate();
-
   const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
-
   const cells = getSortedCells(comic);
 
-  const { hash } = useLocation();
-  const isCellSelected = Boolean(hash);
+  const params = useParams();
+  const comicUrlId = params.comicUrlId!;
+  const selectedCellUrlId = params.cellUrlId;
+
+  const navigate = useNavigate();
 
   return (
     <ThisPagesModal>
       <div className="cells-container">
-        {cells.map(({ caption, imageUrl, schemaVersion, urlId: cellUrlId }) => (
-          <div
-            id={cellUrlId}
-            className={classNames("cell-container", {
-              "not-selected": isCellSelected && "#" + cellUrlId !== hash,
-            })}
-            key={imageUrl}
-            onClick={() => {
-              navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
-                state: { scroll: false },
-              });
-            }}
-          >
-            <Cell
-              imageUrl={imageUrl || ""}
-              isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
-              schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-              caption={caption || ""}
-              cellWidth={theme.cell.width}
-              clickable
-              removeBorders
-            />
-          </div>
-        ))}
+        {cells
+          .filter(({ urlId: cellUrlId }) => {
+            if (selectedCellUrlId === undefined) {
+              return true;
+            }
+
+            return cellUrlId === selectedCellUrlId;
+          })
+          .map(({ caption, imageUrl, schemaVersion, urlId: cellUrlId }) => (
+            <div
+              id={cellUrlId}
+              className="cell-container"
+              key={imageUrl}
+              onClick={() => {
+                navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
+                  state: { scroll: false },
+                });
+                const cellElement = document.getElementById(cellUrlId);
+                cellElement?.scrollIntoView();
+              }}
+            >
+              <Cell
+                imageUrl={imageUrl || ""}
+                isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
+                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                caption={caption || ""}
+                cellWidth={theme.cell.width}
+                clickable
+                removeBorders
+              />
+            </div>
+          ))}
       </div>
+      <Outlet />
       {comic.userCanEdit && (
         <div className="nav-button bottom-right">
           <button
