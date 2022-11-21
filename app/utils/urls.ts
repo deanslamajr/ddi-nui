@@ -21,6 +21,11 @@ export const DDI_API_ENDPOINTS = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/comic/${comicUrlId}`;
   },
+  getCell: (cellUrlId: string) => {
+    return `${getClientVariable(
+      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+    )}/api/cell/${cellUrlId}`;
+  },
   getComic: (comicUrlId: string) => {
     return `${getClientVariable(
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
@@ -67,7 +72,7 @@ export const DDI_APP_PAGES = {
   cell: (comidUrlId: string, cellUrlId: string) => {
     return `${getClientVariable(
       "APP_PATH_PREFIX"
-    )}/gallery/comic/${comidUrlId}#${cellUrlId}`;
+    )}/gallery/comic/${comidUrlId}/cell/${cellUrlId}`;
   },
   comic: (comidUrlId: string) => {
     return `${getClientVariable(
