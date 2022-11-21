@@ -137,8 +137,7 @@ export default function ComicStudioRoute() {
       //     queryString: this.props.searchParams,
       //   })
       // } else {
-      const withoutSuffix = removeSuffix(comicUrlId);
-      return DDI_APP_PAGES.comic(withoutSuffix);
+      return DDI_APP_PAGES.gallery();
     } else {
       return DDI_APP_PAGES.comic(comicUrlId);
     }
