@@ -300,11 +300,11 @@ export default function ComicStudioRoute() {
       )}
 
       <UnstyledLink href={getExitNavLink()}>
-        <div className="nav-button bottom-left larger-font">🔙</div>
+        <div className="nav-button bottom-left large-icon">🔙</div>
       </UnstyledLink>
 
       {!isHydratingComic && (
-        <div className="nav-button bottom-right accented larger-font">
+        <div className="nav-button bottom-right accented large-icon">
           <button onClick={() => setShowComicActionsModal(true)}>⚙️</button>
         </div>
       )}

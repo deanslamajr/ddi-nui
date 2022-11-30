@@ -37,7 +37,7 @@ export default function CreateNavButton({}: Props) {
   return (
     <>
       <div
-        className="nav-button bottom-right accented larger-font"
+        className="nav-button bottom-right accented large-icon"
         onClick={onClick}
       >
         ✏️

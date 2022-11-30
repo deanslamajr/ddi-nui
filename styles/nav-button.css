@@ -1,0 +1,134 @@
+.nav-button {
+  border: 1px solid var(--lightGray);
+  background-color: var(--white);
+  color: var(--black);
+
+  cursor: pointer;
+  z-index: var(--top);
+  border-radius: 5rem;
+  width: var(--buttonDiameter);
+  height: var(--buttonDiameter);
+  font-size: 0.9rem;
+  text-align: center;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem;
+
+  opacity: 0.8;
+}
+
+@media (max-width: 599px) {
+  .nav-button {
+    margin: 3px;
+  }
+}
+
+.nav-button button {
+  all: unset;
+  width: var(--buttonDiameter);
+  height: var(--buttonDiameter);
+}
+
+.nav-button:hover {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.nav-button.accented {
+  background-color: var(--pink);
+  border: 1px solid var(--pink);
+  color: var(--white);
+}
+
+.nav-button.accented:hover {
+  background-color: var(--black);
+  border-color: var(--black);
+  color: var(--pink);
+}
+
+.nav-button.bottom-center {
+  position: fixed;
+  margin: 0.5rem auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.nav-button.top-center {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-button.top-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-button.top-right.secondary {
+  right: calc(var(--buttonDiameter) + (2 * 0.5rem));
+}
+
+@media (max-width: 599px) {
+  .nav-button.top-right.secondary {
+    right: calc(var(--buttonDiameter) + (2 * 4px));
+  }
+}
+
+.nav-button.bottom-right {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.nav-button.bottom-left {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.nav-button.large-icon {
+  font-size: 2.5rem;
+}
+
+@media (max-width: 599px) {
+  .nav-button.bottom-center {
+    margin: 3px auto;
+  }
+}
+
+.nav-button.absolute {
+  position: relative;
+}
+
+.nav-button.disabled {
+  opacity: 0;
+  cursor: inherit;
+}
+
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+
+.nav-button.loading {
+  animation: lds-hourglass 2s infinite;
+  background-color: var(--pink);
+}

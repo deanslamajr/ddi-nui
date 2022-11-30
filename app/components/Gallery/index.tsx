@@ -36,12 +36,14 @@ const Gallery: FC<{
     comics: ComicFromGalleryQueries[];
     hasMoreNewer: boolean;
     hasMoreOlder: boolean;
+    isInitializing: boolean;
     newerCursor: string | null;
     olderCursor: string | null;
   }>({
     comics: [],
     hasMoreNewer: true,
     hasMoreOlder: true,
+    isInitializing: true,
     newerCursor: null,
     olderCursor: null,
   });
@@ -101,6 +103,7 @@ const Gallery: FC<{
         comics: sortedComics,
         hasMoreNewer: hasMoreNewerComics,
         hasMoreOlder: hasMoreOlderComics,
+        isInitializing: false,
         newerCursor: latestNewerCursor,
         olderCursor: latestOlderCursor,
       };
@@ -157,6 +160,7 @@ const Gallery: FC<{
   return (
     <ComicsPreviewContainer
       comics={state.comics}
+      isInitializingData={state.isInitializing}
       isNewComicsExistVisible={showNewComicsExistButton}
       isShowMoreNewerVisible={data.hasCursor && state.hasMoreNewer}
       isShowMoreOlderVisible={state.hasMoreOlder}

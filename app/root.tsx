@@ -12,6 +12,7 @@ import { ErrorBoundaryComponent, LinksFunction, json } from "@remix-run/node";
 import { ThemeProvider } from "styled-components";
 
 import rootStylesPath from "~/styles/root.css";
+import navButtonStylesPath from "~/styles/nav-button.css";
 import cssThemePath from "~/styles/theme.css";
 
 import { theme } from "~/utils/stylesTheme";
@@ -64,8 +65,9 @@ export const links: LinksFunction = () => {
     : [];
 
   return [
-    { rel: "stylesheet", href: cssThemePath },
     { rel: "stylesheet", href: rootStylesPath },
+    { rel: "stylesheet", href: navButtonStylesPath },
+    { rel: "stylesheet", href: cssThemePath },
     ...favicons,
   ];
 };
