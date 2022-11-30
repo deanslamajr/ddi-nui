@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
-import ShowMore, { links as showMoreStylesUrls } from "~/components/ShowMore";
+import ShowMore from "~/components/ShowMore";
 import NewComicsExistButton, {
   links as newComicsExistStylesUrl,
 } from "~/components/NewComicsExistButton";
@@ -17,7 +17,6 @@ import stylesUrl from "~/styles/components/Gallery.css";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesUrl },
-    ...showMoreStylesUrls(),
     ...newComicsExistStylesUrl(),
     ...comicPreviewStylesUrl(),
   ];
@@ -25,6 +24,7 @@ export const links: LinksFunction = () => {
 
 const ComicsPreviewContainer: FC<{
   comics: ComicFromGalleryQueries[];
+  isInitializingData: boolean;
   isNewComicsExistVisible: boolean;
   isShowMoreNewerVisible: boolean;
   isShowMoreOlderVisible: boolean;
@@ -35,6 +35,7 @@ const ComicsPreviewContainer: FC<{
   urlPathForGalleryData?: string;
 }> = ({
   comics,
+  isInitializingData,
   isNewComicsExistVisible,
   isShowMoreNewerVisible,
   isShowMoreOlderVisible,
@@ -84,7 +85,11 @@ const ComicsPreviewContainer: FC<{
     }
   }, [setUrlIdToScrollTo, urlIdToScrollTo, comics.length]);
 
-  return (
+  return isInitializingData ? (
+    <div className="initializing-spinner-container">
+      <div className="nav-button loading large-icon">🤙</div>
+    </div>
+  ) : (
     <>
       {(!shouldCollapseHeader ||
         (shouldCollapseHeader &&

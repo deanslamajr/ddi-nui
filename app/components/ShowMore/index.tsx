@@ -1,15 +1,8 @@
-import type { LinksFunction } from "@remix-run/node";
-import { Form, Link, useTransition } from "@remix-run/react";
+import { Link, useTransition } from "@remix-run/react";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
 
 import { SEARCH_PARAMS } from "~/utils/constants";
-
-import stylesUrl from "~/styles/components/ShowMore.css";
-
-export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }];
-};
 
 export default function ShowMore({
   isNewer,
@@ -26,7 +19,6 @@ export default function ShowMore({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const transition = useTransition();
-  const isSomethingOnPageLoading = transition.state === "submitting";
 
   useEffect(() => {
     if (transition.state === "idle" && isLoading) {
@@ -54,7 +46,7 @@ export default function ShowMore({
       replace={true}
       className={classnames(
         "nav-button",
-        "show-more",
+        "large-icon",
         {
           disabled: !isVisible,
           loading: isLoading,

@@ -19,6 +19,16 @@
   height: 100%;
 }
 
+.initializing-spinner-container {
+  position: relative;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 899px) {
   .comics-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
