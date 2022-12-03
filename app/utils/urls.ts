@@ -87,13 +87,25 @@ export const DDI_APP_PAGES = {
   gallery: () => {
     return `${getClientVariable("APP_PATH_PREFIX")}/gallery`;
   },
-  cellStudio: (cellUrlId?: string) => {
+  cellStudio: (
+    {
+      comicUrlId = "new",
+      cellUrlId = "new",
+    }:
+      | {
+          comicUrlId?: string;
+          cellUrlId?: string;
+        }
+      | undefined = { comicUrlId: "new", cellUrlId: "new" }
+  ) => {
     return `${getClientVariable(
-      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
-    )}/s/cell/${cellUrlId || "new"}`;
+      "APP_PATH_PREFIX"
+    )}/s/comic/${comicUrlId}/cell/${cellUrlId}`;
   },
-  comicStudio: (comicUrlId: string) => {
-    return `${getClientVariable("APP_PATH_PREFIX")}/s/comic/${comicUrlId}`;
+  comicStudio: (comicUrlId?: string) => {
+    return `${getClientVariable("APP_PATH_PREFIX")}/s/comic/${
+      comicUrlId || "new"
+    }`;
   },
   comicStudioCopyFromComicCell: (
     editedComicUrlId: string,

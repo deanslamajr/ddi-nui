@@ -119,9 +119,10 @@ const DraftsModal: React.FC<{
       <div className="cells-container">
         {draftComics.map((draftComic) =>
           selectedComicUrlId === draftComic.urlId ? (
-            <CellWithLoadSpinner />
+            <CellWithLoadSpinner key={`${draftComic.urlId}-loader`} />
           ) : (
             <DraftComicPreview
+              key={draftComic.urlId}
               comic={draftComic}
               selectedComicUrlId={selectedComicUrlId}
               onClick={setSelectedComicUrlId}

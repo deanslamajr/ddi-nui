@@ -45,7 +45,15 @@ export default function ComicViewRoute() {
       initialStudioState: cellData.studioState,
     });
 
-    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    navigate(
+      DDI_APP_PAGES.cellStudio({
+        comicUrlId: newCell.comicUrlId,
+        cellUrlId: newCell.urlId,
+      }),
+      {
+        state: { scroll: false },
+      }
+    );
   };
 
   React.useEffect(() => {

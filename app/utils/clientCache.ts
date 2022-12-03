@@ -47,7 +47,7 @@ export type CellFromClientCache = {
   urlId: string;
   imageUrl?: string | null;
   isDirty?: boolean;
-  comicUrlId?: string | null;
+  comicUrlId: string;
   previousCellUrlId?: string | null;
   schemaVersion?: number | null;
   studioState?: StudioState | null;
@@ -105,9 +105,7 @@ const getInitializedCell = ({
   studioState,
   urlId,
 }: {
-  comicUrlId?:
-    | CellFromClientCache["comicUrlId"]
-    | ComicFromGetComicApi["urlId"];
+  comicUrlId: string;
   hasNewImage?: boolean;
   imageUrl?:
     | CellFromClientCache["imageUrl"]
@@ -120,7 +118,7 @@ const getInitializedCell = ({
   urlId?: CellFromClientCache["urlId"] | null;
 }): CellFromClientCache => {
   return {
-    comicUrlId: comicUrlId || null,
+    comicUrlId,
     hasNewImage: hasNewImage || false,
     imageUrl: imageUrl || null,
     isDirty: isDirty || false,

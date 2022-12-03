@@ -61,11 +61,16 @@ export default function CopyFromComicRoute() {
 
   const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
     const newCell = createNewCell({
-      comicUrlId: comicUrlId,
+      comicUrlId: comicUrlId !== "new" ? comicUrlId : undefined,
       initialStudioState: studioState,
     });
 
-    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
+    location.assign(
+      DDI_APP_PAGES.cellStudio({
+        comicUrlId: newCell.comicUrlId,
+        cellUrlId: newCell.urlId,
+      })
+    );
   };
 
   return (
