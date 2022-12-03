@@ -95,17 +95,18 @@ const UnpublishedChangesLabel = () => (
 export default function ComicStudioRoute() {
   const navigate = useNavigate();
   const params = useParams();
+  const comicUrlId = params.comicUrlId!;
+  const isUninitializedComic = comicUrlId === "new";
 
   const [activeCell, setActiveCell] = useState<CellFromClientCache | null>(
     null
   );
   const [showComicActionsModal, setShowComicActionsModal] = useState(false);
-  const [showAddCellModal, setShowAddCellModal] = useState(false);
+  const [showAddCellModal, setShowAddCellModal] =
+    useState(isUninitializedComic);
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
     useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-
-  const comicUrlId = params.comicUrlId!;
 
   const { comic, isHydrating: isHydratingComic } = useHydrateComic({
     comicUrlId,
@@ -131,12 +132,7 @@ export default function ComicStudioRoute() {
   };
 
   const getExitNavLink = () => {
-    if (isDraftId(comicUrlId)) {
-      // if (this.props.searchParams) {
-      //   window.location = DDI_APP_PAGES.getGalleryPageUrl({
-      //     queryString: this.props.searchParams,
-      //   })
-      // } else {
+    if (isDraftId(comicUrlId) || comicUrlId === "new") {
       return DDI_APP_PAGES.gallery();
     } else {
       return DDI_APP_PAGES.comic(comicUrlId);
@@ -145,10 +141,22 @@ export default function ComicStudioRoute() {
 
   const navigateToCellStudio = (studioState?: StudioState | null) => {
     const newCell = createNewCellInClientCache({
-      comicUrlId,
+      comicUrlId: isUninitializedComic ? undefined : comicUrlId,
       initialStudioState: studioState,
     });
-    location.assign(DDI_APP_PAGES.cellStudio(newCell.urlId));
+
+    navigate(
+      DDI_APP_PAGES.cellStudio({
+        comicUrlId: newCell.comicUrlId,
+        cellUrlId: newCell.urlId,
+      }),
+      {
+        state: { scroll: false },
+      }
+    );
+
+    setActiveCell(null);
+    setShowAddCellModal(false);
   };
 
   const navigateToAddCellFromDuplicate = () => {
@@ -235,24 +243,33 @@ export default function ComicStudioRoute() {
                 />
               </div>
             ))}
-            <MenuButton
-              accented={true}
-              className="add-cell-button"
-              onClick={() => onAddCellClick()}
-            >
-              +
-            </MenuButton>
+            {sortedCells.length > 0 && (
+              <MenuButton
+                accented={true}
+                className="add-cell-button"
+                onClick={() => onAddCellClick()}
+              >
+                +
+              </MenuButton>
+            )}
           </>
         )}
       </div>
 
       {showAddCellModal && (
         <AddCellModal
-          onCancelClick={() => setShowAddCellModal(false)}
+          onCancelClick={() =>
+            isUninitializedComic
+              ? navigate(getExitNavLink())
+              : setShowAddCellModal(false)
+          }
           onAddCellFromNewClick={() => navigateToCellStudio()}
           onAddCellFromDuplicate={navigateToAddCellFromDuplicate}
           onAddCellFromAnotherComic={navigateToComicStudioGallery}
           cells={sortedCells}
+          titleOverride={
+            sortedCells.length === 0 ? "Create a New Comic" : undefined
+          }
         />
       )}
 
@@ -275,6 +292,7 @@ export default function ComicStudioRoute() {
       {activeCell && (
         <CellActionsModal
           cell={activeCell}
+          comicUrlId={comicUrlId}
           onCancelClick={() => setActiveCell(null)}
           onDuplicateClick={() => navigateToCellStudio(activeCell.studioState)}
         />
@@ -303,7 +321,7 @@ export default function ComicStudioRoute() {
         <div className="nav-button bottom-left large-icon">🔙</div>
       </UnstyledLink>
 
-      {!isHydratingComic && (
+      {!isHydratingComic && sortedCells.length > 0 && (
         <div className="nav-button bottom-right accented large-icon">
           <button onClick={() => setShowComicActionsModal(true)}>⚙️</button>
         </div>

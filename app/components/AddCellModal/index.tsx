@@ -20,24 +20,25 @@ export const links: LinksFunction = () => {
   ];
 };
 
-type Props = {
+const AddCellModal: React.FC<{
   cells: CellFromClientCache[];
   onAddCellFromNewClick: () => void;
   onAddCellFromAnotherComic: () => void;
   onAddCellFromDuplicate: () => void;
   onCancelClick: () => void;
-};
-
-const AddCellModal: React.FC<Props> = ({
+  titleOverride?: string;
+}> = ({
+  cells,
   onAddCellFromNewClick,
   onAddCellFromAnotherComic,
   onAddCellFromDuplicate,
   onCancelClick,
+  titleOverride,
 }) => {
   return (
     <Modal
       className="add-cell-modal"
-      header={<Message>Add a New Cell</Message>}
+      header={<Message>{titleOverride || "Add a New Cell"}</Message>}
       footer={
         <>
           <div className="description">choose a starter template</div>
@@ -45,14 +46,17 @@ const AddCellModal: React.FC<Props> = ({
             <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
           </CenteredContainer>
 
-          <CenteredContainer>
-            <MenuButton onClick={onAddCellFromDuplicate}>
-              COPY THIS COMIC
-            </MenuButton>
-          </CenteredContainer>
+          {cells.length > 0 && (
+            <CenteredContainer>
+              <MenuButton onClick={onAddCellFromDuplicate}>
+                COPY FROM THIS COMIC
+              </MenuButton>
+            </CenteredContainer>
+          )}
+
           <CenteredContainer>
             <MenuButton onClick={onAddCellFromAnotherComic}>
-              COPY ANOTHER COMIC
+              COPY FROM ANOTHER COMIC
             </MenuButton>
           </CenteredContainer>
         </>

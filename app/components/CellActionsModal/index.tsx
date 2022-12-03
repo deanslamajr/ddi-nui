@@ -1,5 +1,6 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import Modal, {
@@ -27,21 +28,28 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export type Props = {
+const CellActionsModal: React.FC<{
   cell: CellFromClientCache;
+  comicUrlId: string;
   onCancelClick: () => void;
   onDuplicateClick: (studioStateToDuplicate?: StudioState | null) => void;
-};
+}> = ({ cell, comicUrlId, onCancelClick, onDuplicateClick }) => {
+  const navigate = useNavigate();
 
-const CellActionsModal: React.FC<Props> = ({
-  cell,
-  onCancelClick,
-  onDuplicateClick,
-}) => {
-  const { hasNewImage, imageUrl, schemaVersion, studioState, urlId } = cell;
+  const {
+    hasNewImage,
+    imageUrl,
+    schemaVersion,
+    studioState,
+    urlId: cellUrlId,
+  } = cell;
 
   const navigateToCellStudio = () => {
-    location.href = DDI_APP_PAGES.cellStudio(urlId);
+    // location.href = DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId });
+    navigate(DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId }), {
+      state: { scroll: false },
+    });
+    onCancelClick();
   };
 
   return (
