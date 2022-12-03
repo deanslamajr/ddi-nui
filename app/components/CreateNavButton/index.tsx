@@ -42,7 +42,7 @@ export default function CreateNavButton({}: Props) {
         className="nav-button bottom-right accented large-icon"
         onClick={onClick}
       >
-        ✏️
+        🎨
       </div>
       {showDraftsModal && (
         <DraftsModal

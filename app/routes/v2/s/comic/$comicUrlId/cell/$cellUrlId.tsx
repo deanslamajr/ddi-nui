@@ -27,7 +27,7 @@ export default function ComicStudioRoute() {
   return (
     <>
       <UnstyledLink href={getExitNavLink()}>
-        <div className="nav-button bottom-left large-icon">🔙</div>
+        <div className="nav-button bottom-left secondary large-icon">🎨</div>
       </UnstyledLink>
     </>
   );

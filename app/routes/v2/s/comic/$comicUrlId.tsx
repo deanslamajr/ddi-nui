@@ -318,7 +318,7 @@ export default function ComicStudioRoute() {
       )}
 
       <UnstyledLink href={getExitNavLink()}>
-        <div className="nav-button bottom-left large-icon">🔙</div>
+        <div className="nav-button bottom-left large-icon">🖼️</div>
       </UnstyledLink>
 
       {!isHydratingComic && sortedCells.length > 0 && (
