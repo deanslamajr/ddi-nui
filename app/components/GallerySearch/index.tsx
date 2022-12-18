@@ -1,4 +1,4 @@
-import React, { createContext, FC, useState } from "react";
+import React, { createContext, FC, PropsWithChildren, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 import classNames from "classnames";
@@ -36,7 +36,9 @@ const GallerySearchContext = createContext<{
   setShowGallerySearchModal: null,
 });
 
-export const GallerySearchProvider: FC<{}> = ({ children }) => {
+export const GallerySearchProvider: FC<PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const [showGallerySearchModal, setShowGallerySearchModal] = useState(false);
 
   return (

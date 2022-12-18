@@ -1,7 +1,7 @@
 import { EmojiConfigSerialized, EmojiConfigJs } from "~/interfaces/studioState";
 import { theme } from "~/utils/stylesTheme";
 
-import Konva, { Filters } from "konva";
+import Konva from "konva";
 
 import { sortByOrder } from "~/utils/sortCells";
 
@@ -14,8 +14,7 @@ import { sortByOrder } from "~/utils/sortCells";
 
 export const RGBA = "RGBA";
 const konvaFiltersEnabledInDdi = {
-  // @ts-ignore RGBA filter exists in code but seems to be a typo in the type :shrug:
-  [RGBA]: Konva.Filters.RGBA as typeof Filters.RGA,
+  [RGBA]: Konva.Filters.RGBA,
 };
 
 export const EMOJI_MASK_REF_ID = "EMOJI_MASK_REF_ID";
@@ -54,9 +53,9 @@ export const getEmojiConfigs = (
 ): EmojiConfigJs[] => {
   return emojis.sort(sortByOrder).map((emoji) => ({
     "data-id": emoji.id,
-    filters:
-      emoji.filters &&
-      emoji.filters.map((filter) => konvaFiltersEnabledInDdi[filter]),
+    filters: emoji.filters
+      ? emoji.filters.filter((filter) => Boolean(filter))
+      : [],
     x: emoji.x,
     y: emoji.y,
     scaleX: emoji.scaleX,

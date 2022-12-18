@@ -15,7 +15,9 @@ const CaptchaV3Context = React.createContext<State>({
   captchaV3Instance: null,
 });
 
-const CaptchaV3Provider: React.FC<{}> = ({ children }) => {
+const CaptchaV3Provider: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const [state, setState] = React.useState<State>({
     isCaptchaV3Enabled: Boolean(captchaV3SiteKey),
     captchaV3Instance: null,

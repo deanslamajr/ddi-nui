@@ -8,11 +8,13 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export const MenuButton: React.FC<{
-  accented?: boolean;
-  className?: string;
-  onClick?: () => void;
-}> = ({ children, className, accented, onClick }) => {
+export const MenuButton: React.FC<
+  React.PropsWithChildren<{
+    accented?: boolean;
+    className?: string;
+    onClick?: () => void;
+  }>
+> = ({ children, className, accented, onClick }) => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   return (

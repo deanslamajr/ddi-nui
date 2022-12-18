@@ -1,5 +1,5 @@
 import type { LinksFunction } from "@remix-run/node";
-import { MouseEventHandler, FC } from "react";
+import { MouseEventHandler, FC, PropsWithChildren } from "react";
 import { Link, LinkProps } from "@remix-run/react";
 
 import stylesUrl from "~/styles/components/UnstyledLink.css";
@@ -22,7 +22,7 @@ type Props =
       onclick?: MouseEventHandler<HTMLAnchorElement>;
     } & Omit<LinkProps, "to">);
 
-const UnstyledLink: FC<Props> = ({
+const UnstyledLink: FC<PropsWithChildren<Props>> = ({
   children,
   href,
   id,

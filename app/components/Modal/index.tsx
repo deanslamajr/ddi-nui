@@ -11,26 +11,24 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export const CenteredContainer: React.FC<{ className?: string }> = ({
-  children,
-  className,
-}) => (
+export const CenteredContainer: React.FC<
+  React.PropsWithChildren<{ className?: string }>
+> = ({ children, className }) => (
   <div className={classNames("centered-container", className)}>{children}</div>
 );
 
-export const MessageContainer: React.FC<{ className?: string }> = ({
-  children,
-  className,
-}) => (
+export const MessageContainer: React.FC<
+  React.PropsWithChildren<{ className?: string }>
+> = ({ children, className }) => (
   <div className={classNames("message-container", className)}>{children}</div>
 );
 
-export type Props = {
+export type Props = React.PropsWithChildren<{
   className?: string;
   footer?: React.ReactNode;
   header?: React.ReactNode;
   onCancelClick?: () => void;
-};
+}>;
 
 const Modal: React.FC<Props> = ({
   children,
