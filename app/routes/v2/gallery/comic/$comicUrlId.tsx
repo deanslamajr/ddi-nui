@@ -65,10 +65,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return json(comicData);
 };
 
-const ThisPagesModal: React.FC<{ isError?: boolean }> = ({
-  children,
-  isError,
-}) => {
+const ThisPagesModal: React.FC<
+  React.PropsWithChildren<{ isError?: boolean }>
+> = ({ children, isError }) => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();

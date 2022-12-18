@@ -1,4 +1,4 @@
-import { Filters } from "konva";
+import Konva from "konva";
 
 import { RGBA } from "~/utils/konva";
 
@@ -22,7 +22,7 @@ type LatestEmojiConfigBase = EmojiConfigBase & {
 // This version is for rendering comics
 export type EmojiConfigJs = LatestEmojiConfigBase & {
   "data-id": number | string;
-  filters?: Array<typeof Filters.RGA>;
+  filters?: Array<typeof Konva.Filters.RGBA>;
   fontSize: number;
   opacity: number;
   text: string;
@@ -37,7 +37,7 @@ export type AllEmojiConfigs =
 // This version is for storing in DB/client cache
 export type EmojiConfigSerialized = LatestEmojiConfigBase & {
   emoji: string;
-  filters?: [typeof RGBA];
+  filters?: Array<typeof Konva.Filters["RGBA"]>;
   id: number;
   opacity?: number;
   order: number;

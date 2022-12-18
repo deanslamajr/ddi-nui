@@ -349,12 +349,11 @@ export const createNewCell = ({
   return newCell;
 };
 
-// export const getStudioState = (cellUrlId) => {
-//   const cache = getCache();
-//   const cellCache = cache && cache.cells ? cache.cells[cellUrlId] : null;
-
-//   return cellCache ? cellCache.studioState : null;
-// };
+export const getStudioState = (comicUrlId: string, cellUrlId: string) => {
+  const cells = getCellsByComicUrlId(comicUrlId);
+  const cell = cells[cellUrlId];
+  return cell ? cell.studioState || null : null;
+};
 
 // export const clearStudioState = (cellUrlId, initialStudioState) => {
 //   const newStudioState = initialStudioState || getInitializedStudioState();

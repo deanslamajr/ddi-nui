@@ -8,4 +8,5 @@ module.exports = {
   // serverBuildPath: "build/index.js",
   publicPath: "/v2/build/",
   // devServerPort: 8002
+  serverDependenciesToBundle: [/^konva.*/, "react-konva"],
 };
