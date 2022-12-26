@@ -1,6 +1,11 @@
 import { useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { Outlet, useParams, useNavigate } from "@remix-run/react";
+import {
+  Outlet,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from "@remix-run/react";
 import styled from "styled-components";
 
 import {
@@ -10,7 +15,11 @@ import {
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
-import { MAX_DIRTY_CELLS, SCHEMA_VERSION } from "~/utils/constants";
+import {
+  MAX_DIRTY_CELLS,
+  SCHEMA_VERSION,
+  SEARCH_PARAMS,
+} from "~/utils/constants";
 import { isDraftId, removeSuffix } from "~/utils/draftId";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
@@ -95,6 +104,9 @@ const UnpublishedChangesLabel = () => (
 export default function ComicStudioRoute() {
   const navigate = useNavigate();
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const lastUpdateHash =
+    searchParams.get(SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE) || "";
   const comicUrlId = params.comicUrlId!;
   const isUninitializedComic = comicUrlId === "new";
 
@@ -113,7 +125,11 @@ export default function ComicStudioRoute() {
     onError: () => {
       navigate(DDI_APP_PAGES.gallery(), { replace: true });
     },
+    useEffectKey: lastUpdateHash,
   });
+
+  console.log("lastUpdateHash", lastUpdateHash);
+  console.log("isHydratingComic", isHydratingComic);
 
   const getCellsFromState = () => {
     return Object.values(comic?.cells || {}) || [];
@@ -149,6 +165,7 @@ export default function ComicStudioRoute() {
       DDI_APP_PAGES.cellStudio({
         comicUrlId: newCell.comicUrlId,
         cellUrlId: newCell.urlId,
+        lastUpdateHash,
       }),
       {
         state: { scroll: false },
@@ -293,6 +310,7 @@ export default function ComicStudioRoute() {
         <CellActionsModal
           cell={activeCell}
           comicUrlId={comicUrlId}
+          lastUpdateHash={lastUpdateHash}
           onCancelClick={() => setActiveCell(null)}
           onDuplicateClick={() => navigateToCellStudio(activeCell.studioState)}
         />

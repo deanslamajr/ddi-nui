@@ -1,0 +1,5 @@
+.cell-studio-modal {
+  min-width: inherit;
+  position: fixed;
+  top: 0;
+}

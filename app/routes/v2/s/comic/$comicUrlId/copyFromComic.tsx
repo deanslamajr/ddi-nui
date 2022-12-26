@@ -47,7 +47,7 @@ export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
 
   const returnToParent = () => {
-    navigate(`${DDI_APP_PAGES.comicStudio(comicUrlId)}${queryString}`, {
+    navigate(`${DDI_APP_PAGES.comicStudio({ comicUrlId })}${queryString}`, {
       state: { scroll: false },
     });
   };

@@ -1,9 +1,15 @@
 import React from "react";
 import cloneDeep from "fast-clone";
 import type { LinksFunction } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { HydratedComic, getDirtyComics } from "~/utils/clientCache";
+import {
+  createNewCell,
+  doesCellUrlIdExist,
+  setCellStudioState,
+} from "~/utils/clientCache";
+import { init, update } from "~/utils/studioStateMachine";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -18,9 +24,11 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }, ...emojiCanvasStylesUrl()];
 };
 
-const CellStudio: React.FC<{ initialStudioState: StudioState | null }> = ({
-  initialStudioState,
-}) => {
+const CellStudio: React.FC<{
+  cellUrlId: string;
+  initialStudioState: StudioState | null;
+}> = ({ cellUrlId, initialStudioState }) => {
+  const navigate = useNavigate();
   const [studioState, setStudioState] = React.useState<StudioState | null>(
     null
   );
@@ -28,7 +36,36 @@ const CellStudio: React.FC<{ initialStudioState: StudioState | null }> = ({
 
   React.useEffect(() => {
     setStudioState(initialStudioState);
+    init(initialStudioState);
   }, [initialStudioState, setStudioState]);
+
+  const createNewComicAndCell = (initialStudioState: StudioState) => {
+    // create new cell in cache
+    const newCellFromClientCache = createNewCell({
+      comicUrlId: undefined,
+      initialStudioState,
+    });
+
+    const cellStudioUrl = DDI_APP_PAGES.cellStudio({
+      cellUrlId: newCellFromClientCache.urlId,
+    });
+    navigate(cellStudioUrl, {
+      state: { scroll: false },
+    });
+  };
+
+  const saveStudioStateToCache = ({
+    setHasNewImage = true,
+    newStudioState = studioState!,
+  }: { setHasNewImage?: boolean; newStudioState?: StudioState } = {}) => {
+    if (!doesCellUrlIdExist(cellUrlId)) {
+      createNewComicAndCell(newStudioState);
+    } else {
+      setCellStudioState(cellUrlId, newStudioState, {
+        setHasNewImage,
+      });
+    }
+  };
 
   const handleDragEnd = ({
     xDiff,
@@ -44,21 +81,20 @@ const CellStudio: React.FC<{ initialStudioState: StudioState | null }> = ({
         return null;
       }
 
-      const activeEmojiId = prevStudioState.activeEmojiId;
-      const clonedStudioState = cloneDeep(prevStudioState);
-      const clonedEmojis = clonedStudioState.emojis;
-      const activeEmoji = clonedEmojis[activeEmojiId];
+      const newStudioState = update({
+        type: "MOVE_EMOJI",
+        emoijId: prevStudioState.activeEmojiId,
+        data: {
+          x: xDiff,
+          y: yDiff,
+        },
+      });
 
-      clonedEmojis[activeEmojiId].x = activeEmoji.x + xDiff;
-      clonedEmojis[activeEmojiId].y = activeEmoji.y + yDiff;
+      saveStudioStateToCache({ newStudioState });
 
-      return clonedStudioState;
+      return newStudioState;
     });
-
-    // saveStudioStateToCache();
   };
-
-  console.log("studioState", studioState);
 
   return studioState !== null ? (
     <EmojiCanvas

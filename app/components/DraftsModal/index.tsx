@@ -67,9 +67,12 @@ const DraftComicPreview: React.FC<{
       onClick={() => {
         if (selectedComicUrlId === null) {
           onClick(comic.urlId);
-          navigate(DDI_APP_PAGES.comicStudio(hydratedComic.urlId), {
-            state: { scroll: false },
-          });
+          navigate(
+            DDI_APP_PAGES.comicStudio({ comicUrlId: hydratedComic.urlId }),
+            {
+              state: { scroll: false },
+            }
+          );
         }
       }}
     >

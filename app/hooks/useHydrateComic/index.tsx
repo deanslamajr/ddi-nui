@@ -60,10 +60,12 @@ const useHydrateComic = ({
   comicUrlId,
   onError,
   shouldUpdateCache = true,
+  useEffectKey = "",
 }: {
   comicUrlId: string;
   onError: () => void;
   shouldUpdateCache?: boolean;
+  useEffectKey?: string;
 }): {
   comic: HydratedComic | null;
   isHydrating: boolean;
@@ -89,7 +91,7 @@ const useHydrateComic = ({
       .finally(() => {
         setIsHydrating(false);
       });
-  }, [comicUrlId, setIsHydrating]);
+  }, [comicUrlId, setIsHydrating, useEffectKey]);
 
   return { comic, isHydrating };
 };

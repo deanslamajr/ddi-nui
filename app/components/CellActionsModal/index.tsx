@@ -31,9 +31,16 @@ export const links: LinksFunction = () => {
 const CellActionsModal: React.FC<{
   cell: CellFromClientCache;
   comicUrlId: string;
+  lastUpdateHash?: string;
   onCancelClick: () => void;
   onDuplicateClick: (studioStateToDuplicate?: StudioState | null) => void;
-}> = ({ cell, comicUrlId, onCancelClick, onDuplicateClick }) => {
+}> = ({
+  cell,
+  comicUrlId,
+  lastUpdateHash,
+  onCancelClick,
+  onDuplicateClick,
+}) => {
   const navigate = useNavigate();
 
   const {
@@ -46,9 +53,12 @@ const CellActionsModal: React.FC<{
 
   const navigateToCellStudio = () => {
     // location.href = DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId });
-    navigate(DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId }), {
-      state: { scroll: false },
-    });
+    navigate(
+      DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId, lastUpdateHash }),
+      {
+        state: { scroll: false },
+      }
+    );
     onCancelClick();
   };
 
