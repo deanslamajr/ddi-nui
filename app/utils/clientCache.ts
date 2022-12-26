@@ -226,13 +226,10 @@ export const deleteCell = (cellUrlId: string, cache?: ClientCache) => {
   }
 };
 
-// export const doesCellUrlIdExist = (cellUrlId) => {
-//   const cache = getCache();
-//   if (!cache || !cache.cells) {
-//     return false;
-//   }
-//   return Object.keys(cache.cells).includes(cellUrlId);
-// };
+export const doesCellUrlIdExist = (cellUrlId: string) => {
+  const localCache = getCache();
+  return Object.keys(localCache.cells).includes(cellUrlId);
+};
 
 export const doesComicUrlIdExist = (
   comicUrlId: string,
@@ -270,26 +267,29 @@ const updateComicLastModified = (comicUrlId: string, cache?: ClientCache) => {
   comicToUpdate.lastModified = Date.now();
 };
 
-// export const setCellStudioState = (
-//   cellUrlId,
-//   newStudioState,
-//   { setHasNewImage = true } = {}
-// ) => {
-//   const cache = getCache();
+export const setCellStudioState = (
+  cellUrlId: string,
+  newStudioState: StudioState,
+  options: {
+    cache?: ClientCache;
+    setHasNewImage?: boolean;
+  } = {}
+) => {
+  const localCache = options.cache || getCache();
 
-//   const cellToUpdate = cache.cells[cellUrlId];
+  const cellToUpdate = localCache.cells[cellUrlId];
 
-//   cellToUpdate.studioState = newStudioState;
-//   cellToUpdate.isDirty = true;
+  cellToUpdate.studioState = newStudioState;
+  cellToUpdate.isDirty = true;
 
-//   if (setHasNewImage) {
-//     cellToUpdate.hasNewImage = true;
-//   }
+  if (options.setHasNewImage) {
+    cellToUpdate.hasNewImage = true;
+  }
 
-//   updateComicLastModified(cellToUpdate.comicUrlId, cache);
+  updateComicLastModified(cellToUpdate.comicUrlId, localCache);
 
-//   setCache(cache);
-// };
+  setCache(localCache);
+};
 
 export const createNewCell = ({
   comicUrlId,

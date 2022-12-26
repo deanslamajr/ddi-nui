@@ -1,4 +1,5 @@
 import { getClientVariable } from "~/utils/environment-variables";
+import { SEARCH_PARAMS } from "~/utils/constants";
 
 export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
   const cellUrl =
@@ -91,21 +92,32 @@ export const DDI_APP_PAGES = {
     {
       comicUrlId = "new",
       cellUrlId = "new",
+      lastUpdateHash = "",
     }:
       | {
           comicUrlId?: string;
           cellUrlId?: string;
+          lastUpdateHash?: string;
         }
       | undefined = { comicUrlId: "new", cellUrlId: "new" }
   ) => {
+    const lastUpdateSearchParam = lastUpdateHash
+      ? `?${SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE}=${lastUpdateHash}`
+      : "";
+
     return `${getClientVariable(
       "APP_PATH_PREFIX"
-    )}/s/comic/${comicUrlId}/cell/${cellUrlId}`;
+    )}/s/comic/${comicUrlId}/cell/${cellUrlId}${lastUpdateSearchParam}`;
   },
-  comicStudio: (comicUrlId?: string) => {
+  comicStudio: (
+    options: { comicUrlId?: string; lastUpdateHash?: string } = {}
+  ) => {
+    const lastUpdateSearchParam = options.lastUpdateHash
+      ? `?${SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE}=${options.lastUpdateHash}`
+      : "";
     return `${getClientVariable("APP_PATH_PREFIX")}/s/comic/${
-      comicUrlId || "new"
-    }`;
+      options.comicUrlId || "new"
+    }${lastUpdateSearchParam}`;
   },
   comicStudioCopyFromComicCell: (
     editedComicUrlId: string,

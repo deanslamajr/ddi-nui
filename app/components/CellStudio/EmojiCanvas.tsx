@@ -48,9 +48,6 @@ const EmojiCanvas: FC<{
   emojiRefs,
   handleDragEnd,
 }) => {
-  const [emojiJsConfigs, setEmojiJsConfigs] = useState<EmojiConfigJs[] | null>(
-    null
-  );
   const [state, setState] = useState<{
     isDragging: boolean;
     prevX: number;
@@ -61,10 +58,7 @@ const EmojiCanvas: FC<{
     prevY: 0,
   });
 
-  useEffect(() => {
-    const emojiJsConfigs = getEmojiConfigs(emojiConfigs);
-    setEmojiJsConfigs(emojiJsConfigs);
-  }, []);
+  const emojiKonvaConfigs = getEmojiConfigs(emojiConfigs);
 
   const onDragStart = () => {
     setState((prevState) => ({ ...prevState, isDragging: true }));
@@ -90,12 +84,12 @@ const EmojiCanvas: FC<{
     }));
   };
 
-  if (emojiJsConfigs === null) {
+  if (emojiKonvaConfigs === null) {
     return null;
   }
 
   const activeEmojiConfig =
-    emojiJsConfigs.find((config) => config["data-id"] === activeEmojiId) ||
+    emojiKonvaConfigs.find((config) => config["data-id"] === activeEmojiId) ||
     ({} as EmojiConfigJs);
 
   const outlineConfig = getOutlineConfig(activeEmojiConfig);
@@ -105,6 +99,8 @@ const EmojiCanvas: FC<{
     activeEmojiConfig!.opacity = 0;
     outlineConfig.opacity = 0;
   }
+
+  console.dir(emojiKonvaConfigs);
 
   return (
     <div className="emoji-canvas">
@@ -133,13 +129,13 @@ const EmojiCanvas: FC<{
               image={this.state.emojiImageObj}
             />} */}
 
-          {emojiConfigs.map((config) => (
+          {emojiKonvaConfigs.map((config) => (
             <Text
               {...config}
               useCache
-              ref={(ref) => (emojiRefs[config.id] = ref)}
-              key={`${config.id}${config.emoji}`}
-              id={`${config.id}`}
+              ref={(ref) => (emojiRefs[config["data-id"]] = ref)}
+              key={`${config["data-id"]}${config.text}`}
+              id={`${config["data-id"]}`}
             />
           ))}
 

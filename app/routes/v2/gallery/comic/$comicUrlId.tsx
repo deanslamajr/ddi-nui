@@ -159,7 +159,7 @@ export default function ComicViewRoute() {
       {comic.userCanEdit && (
         <div className="nav-button bottom-right">
           <button
-            onClick={() => navigate(DDI_APP_PAGES.comicStudio(comicUrlId))}
+            onClick={() => navigate(DDI_APP_PAGES.comicStudio({ comicUrlId }))}
           >
             ✍️
           </button>

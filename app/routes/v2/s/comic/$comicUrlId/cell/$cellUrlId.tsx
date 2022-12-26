@@ -1,10 +1,8 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
-import Modal, {
-  links as modalStylesUrl,
-  MessageContainer,
-} from "~/components/Modal";
+import shortid from "shortid";
+import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { getStudioState } from "~/utils/clientCache";
 
@@ -43,7 +41,12 @@ export default function CellStudioRoute() {
   console.log("cellUrlId", cellUrlId);
 
   const navigateToComicStudioPage = () => {
-    const comicStudioPageUrl = DDI_APP_PAGES.comicStudio(comicUrlId);
+    // @TODO: replace this with a hash from the undo/redo change mgmt system
+    const updateHash = shortid.generate();
+    const comicStudioPageUrl = DDI_APP_PAGES.comicStudio({
+      comicUrlId,
+      lastUpdateHash: updateHash,
+    });
     navigate(comicStudioPageUrl, {
       state: { scroll: false },
     });
@@ -55,9 +58,12 @@ export default function CellStudioRoute() {
         header={null}
         footer={null}
         onCancelClick={navigateToComicStudioPage}
-        className="within-modal"
+        className="cell-studio-modal"
       >
-        <CellStudio initialStudioState={initialStudioState} />
+        <CellStudio
+          cellUrlId={cellUrlId}
+          initialStudioState={initialStudioState}
+        />
       </Modal>
     </>
   );
