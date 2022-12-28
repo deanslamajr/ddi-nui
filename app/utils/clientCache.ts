@@ -349,12 +349,6 @@ export const createNewCell = ({
   return newCell;
 };
 
-export const getStudioState = (comicUrlId: string, cellUrlId: string) => {
-  const cells = getCellsByComicUrlId(comicUrlId);
-  const cell = cells[cellUrlId];
-  return cell ? cell.studioState || null : null;
-};
-
 // export const clearStudioState = (cellUrlId, initialStudioState) => {
 //   const newStudioState = initialStudioState || getInitializedStudioState();
 //   setCellStudioState(cellUrlId, newStudioState);
