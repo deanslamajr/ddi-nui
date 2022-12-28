@@ -4,14 +4,15 @@ import { useParams, useNavigate } from "@remix-run/react";
 import shortid from "shortid";
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { getStudioState } from "~/utils/clientCache";
+import { useComicStudioState } from "~/contexts/ComicStudioState";
+import { getCellState } from "~/contexts/ComicStudioState/selectors";
+// import { hasUndo } from "~/utils/studioStateMachine";
 
 import CellStudio, {
   links as cellStudioStylesUrl,
 } from "~/components/CellStudio";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/cell/$cellUrlId.css";
-import { StudioState } from "~/interfaces/studioState";
 
 export const links: LinksFunction = () => {
   return [
@@ -25,20 +26,14 @@ export const links: LinksFunction = () => {
  * MAIN
  */
 export default function CellStudioRoute() {
-  const params = useParams();
   const navigate = useNavigate();
-  const [initialStudioState, setInitialStudioState] =
-    React.useState<StudioState | null>(null);
 
+  const params = useParams();
   const comicUrlId = params.comicUrlId!;
   const cellUrlId = params.cellUrlId!;
 
-  React.useEffect(() => {
-    const studioStateFromCache = getStudioState(comicUrlId, cellUrlId);
-    setInitialStudioState(studioStateFromCache);
-  }, [comicUrlId, cellUrlId, setInitialStudioState]);
-
-  console.log("cellUrlId", cellUrlId);
+  const [comicStudioState, dispatch] = useComicStudioState();
+  const cellState = getCellState(comicStudioState, cellUrlId);
 
   const navigateToComicStudioPage = () => {
     // @TODO: replace this with a hash from the undo/redo change mgmt system
@@ -54,16 +49,24 @@ export default function CellStudioRoute() {
 
   return (
     <>
+      <div className="nav-button top-right large-icon">
+        <button onClick={() => /*undo(true)*/ {}}>↶</button>
+      </div>
+      <div className="nav-button top-right large-icon">
+        <button onClick={() => /*redo(true)*/ {}}>↷</button>
+      </div>
       <Modal
         header={null}
         footer={null}
         onCancelClick={navigateToComicStudioPage}
         className="cell-studio-modal"
       >
-        <CellStudio
-          cellUrlId={cellUrlId}
-          initialStudioState={initialStudioState}
-        />
+        {cellState?.studioState && (
+          <CellStudio
+            cellStudioState={cellState.studioState}
+            cellUrlId={cellUrlId}
+          />
+        )}
       </Modal>
     </>
   );

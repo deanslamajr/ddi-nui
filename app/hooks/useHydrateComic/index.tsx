@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import {
-  doesComicUrlIdExist,
+  doesComicUrlIdExist as doesComicExistInClientCache,
   hydrateComicFromClientCache,
   HydratedComic,
 } from "~/utils/clientCache";
@@ -18,7 +18,7 @@ const hydrateComic = async (
 
   // try to fetch from client cache
   // if exists in client cache
-  if (doesComicUrlIdExist(comicUrlId)) {
+  if (doesComicExistInClientCache(comicUrlId)) {
     // hydrate the cells and comic from client cache and return formatted data
     hydratedComic = hydrateComicFromClientCache(comicUrlId);
     const unsortedCells = Object.values(hydratedComic.cells || {});

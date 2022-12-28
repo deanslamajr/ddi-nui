@@ -16,7 +16,7 @@ import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache";
 import { theme } from "~/utils/stylesTheme";
 
-import useComic from "~/hooks/useHydrateComic";
+import useHydrateComic from "~/hooks/useHydrateComic";
 
 import { StudioState } from "~/interfaces/studioState";
 
@@ -41,7 +41,7 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
-  const { comic, isHydrating: isLoadingComic } = useComic({
+  const { comic, isHydrating: isLoadingComic } = useHydrateComic({
     comicUrlId: copiedComicUrlId,
     shouldUpdateCache: false,
     onError: () => console.log("There was an error loading this comic!"),
