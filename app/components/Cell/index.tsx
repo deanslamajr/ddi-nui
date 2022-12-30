@@ -1,6 +1,7 @@
 import { FC } from "react";
 import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
+import classNames from "classnames";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
@@ -9,27 +10,14 @@ import DynamicTextContainer, {
   links as dynamicTextContainerStylesUrl,
 } from "~/components/DynamicTextContainer";
 
+import stylesUrl from "~/styles/components/Cell.css";
+
 export const links: LinksFunction = () => {
-  return [...dynamicTextContainerStylesUrl()];
+  return [
+    ...dynamicTextContainerStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
-
-const CellContainer = styled.div<{
-  schemaVersion: number;
-  clickable: boolean;
-}>`
-  margin: 0;
-  margin-bottom: ${(props) => (props.schemaVersion === 1 ? "3px" : "1px")};
-  margin-right: ${(props) => (props.schemaVersion === 1 ? "3px" : "1px")};
-  padding: ${(props) => (props.schemaVersion === 1 ? "0" : "1px")};
-  cursor: ${(props) => (props.clickable ? "pointer" : "default")};
-  background: ${(props) =>
-    props.schemaVersion === 1 ? "inherit" : `${props.theme.colors.lightGray}`};
-
-  ${tabletMax`
-    margin-bottom: 0;
-    margin-right: 0;
-  `}
-`;
 
 const CellBorder = styled.div`
   padding: 0;
@@ -83,6 +71,7 @@ const Cell: FC<{
   removeBorders?: boolean;
   schemaVersion: number;
   cellWidth?: string;
+  containerWidth?: string;
 }> = ({
   className,
   imageUrl,
@@ -93,6 +82,7 @@ const Cell: FC<{
   removeBorders,
   schemaVersion,
   cellWidth,
+  containerWidth,
 }) => {
   const cellUrl = isImageUrlAbsolute
     ? imageUrl
@@ -104,12 +94,23 @@ const Cell: FC<{
     ? theme.cell.fullWidth
     : undefined;
 
+  const cellContainerStyles: React.CSSProperties = {
+    marginBottom: schemaVersion === 1 ? "3px" : "1px",
+    marginRight: schemaVersion === 1 ? "3px" : "1px",
+    padding: schemaVersion === 1 ? "0" : "1px",
+    cursor: clickable ? "pointer" : "default",
+    background: schemaVersion === 1 ? "inherit" : "var(--lightGray)",
+  };
+
+  if (containerWidth) {
+    cellContainerStyles.width = containerWidth;
+  }
+
   return (
-    <CellContainer
-      className={className}
-      clickable={clickable || false}
+    <div
+      className={classNames("cell-container", className)}
+      style={cellContainerStyles}
       onClick={clickable && onClick ? onClick : () => {}}
-      schemaVersion={schemaVersion}
     >
       {schemaVersion === 1 ? (
         <CellBorder>
@@ -130,7 +131,7 @@ const Cell: FC<{
           )}
         </OldCellBorder>
       )}
-    </CellContainer>
+    </div>
   );
 };
 

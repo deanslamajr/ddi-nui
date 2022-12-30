@@ -1,7 +1,5 @@
-import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
-import shortid from "shortid";
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
@@ -36,11 +34,8 @@ export default function CellStudioRoute() {
   const cellState = getCellState(comicStudioState, cellUrlId);
 
   const navigateToComicStudioPage = () => {
-    // @TODO: replace this with a hash from the undo/redo change mgmt system
-    const updateHash = shortid.generate();
     const comicStudioPageUrl = DDI_APP_PAGES.comicStudio({
       comicUrlId,
-      lastUpdateHash: updateHash,
     });
     navigate(comicStudioPageUrl, {
       state: { scroll: false },

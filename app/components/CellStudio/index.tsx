@@ -1,15 +1,15 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
+// import { useNavigate } from "@remix-run/react";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { moveEmoji } from "~/contexts/ComicStudioState/actions";
 
-import { DDI_APP_PAGES } from "~/utils/urls";
-import {
-  createNewCell,
-  doesCellUrlIdExist,
-  setCellStudioState,
-} from "~/utils/clientCache";
+// import { DDI_APP_PAGES } from "~/utils/urls";
+// import {
+//   createNewCell,
+//   doesCellUrlIdExist,
+//   setCellStudioState,
+// } from "~/utils/clientCache";
 // import { init, update } from "~/utils/studioStateMachine";
 
 import { StudioState } from "~/interfaces/studioState";
@@ -29,7 +29,7 @@ const CellStudio: React.FC<{
   cellUrlId: string;
   cellStudioState: StudioState;
 }> = ({ cellStudioState, cellUrlId }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [comicStudioState, dispatch] = useComicStudioState();
 
@@ -78,23 +78,6 @@ const CellStudio: React.FC<{
         yDiff,
       })
     );
-    // setStudioState((prevStudioState) => {
-    // This case should never occur as handleDragEnd is only ever used in EmojiCanvas
-    // and EmojiCanvas will only render when prevStudioState !== null
-    // if (prevStudioState === null) {
-    //   return null;
-    // }
-    // const newStudioState = update({
-    //   type: "MOVE",
-    //   emoijId: prevStudioState.activeEmojiId,
-    //   data: {
-    //     x: xDiff,
-    //     y: yDiff,
-    //   },
-    // });
-    // saveStudioStateToCache({ newStudioState });
-    // return newStudioState;
-    // });
   };
 
   return (

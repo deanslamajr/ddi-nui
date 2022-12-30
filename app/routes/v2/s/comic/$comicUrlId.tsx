@@ -1,4 +1,3 @@
-import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
 
@@ -12,11 +11,7 @@ import {
 } from "~/components/ComicStudio";
 
 export const links: LinksFunction = () => {
-  return [
-    ...comicStudioStylesUrl(),
-    ...comicStudioStateProviderStylesUrl(),
-    // { rel: "stylesheet", href: stylesUrl },
-  ];
+  return [...comicStudioStylesUrl(), ...comicStudioStateProviderStylesUrl()];
 };
 
 export default function ComicStudioRoute() {
@@ -29,5 +24,3 @@ export default function ComicStudioRoute() {
     </ComicStudioStateProvider>
   );
 }
-
-export const unstable_shouldReload = () => false;

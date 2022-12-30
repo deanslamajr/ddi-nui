@@ -1,0 +1,8 @@
+.cell-container {
+  margin: 0;
+
+  @media (max-width: 599px) {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+}
