@@ -1,15 +1,16 @@
-import { hydrate } from "react-dom";
+import { hydrateRoot } from "react-dom/client";
+
 import { RemixBrowser } from "@remix-run/react";
 
 import { CaptchaV3Provider } from "~/contexts/CaptchaV3";
 
 import { GallerySearchProvider } from "~/components/GallerySearch";
 
-hydrate(
+hydrateRoot(
+  document,
   <CaptchaV3Provider>
     <GallerySearchProvider>
       <RemixBrowser />
     </GallerySearchProvider>
-  </CaptchaV3Provider>,
-  document
+  </CaptchaV3Provider>
 );
