@@ -17,7 +17,12 @@ import {
   ComicFromGetComicApi,
 } from "~/interfaces/comic";
 
-const getCache = (): ClientCache => {
+export type ClientCache = {
+  cells: Record<string, CellFromClientCache>;
+  comics: Record<string, ComicFromClientCache>;
+};
+
+export const getCache = (): ClientCache => {
   const cacheFromStore: ClientCache | null = store(STORAGEKEY_STUDIO);
 
   if (cacheFromStore !== null) {
@@ -31,7 +36,7 @@ const getCache = (): ClientCache => {
   return newClientCache;
 };
 
-const setCache = (newCache: ClientCache) => {
+export const setCache = (newCache: ClientCache) => {
   store(STORAGEKEY_STUDIO, newCache);
 };
 
@@ -61,11 +66,6 @@ export type ComicFromClientCache = {
 
 export type HydratedComic = ComicFromClientCache & {
   cells: Record<string, CellFromClientCache> | null;
-};
-
-export type ClientCache = {
-  cells: Record<string, CellFromClientCache>;
-  comics: Record<string, ComicFromClientCache>;
 };
 
 const LATEST_TIMESTAMP_CACHE_KEY = "LATEST_TIMESTAMP";

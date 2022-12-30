@@ -1,11 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import {
-  Outlet,
-  useParams,
-  useNavigate,
-  useSearchParams,
-} from "@remix-run/react";
+import { Outlet, useParams, useNavigate } from "@remix-run/react";
 
 import {
   CellFromClientCache,
@@ -13,7 +8,7 @@ import {
   deleteComic as removeComicAndCellsFromClientCache,
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
-import { MAX_DIRTY_CELLS, SEARCH_PARAMS } from "~/utils/constants";
+import { MAX_DIRTY_CELLS } from "~/utils/constants";
 import { isDraftId } from "~/utils/draftId";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
@@ -144,7 +139,13 @@ export const ComicStudio: FC<{}> = ({}) => {
     if (!activeCell.isDirty && !canAddMoreCells()) {
       setShowCellAddLimitReachedModal(true);
     } else {
-      setActiveCell(activeCell);
+      // setActiveCell(activeCell);
+      navigate(
+        DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId: activeCell.urlId }),
+        {
+          state: { scroll: false },
+        }
+      );
     }
   };
 
