@@ -92,32 +92,21 @@ export const DDI_APP_PAGES = {
     {
       comicUrlId = "new",
       cellUrlId = "new",
-      lastUpdateHash = "",
     }:
       | {
           comicUrlId?: string;
           cellUrlId?: string;
-          lastUpdateHash?: string;
         }
       | undefined = { comicUrlId: "new", cellUrlId: "new" }
   ) => {
-    const lastUpdateSearchParam = lastUpdateHash
-      ? `?${SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE}=${lastUpdateHash}`
-      : "";
-
     return `${getClientVariable(
       "APP_PATH_PREFIX"
-    )}/s/comic/${comicUrlId}/cell/${cellUrlId}${lastUpdateSearchParam}`;
+    )}/s/comic/${comicUrlId}/cell/${cellUrlId}`;
   },
-  comicStudio: (
-    options: { comicUrlId?: string; lastUpdateHash?: string } = {}
-  ) => {
-    const lastUpdateSearchParam = options.lastUpdateHash
-      ? `?${SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE}=${options.lastUpdateHash}`
-      : "";
+  comicStudio: (options: { comicUrlId?: string } = {}) => {
     return `${getClientVariable("APP_PATH_PREFIX")}/s/comic/${
       options.comicUrlId || "new"
-    }${lastUpdateSearchParam}`;
+    }`;
   },
   comicStudioCopyFromComicCell: (
     editedComicUrlId: string,

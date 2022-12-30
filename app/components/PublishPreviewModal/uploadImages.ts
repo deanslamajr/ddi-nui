@@ -69,7 +69,7 @@ const uploadImages = async ({
         );
       }
 
-      const file = await generateCellImage(cellDraft, filename);
+      const { file } = await generateCellImage(cellDraft, filename);
 
       await uploadImage(file, signData.signedRequest);
 

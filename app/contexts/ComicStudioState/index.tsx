@@ -8,14 +8,12 @@ import CellWithLoadSpinner, {
 import useHydrateComic from "~/hooks/useHydrateComic";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { HydratedComic } from "~/utils/clientCache";
+
 import { ComicStudioContextValue } from "./types";
 import { reducer, initialState } from "./reducer";
 
 export const links: LinksFunction = () => {
-  return [
-    ...cellWithLoadSpinnerStylesUrl(),
-    // { rel: "stylesheet", href: stylesUrl },
-  ];
+  return [...cellWithLoadSpinnerStylesUrl()];
 };
 
 const StudioStateContext =
@@ -28,6 +26,28 @@ const Provider: React.FC<
     changeHistory: initialState.changeHistory,
     comicState: hydratedComic,
   });
+
+  // const value = React.useMemo(() => {
+  //   const moveEmoji = async ({
+  //     cellUrlId,
+  //       emojiId,
+  //       xDiff,
+  //       yDiff
+  //   }: {
+  //     cellUrlId: string;
+  //       emojiId: number;
+  //       xDiff: number;
+  //       yDiff: number;
+  //   }): Promise<void> => {
+  //     dispatch(moveEmojiActionCreator({
+  //       cellUrlId,
+  //       emojiId,
+  //       xDiff,
+  //       yDiff,
+  //     }));
+  //     generateCellImage()
+  //   }
+  // }, [state, dispatch])
 
   return (
     <StudioStateContext.Provider value={returnFromUseReducer}>

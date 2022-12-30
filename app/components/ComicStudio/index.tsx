@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Outlet,
@@ -6,7 +6,6 @@ import {
   useNavigate,
   useSearchParams,
 } from "@remix-run/react";
-import styled from "styled-components";
 
 import {
   CellFromClientCache,
@@ -14,16 +13,10 @@ import {
   deleteComic as removeComicAndCellsFromClientCache,
 } from "~/utils/clientCache";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
-import { theme } from "~/utils/stylesTheme";
-import {
-  MAX_DIRTY_CELLS,
-  SCHEMA_VERSION,
-  SEARCH_PARAMS,
-} from "~/utils/constants";
+import { MAX_DIRTY_CELLS, SEARCH_PARAMS } from "~/utils/constants";
 import { isDraftId } from "~/utils/draftId";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
-import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
@@ -43,6 +36,7 @@ import PublishPreviewModal, {
 import ReachedDirtyCellLimitModal, {
   links as reachedDirtyCellLimitModalStylesUrl,
 } from "~/components/ReachedDirtyCellLimitModal";
+import StudioCell, { links as studioCellStylesUrl } from "./StudioCell";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 
@@ -52,7 +46,7 @@ import stylesUrl from "~/styles/components/ComicStudio.css";
 
 export const links: LinksFunction = () => {
   return [
-    ...cellStylesUrl(),
+    ...studioCellStylesUrl(),
     ...unstyledLinkStylesUrl(),
     ...addCellModalStylesUrl(),
     ...cellActionsModalStylesUrl(),
@@ -64,45 +58,12 @@ export const links: LinksFunction = () => {
   ];
 };
 
-const SIDE_BUTTONS_SPACER = 0; //.4
-const cellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
-
-/**
- * STYLED COMPONENTS
- */
-const StudioCell = styled(Cell)<{ cellWidth: string }>`
-  margin: 0 auto;
-  width: ${(props) => props.cellWidth};
-`;
-
-const PinkLabel = styled.div`
-  z-index: 999;
-  position: absolute;
-  font-size: 0.9rem;
-  opacity: 0.35;
-  padding: 0.1rem 0.2rem;
-  background-color: ${(props) => props.theme.colors.pink};
-  color: ${(props) => props.theme.colors.white};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  cursor: pointer;
-`;
-
-const UnpublishedChangesLabel = () => (
-  <PinkLabel>Unpublished Changes</PinkLabel>
-);
-
 /**
  * MAIN
  */
 export const ComicStudio: FC<{}> = ({}) => {
   const navigate = useNavigate();
   const params = useParams();
-  const [searchParams] = useSearchParams();
-  const lastUpdateHash =
-    searchParams.get(SEARCH_PARAMS.COMIC_STUDIO_LAST_UPDATE) || "";
   const comicUrlId = params.comicUrlId!;
   const isUninitializedComic = comicUrlId === "new";
 
@@ -116,7 +77,7 @@ export const ComicStudio: FC<{}> = ({}) => {
     useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
-  const [comicStudioState, comicStudioStateDispatch] = useComicStudioState();
+  const [comicStudioState] = useComicStudioState();
 
   const getCellsFromState = () => {
     return Object.values(comicStudioState.comicState.cells || {}) || [];
@@ -152,7 +113,6 @@ export const ComicStudio: FC<{}> = ({}) => {
       DDI_APP_PAGES.cellStudio({
         comicUrlId: newCell.comicUrlId,
         cellUrlId: newCell.urlId,
-        lastUpdateHash,
       }),
       {
         state: { scroll: false },
@@ -227,23 +187,21 @@ export const ComicStudio: FC<{}> = ({}) => {
 
   const sortedCells = getCellsFromState();
 
+  const renderedComic = useMemo(() => {
+    return sortedCells.map((cell) => (
+      <StudioCell
+        key={cell.imageUrl}
+        cellUrlId={cell.urlId}
+        onCellClick={handleCellClick}
+      />
+    ));
+  }, []);
+
   return (
     <>
       <div className="outer-container">
         <>
-          {sortedCells.map((cell) => (
-            <div key={cell.imageUrl} onClick={() => handleCellClick(cell)}>
-              {cell.isDirty && <UnpublishedChangesLabel />}
-              <StudioCell
-                clickable
-                imageUrl={cell.imageUrl || ""}
-                isImageUrlAbsolute={cell.hasNewImage || false}
-                schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-                caption={cell.studioState?.caption || ""}
-                cellWidth={cellWidth}
-              />
-            </div>
-          ))}
+          {renderedComic}
           {sortedCells.length > 0 && (
             <MenuButton
               accented={true}
@@ -293,7 +251,6 @@ export const ComicStudio: FC<{}> = ({}) => {
         <CellActionsModal
           cell={activeCell}
           comicUrlId={comicUrlId}
-          lastUpdateHash={lastUpdateHash}
           onCancelClick={() => setActiveCell(null)}
           onDuplicateClick={() => navigateToCellStudio(activeCell.studioState)}
         />

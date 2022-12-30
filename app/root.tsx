@@ -25,6 +25,7 @@ import ConditionalScrollRestoration from "~/components/ConditionalScrollRestorat
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
 // don't rerun the loader on client actions
+// https://remix.run/docs/en/v1/route/should-reload
 export const unstable_shouldReload: ShouldReloadFunction = () => false;
 
 export const links: LinksFunction = () => {
