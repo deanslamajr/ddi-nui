@@ -27,28 +27,6 @@ const Provider: React.FC<
     comicState: hydratedComic,
   });
 
-  // const value = React.useMemo(() => {
-  //   const moveEmoji = async ({
-  //     cellUrlId,
-  //       emojiId,
-  //       xDiff,
-  //       yDiff
-  //   }: {
-  //     cellUrlId: string;
-  //       emojiId: number;
-  //       xDiff: number;
-  //       yDiff: number;
-  //   }): Promise<void> => {
-  //     dispatch(moveEmojiActionCreator({
-  //       cellUrlId,
-  //       emojiId,
-  //       xDiff,
-  //       yDiff,
-  //     }));
-  //     generateCellImage()
-  //   }
-  // }, [state, dispatch])
-
   return (
     <StudioStateContext.Provider value={returnFromUseReducer}>
       {children}
