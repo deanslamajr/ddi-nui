@@ -1,10 +1,9 @@
 import type { LinksFunction } from "@remix-run/node";
-import { FC } from "react";
-import { Img } from "react-image";
+import { Component, FC, Suspense, ReactNode } from "react";
+import { useImage } from "react-image";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { getClientVariable } from "~/utils/environment-variables";
-import isServerContext from "~/utils/isServerContext";
 
 import DynamicTextContainer, {
   links as dynamicTextContainerStylesUrl,
@@ -19,67 +18,52 @@ export const links: LinksFunction = () => {
   ];
 };
 
-const ThumbSchema1: FC<{
-  caption?: string;
-  cellsCount: number;
-  imageUrl: string;
-}> = ({ caption, cellsCount, imageUrl }) => {
-  const isPreview = true;
-  const showLoader = isServerContext();
+class ErrorBoundary extends Component<
+  {
+    children?: ReactNode;
+  },
+  { hasError: boolean }
+> {
+  public state: { hasError: boolean } = {
+    hasError: false,
+  };
 
-  return (
-    <>
-      {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
-      {caption && (
-        <DynamicTextContainer
-          caption={caption}
-          fontRatio={16}
-          isPreview={isPreview}
-          // This width is for gallery views, might break in other views
-          // 2px accounts for the grid-gap of 2px in gallery views
-          captionCssWidth="100% - 2px"
-        />
-      )}
-      {showLoader ? (
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
         <img
           className="base-cell-image"
-          src={`${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/loading.png`}
-          alt="Loading image"
+          src={`${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/error.png`}
+          alt="Cannot load image"
         />
-      ) : (
-        <Img
-          className="base-cell-image"
-          src={imageUrl}
-          loader={
-            <img
-              className="base-cell-image"
-              src={`${getClientVariable(
-                "ASSETS_URL_WITH_PROTOCOL"
-              )}/loading.png`}
-              alt="Loading image"
-            />
-          }
-          unloader={
-            <img
-              className="base-cell-image"
-              src={`${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/error.png`}
-              alt="Cannot load image"
-            />
-          }
-        />
-      )}
-    </>
-  );
-};
+      );
+    }
 
-type Cell = {
-  caption: string;
+    return this.props.children;
+  }
+}
+
+const Image: FC<{
   imageUrl: string;
-  schemaVersion: number;
+}> = ({ imageUrl }) => {
+  const { src } = useImage({
+    srcList: imageUrl,
+  });
+
+  return <img className="base-cell-image" src={src} />;
 };
 
 const CellsThumb: FC<{
-  cell?: Cell;
+  cell?: {
+    caption: string;
+    imageUrl: string;
+    schemaVersion: number;
+  };
   cellsCount: number;
 }> = ({ cell, cellsCount }) => {
   if (cell) {
@@ -89,11 +73,34 @@ const CellsThumb: FC<{
         : getCellImageUrl(cell.imageUrl, cell.schemaVersion);
 
     return (
-      <ThumbSchema1
-        caption={cell.caption}
-        cellsCount={cellsCount}
-        imageUrl={imageUrl}
-      />
+      <>
+        {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
+        {cell.caption && (
+          <DynamicTextContainer
+            caption={cell.caption}
+            fontRatio={16}
+            isPreview
+            // This width is for gallery views, might break in other views
+            // 2px accounts for the grid-gap of 2px in gallery views
+            captionCssWidth="100% - 2px"
+          />
+        )}
+        <ErrorBoundary>
+          <Suspense
+            fallback={
+              <img
+                className="base-cell-image"
+                src={`${getClientVariable(
+                  "ASSETS_URL_WITH_PROTOCOL"
+                )}/loading.png`}
+                alt="Loading image"
+              />
+            }
+          >
+            <Image imageUrl={imageUrl} />
+          </Suspense>
+        </ErrorBoundary>
+      </>
     );
   }
 
