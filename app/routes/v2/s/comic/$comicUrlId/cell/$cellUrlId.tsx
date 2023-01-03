@@ -30,7 +30,7 @@ export default function CellStudioRoute() {
   const comicUrlId = params.comicUrlId!;
   const cellUrlId = params.cellUrlId!;
 
-  const [comicStudioState, dispatch] = useComicStudioState();
+  const [comicStudioState] = useComicStudioState();
   const cellState = getCellState(comicStudioState, cellUrlId);
 
   const navigateToComicStudioPage = () => {

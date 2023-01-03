@@ -18,7 +18,7 @@ const hydrateComic = async (
 
   // try to fetch from client cache
   // if exists in client cache
-  if (doesComicExistInClientCache(comicUrlId)) {
+  if (comicUrlId === "new" || doesComicExistInClientCache(comicUrlId)) {
     // hydrate the cells and comic from client cache and return formatted data
     hydratedComic = hydrateComicFromClientCache(comicUrlId);
     const unsortedCells = Object.values(hydratedComic.cells || {});
@@ -60,12 +60,10 @@ const useHydrateComic = ({
   comicUrlId,
   onError,
   shouldUpdateCache = true,
-  useEffectKey = "",
 }: {
   comicUrlId: string;
   onError: () => void;
   shouldUpdateCache?: boolean;
-  useEffectKey?: string;
 }): {
   comic: HydratedComic | null;
   isHydrating: boolean;
@@ -91,7 +89,7 @@ const useHydrateComic = ({
       .finally(() => {
         setIsHydrating(false);
       });
-  }, [comicUrlId, setIsHydrating, useEffectKey]);
+  }, [comicUrlId, setIsHydrating]);
 
   return { comic, isHydrating };
 };
