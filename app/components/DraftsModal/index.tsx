@@ -15,7 +15,7 @@ import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import useHydrateComic from "~/hooks/useHydrateComic";
 
-import { HydratedComic, getCellsByComicUrlId } from "~/utils/clientCache";
+import { HydratedComic } from "~/utils/clientCache";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
