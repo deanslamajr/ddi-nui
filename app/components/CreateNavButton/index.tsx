@@ -31,7 +31,6 @@ export default function CreateNavButton({}: Props) {
     if (draftComics.length) {
       setShowDraftsModal(true);
     } else {
-      // location.href = DDI_APP_PAGES.cellStudio();
       navigate(DDI_APP_PAGES.comicStudio(), { state: { scroll: false } });
     }
   };

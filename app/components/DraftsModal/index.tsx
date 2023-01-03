@@ -111,7 +111,7 @@ const DraftsModal: React.FC<{
           <MenuButton
             accented={true}
             className="add-cell-button"
-            onClick={() => (location.href = DDI_APP_PAGES.cellStudio())}
+            onClick={() => (location.href = DDI_APP_PAGES.comicStudio())}
           >
             CREAT NEW COMIC
           </MenuButton>

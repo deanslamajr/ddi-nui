@@ -31,7 +31,7 @@ const CellStudio: React.FC<{
 }> = ({ cellStudioState, cellUrlId }) => {
   // const navigate = useNavigate();
 
-  const [comicStudioState, dispatch] = useComicStudioState();
+  const [_, dispatch] = useComicStudioState();
 
   const emojiRefs = React.useRef({} as EmojiRefs);
 
