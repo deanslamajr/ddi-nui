@@ -15,10 +15,8 @@ import CellWithLoadSpinner, {
 
 import { theme } from "~/utils/stylesTheme";
 import { SCHEMA_VERSION } from "~/utils/constants";
-import {
-  CellFromClientCache,
-  deleteComic as removeComicAndCellsFromClientCache,
-} from "~/utils/clientCache";
+import { deleteComic as removeComicAndCellsFromClientCache } from "~/utils/clientCache/comic";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { isDraftId } from "~/utils/draftId";
 import { DDI_APP_PAGES } from "~/utils/urls";
 

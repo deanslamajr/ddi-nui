@@ -5,8 +5,8 @@ import { Outlet, useParams, useNavigate } from "@remix-run/react";
 import {
   CellFromClientCache,
   createNewCell as createNewCellInClientCache,
-  deleteComic as removeComicAndCellsFromClientCache,
-} from "~/utils/clientCache";
+} from "~/utils/clientCache/cell";
+import { deleteComic as removeComicAndCellsFromClientCache } from "~/utils/clientCache/comic";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { MAX_DIRTY_CELLS } from "~/utils/constants";
 import { isDraftId } from "~/utils/draftId";

@@ -4,7 +4,7 @@ import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
-import { createNewCell } from "~/utils/clientCache";
+import { createNewCell } from "~/utils/clientCache/cell";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
 import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId/cell/$cellUrlId.css";

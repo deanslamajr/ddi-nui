@@ -7,7 +7,7 @@ import CellWithLoadSpinner, {
 } from "~/components/CellWithLoadSpinner";
 import useHydrateComic from "~/hooks/useHydrateComic";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { HydratedComic } from "~/utils/clientCache";
+import { HydratedComic } from "~/utils/clientCache/comic";
 
 import { ComicStudioContextValue } from "./types";
 import { reducer } from "./reducer";

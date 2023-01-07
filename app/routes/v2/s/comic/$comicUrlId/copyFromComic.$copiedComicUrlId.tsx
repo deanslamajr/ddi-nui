@@ -13,7 +13,7 @@ import CellWithLoadSpinner, {
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
-import { createNewCell } from "~/utils/clientCache";
+import { createNewCell } from "~/utils/clientCache/cell";
 import { theme } from "~/utils/stylesTheme";
 
 import useHydrateComic from "~/hooks/useHydrateComic";

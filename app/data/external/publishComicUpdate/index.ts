@@ -1,4 +1,4 @@
-import type { CellFromClientCache } from "~/utils/clientCache";
+import type { CellFromClientCache } from "~/utils/clientCache/cell";
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
