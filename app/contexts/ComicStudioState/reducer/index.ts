@@ -1,6 +1,7 @@
 import { ComicStudioState, ComicStudioStateAction } from "../types";
 import moveEmoji from "./moveEmoji";
 import undoCellUpdate from "./undoCellUpdate";
+import redoCellUpdate from "./redoCellUpdate";
 import {
   getCache,
   setCache,
@@ -51,6 +52,9 @@ export const reducer = (
       break;
     case "UNDO_CELL":
       newState = undoCellUpdate(state, action);
+      break;
+    case "REDO_CELL":
+      newState = redoCellUpdate(state, action);
       break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");
