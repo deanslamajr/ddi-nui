@@ -1,4 +1,6 @@
 import type { LinksFunction } from "@remix-run/node";
+import classNames from "classnames";
+
 import { getClientVariable } from "~/utils/environment-variables";
 
 import stylesUrl from "~/styles/components/CellWithLoadSpinner.css";
@@ -14,10 +16,11 @@ const spinnerUrlAsCssVariable = {
 } as React.CSSProperties;
 
 const LoadSpinner: React.FC<{
+  className?: string;
   percentCompleted?: number;
-}> = ({ percentCompleted }) => {
+}> = ({ className, percentCompleted }) => {
   return (
-    <span className="load-spinner-container">
+    <span className={classNames("load-spinner-container", className)}>
       <div className="load-spinner" style={spinnerUrlAsCssVariable}>
         {Number.isFinite(percentCompleted) && (
           <span className="load-spinner-counter">{percentCompleted}&#37;</span>
