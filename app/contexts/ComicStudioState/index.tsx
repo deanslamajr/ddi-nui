@@ -10,7 +10,7 @@ import { DDI_APP_PAGES } from "~/utils/urls";
 import { HydratedComic } from "~/utils/clientCache";
 
 import { ComicStudioContextValue } from "./types";
-import { reducer, initialState } from "./reducer";
+import { reducer } from "./reducer";
 
 import stylesUrl from "~/styles/contexts/comic-studio-state.css";
 
@@ -28,7 +28,6 @@ const Provider: React.FC<
   React.PropsWithChildren<{ hydratedComic: HydratedComic }>
 > = ({ children, hydratedComic }) => {
   const returnFromUseReducer = React.useReducer(reducer, {
-    changeHistory: initialState.changeHistory,
     comicState: hydratedComic,
   });
 

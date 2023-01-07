@@ -2,15 +2,22 @@ import { HydratedComic } from "~/utils/clientCache";
 
 export type ComicStudioState = {
   comicState: HydratedComic;
-  changeHistory: ChangeHistory;
 };
 
 export type ComicStudioContextValue =
   | [ComicStudioState, React.Dispatch<ComicStudioStateAction>]
   | undefined;
 
-export type MoveUpdateDetails = {
-  type: "MOVE";
+export type UndoCellAction = {
+  type: "UNDO_CELL";
+  data: {
+    cellUrlId: string;
+    prevCellChangeId: string;
+  };
+};
+
+export type MoveEmojiAction = {
+  type: "MOVE_EMOIJ";
   data: {
     cellUrlId: string;
     emojiId: number;
@@ -19,29 +26,9 @@ export type MoveUpdateDetails = {
   };
 };
 
-export type RotateUpdateDetails = {
-  type: "ROTATE";
-  data: {
-    beef: string;
-  }; // @TODO fill out real type
-};
-
-export type ComicStudioStateAction = MoveUpdateDetails | RotateUpdateDetails;
-
-export type ChangeDetail = {
-  id: string;
-  previousChangeDetailId: string | null;
-  nextChangeDetailId: string | null;
-  action: ComicStudioStateAction;
-};
-
-export type ChangeHistory = {
-  headDetailId: string | null;
-  changeDetails: Record<string, ChangeDetail>;
-};
+export type ComicStudioStateAction = UndoCellAction | MoveEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,
-  action: T,
-  isUndo?: boolean
+  action: T
 ) => ComicStudioState;

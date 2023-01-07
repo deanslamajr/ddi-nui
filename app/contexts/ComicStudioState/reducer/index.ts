@@ -1,9 +1,6 @@
-import {
-  ChangeDetail,
-  ComicStudioState,
-  ComicStudioStateAction,
-} from "../types";
+import { ComicStudioState, ComicStudioStateAction } from "../types";
 import moveEmoji from "./moveEmoji";
+import undoCellUpdate from "./undoCellUpdate";
 import {
   getCache,
   setCache,
@@ -17,10 +14,6 @@ export const initialState: ComicStudioState = {
     lastModified: 0,
     urlId: "",
     cells: {},
-  },
-  changeHistory: {
-    headDetailId: null,
-    changeDetails: {} as Record<string, ChangeDetail>,
   },
 };
 
@@ -53,8 +46,12 @@ export const reducer = (
   let newState = state;
 
   switch (action.type) {
-    case "MOVE":
+    case "MOVE_EMOIJ":
       newState = moveEmoji(state, action);
+      break;
+    case "UNDO_CELL":
+      newState = undoCellUpdate(state, action);
+      break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");
   }

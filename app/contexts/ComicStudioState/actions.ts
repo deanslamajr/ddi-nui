@@ -1,6 +1,5 @@
-import { MoveUpdateDetails } from "./types";
+import { MoveEmojiAction, UndoCellAction } from "./types";
 
-// Action creators
 export const moveEmoji = ({
   cellUrlId,
   emojiId,
@@ -11,12 +10,26 @@ export const moveEmoji = ({
   emojiId: number;
   xDiff: number;
   yDiff: number;
-}): MoveUpdateDetails => ({
-  type: "MOVE",
+}): MoveEmojiAction => ({
+  type: "MOVE_EMOIJ",
   data: {
     cellUrlId,
     emojiId,
     xDiff,
     yDiff,
+  },
+});
+
+export const undoCellUpdate = ({
+  cellUrlId,
+  prevCellChangeId,
+}: {
+  cellUrlId: string;
+  prevCellChangeId: string;
+}): UndoCellAction => ({
+  type: "UNDO_CELL",
+  data: {
+    cellUrlId,
+    prevCellChangeId,
   },
 });

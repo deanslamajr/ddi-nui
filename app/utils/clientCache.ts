@@ -47,6 +47,18 @@ const generateDraftUrlId = () => {
 // CACHE SCHEMA
 //
 
+export type CellChange = {
+  id: string;
+  studioState: StudioState;
+  prevChangeId: string | null;
+  nextChangeId: string[];
+};
+
+export type CellChangeHistory = {
+  currentChangeId: string;
+  changes: Record<string, CellChange>;
+};
+
 export type CellFromClientCache = {
   hasNewImage?: boolean;
   urlId: string;
@@ -56,6 +68,7 @@ export type CellFromClientCache = {
   previousCellUrlId?: string | null;
   schemaVersion?: number | null;
   studioState?: StudioState | null;
+  changeHistory?: CellChangeHistory;
 };
 
 export type ComicFromClientCache = {
@@ -96,6 +109,67 @@ const createNewComic = (
   };
 };
 
+export const addNewCellChangeToHistory = (
+  cellState: CellFromClientCache,
+  studioStateResultingFromChange?: StudioState
+): void => {
+  if (!cellState.changeHistory) {
+    const newCellChangeHistory = initializeCellChangeHistory(
+      studioStateResultingFromChange || cellState.studioState!
+    );
+    cellState.changeHistory = newCellChangeHistory;
+    return;
+  }
+
+  const prevChangeId = cellState.changeHistory.currentChangeId;
+
+  const newCellChange = generateCellChange({
+    prevChangeId,
+    studioStateResultingFromChange:
+      studioStateResultingFromChange || cellState.studioState!,
+  });
+
+  // add new change to history
+  cellState.changeHistory.currentChangeId = newCellChange.id;
+  cellState.changeHistory.changes[newCellChange.id] = newCellChange;
+
+  // add new change reference to previous change
+  const prevChange = cellState.changeHistory.changes[prevChangeId];
+
+  if (prevChange) {
+    prevChange.nextChangeId.unshift(newCellChange.id);
+  }
+};
+
+const generateCellChange = ({
+  prevChangeId,
+  studioStateResultingFromChange,
+}: {
+  prevChangeId?: string;
+  studioStateResultingFromChange: StudioState;
+}): CellChange => {
+  return {
+    id: shortid.generate(),
+    studioState: studioStateResultingFromChange,
+    prevChangeId: prevChangeId || null,
+    nextChangeId: [],
+  };
+};
+
+const initializeCellChangeHistory = (
+  initialStudioState: StudioState
+): CellChangeHistory => {
+  const newCellChange = generateCellChange({
+    studioStateResultingFromChange: initialStudioState,
+  });
+  return {
+    currentChangeId: newCellChange.id,
+    changes: {
+      [newCellChange.id]: newCellChange,
+    },
+  };
+};
+
 const getInitializedCell = ({
   comicUrlId,
   hasNewImage,
@@ -117,6 +191,7 @@ const getInitializedCell = ({
     | AllCellsFromGetComicApi["studioState"];
   urlId?: CellFromClientCache["urlId"] | null;
 }): CellFromClientCache => {
+  const initialStudioState = validateStudioState(studioState);
   return {
     comicUrlId,
     hasNewImage: hasNewImage || false,
@@ -124,8 +199,9 @@ const getInitializedCell = ({
     isDirty: isDirty || false,
     previousCellUrlId,
     schemaVersion: SCHEMA_VERSION,
-    studioState: validateStudioState(studioState),
+    studioState: initialStudioState,
     urlId: urlId || generateDraftUrlId(),
+    changeHistory: initializeCellChangeHistory(initialStudioState),
   };
 };
 
