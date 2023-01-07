@@ -31,7 +31,7 @@ import PublishPreviewModal, {
 import ReachedDirtyCellLimitModal, {
   links as reachedDirtyCellLimitModalStylesUrl,
 } from "~/components/ReachedDirtyCellLimitModal";
-import StudioCell, { links as studioCellStylesUrl } from "./StudioCell";
+import CellPreview, { links as studioCellStylesUrl } from "./CellPreview";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 
@@ -188,9 +188,9 @@ export const ComicStudio: FC<{}> = ({}) => {
 
   const sortedCells = getCellsFromState();
 
-  const renderedComic = useMemo(() => {
+  const renderedComicPreview = useMemo(() => {
     return sortedCells.map((cell) => (
-      <StudioCell
+      <CellPreview
         key={cell.imageUrl}
         cellUrlId={cell.urlId}
         onCellClick={handleCellClick}
@@ -202,7 +202,7 @@ export const ComicStudio: FC<{}> = ({}) => {
     <>
       <div className="outer-container">
         <>
-          {renderedComic}
+          {renderedComicPreview}
           {sortedCells.length > 0 && (
             <MenuButton
               accented={true}

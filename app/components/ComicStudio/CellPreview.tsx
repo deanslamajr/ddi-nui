@@ -29,7 +29,7 @@ export const links: LinksFunction = () => {
 const SIDE_BUTTONS_SPACER = 0;
 const cellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
 
-const StudioCell: React.FC<{
+const CellPreview: React.FC<{
   cellUrlId: string;
   onCellClick: (cell: CellFromClientCache) => void;
 }> = ({ cellUrlId, onCellClick }) => {
@@ -69,4 +69,4 @@ const StudioCell: React.FC<{
   );
 };
 
-export default StudioCell;
+export default CellPreview;
