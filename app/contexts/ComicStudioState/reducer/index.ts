@@ -2,12 +2,9 @@ import { ComicStudioState, ComicStudioStateAction } from "../types";
 import moveEmoji from "./moveEmoji";
 import undoCellUpdate from "./undoCellUpdate";
 import redoCellUpdate from "./redoCellUpdate";
-import {
-  getCache,
-  setCache,
-  ClientCache,
-  ComicFromClientCache,
-} from "~/utils/clientCache";
+import { getCache, setCache, ClientCache } from "~/utils/clientCache";
+
+import { ComicFromClientCache } from "~/utils/clientCache/comic";
 
 export const initialState: ComicStudioState = {
   comicState: {

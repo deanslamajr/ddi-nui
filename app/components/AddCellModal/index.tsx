@@ -1,7 +1,7 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 
-import { CellFromClientCache } from "~/utils/clientCache";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 
 import Modal, {
   CenteredContainer,

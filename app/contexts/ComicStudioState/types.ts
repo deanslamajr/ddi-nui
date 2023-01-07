@@ -1,4 +1,4 @@
-import { HydratedComic } from "~/utils/clientCache";
+import { HydratedComic } from "~/utils/clientCache/comic";
 
 export type ComicStudioState = {
   comicState: HydratedComic;

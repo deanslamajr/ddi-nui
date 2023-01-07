@@ -1,11 +1,10 @@
-import type { CellFromClientCache, HydratedComic } from "~/utils/clientCache";
+import type { CellFromClientCache } from "~/utils/clientCache/cell";
+import type { HydratedComic } from "~/utils/clientCache/comic";
 import { isDraftId } from "~/utils/draftId";
 import { SCHEMA_VERSION } from "~/utils/constants";
 
-import { get as getPublishedComic } from "~/data/external/getComics";
 import { hydrateFromNetwork } from "~/data/client/comic";
 
-import { ComicFromGetComicApi } from "~/interfaces/comic";
 import { SignedCells } from "~/interfaces/signedCells";
 import { StudioState } from "~/interfaces/studioState";
 

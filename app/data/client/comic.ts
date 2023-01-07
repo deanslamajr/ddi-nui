@@ -1,8 +1,8 @@
 import {
-  HydratedComic,
   copyComicFromPublishedComic,
   createComicFromPublishedComic,
-} from "~/utils/clientCache";
+  HydratedComic,
+} from "~/utils/clientCache/comic";
 import { sortCellsFromGetComic } from "~/utils/sortCells";
 
 import { get as getComicFromNetwork } from "~/data/external/getComics";

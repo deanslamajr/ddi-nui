@@ -11,7 +11,7 @@ import Modal, {
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import { SCHEMA_VERSION } from "~/utils/constants";
-import { CellFromClientCache } from "~/utils/clientCache";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
 

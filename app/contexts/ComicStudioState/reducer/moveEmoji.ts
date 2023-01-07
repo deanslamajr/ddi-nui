@@ -2,10 +2,8 @@ import cloneDeep from "fast-clone";
 
 import { ComicStudioStateReducer, MoveEmojiAction } from "../types";
 import { getCellState } from "../selectors";
-import {
-  addNewCellChangeToHistory,
-  CellFromClientCache,
-} from "~/utils/clientCache";
+import { addNewCellChangeToHistory } from "~/models/cellChange";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 
 const updateComicStudioState = (
   cellState: CellFromClientCache,

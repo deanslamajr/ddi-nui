@@ -4,7 +4,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { HydratedComic, getDirtyComics } from "~/utils/clientCache";
+import { HydratedComic, getDirtyComics } from "~/utils/clientCache/comic";
 
 import DraftsModal, {
   links as draftsModalStylesUrl,

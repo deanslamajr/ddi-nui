@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
-import {
-  doesComicUrlIdExist as doesComicExistInClientCache,
-  hydrateComicFromClientCache,
-  HydratedComic,
-} from "~/utils/clientCache";
+import { hydrateComicFromClientCache } from "~/utils/clientCache";
+import { HydratedComic } from "~/utils/clientCache/comic";
+import { doesComicUrlIdExist as doesComicExistInClientCache } from "~/utils/clientCache/comic";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 

@@ -5,7 +5,7 @@ import useDeepCompareEffect from "use-deep-compare-effect";
 import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
-import { CellFromClientCache } from "~/utils/clientCache";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 
