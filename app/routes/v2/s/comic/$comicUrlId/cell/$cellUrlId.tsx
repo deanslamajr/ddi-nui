@@ -3,9 +3,13 @@ import { useParams, useNavigate } from "@remix-run/react";
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { undoCellUpdate } from "~/contexts/ComicStudioState/actions";
+import {
+  redoCellUpdate,
+  undoCellUpdate,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getCellState,
+  getNextCellChangeId,
   getPreviousCellChangeId,
 } from "~/contexts/ComicStudioState/selectors";
 // import { hasUndo } from "~/utils/studioStateMachine";
@@ -37,6 +41,7 @@ export default function CellStudioRoute() {
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellState = getCellState(comicStudioState, cellUrlId);
   const prevCellChangeId = getPreviousCellChangeId(comicStudioState, cellUrlId);
+  const nextCellChangeId = getNextCellChangeId(comicStudioState, cellUrlId);
 
   const navigateToComicStudioPage = () => {
     const comicStudioPageUrl = DDI_APP_PAGES.comicStudio({
@@ -73,9 +78,15 @@ export default function CellStudioRoute() {
               </button>
             </div>
           )}
-          {false && (
+          {nextCellChangeId && (
             <div className="nav-button top-right large-icon">
-              <button onClick={() => /*redo(true)*/ {}}>↷</button>
+              <button
+                onClick={() =>
+                  dispatch(redoCellUpdate({ cellUrlId, nextCellChangeId }))
+                }
+              >
+                ↷
+              </button>
             </div>
           )}
         </>

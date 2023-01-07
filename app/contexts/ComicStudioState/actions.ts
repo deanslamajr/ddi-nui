@@ -1,4 +1,4 @@
-import { MoveEmojiAction, UndoCellAction } from "./types";
+import { MoveEmojiAction, RedoCellAction, UndoCellAction } from "./types";
 
 export const moveEmoji = ({
   cellUrlId,
@@ -31,5 +31,19 @@ export const undoCellUpdate = ({
   data: {
     cellUrlId,
     prevCellChangeId,
+  },
+});
+
+export const redoCellUpdate = ({
+  cellUrlId,
+  nextCellChangeId,
+}: {
+  cellUrlId: string;
+  nextCellChangeId: string;
+}): RedoCellAction => ({
+  type: "REDO_CELL",
+  data: {
+    cellUrlId,
+    nextCellChangeId,
   },
 });

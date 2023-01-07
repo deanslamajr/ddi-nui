@@ -16,6 +16,14 @@ export type UndoCellAction = {
   };
 };
 
+export type RedoCellAction = {
+  type: "REDO_CELL";
+  data: {
+    cellUrlId: string;
+    nextCellChangeId: string;
+  };
+};
+
 export type MoveEmojiAction = {
   type: "MOVE_EMOIJ";
   data: {
@@ -26,7 +34,10 @@ export type MoveEmojiAction = {
   };
 };
 
-export type ComicStudioStateAction = UndoCellAction | MoveEmojiAction;
+export type ComicStudioStateAction =
+  | UndoCellAction
+  | RedoCellAction
+  | MoveEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

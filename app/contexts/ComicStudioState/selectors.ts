@@ -25,3 +25,25 @@ export const getPreviousCellChangeId = (
 
   return latestCellChange.prevChangeId;
 };
+
+export const getNextCellChangeId = (
+  state: ComicStudioState,
+  cellUrlId: string
+): string | null => {
+  const cellState = getCellState(state, cellUrlId);
+
+  if (!cellState || !cellState.changeHistory) {
+    return null;
+  }
+
+  const latestCellChange =
+    cellState.changeHistory.changes[cellState.changeHistory.currentChangeId];
+
+  if (!latestCellChange) {
+    return null;
+  }
+
+  return latestCellChange.nextChangeId.length
+    ? latestCellChange.nextChangeId[0]
+    : null;
+};
