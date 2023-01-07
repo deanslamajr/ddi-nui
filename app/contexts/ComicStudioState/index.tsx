@@ -12,8 +12,13 @@ import { HydratedComic } from "~/utils/clientCache";
 import { ComicStudioContextValue } from "./types";
 import { reducer, initialState } from "./reducer";
 
+import stylesUrl from "~/styles/contexts/comic-studio-state.css";
+
 export const links: LinksFunction = () => {
-  return [...cellWithLoadSpinnerStylesUrl()];
+  return [
+    ...cellWithLoadSpinnerStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 const StudioStateContext =
@@ -57,7 +62,7 @@ const ComicStudioStateProvider: React.FC<
   }, [hydratedComic, isHydratingComic]);
 
   return isHydratingComic || !hydratedComic ? (
-    <CellWithLoadSpinner />
+    <CellWithLoadSpinner className="comic-studio-state-context-loader-container" />
   ) : (
     <Provider hydratedComic={hydratedComic}>{children}</Provider>
   );

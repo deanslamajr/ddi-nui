@@ -10,8 +10,14 @@ import {
   links as comicStudioStylesUrl,
 } from "~/components/ComicStudio";
 
+import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId.css";
+
 export const links: LinksFunction = () => {
-  return [...comicStudioStylesUrl(), ...comicStudioStateProviderStylesUrl()];
+  return [
+    ...comicStudioStylesUrl(),
+    ...comicStudioStateProviderStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 export default function ComicStudioRoute() {
@@ -19,8 +25,10 @@ export default function ComicStudioRoute() {
   const comicUrlId = params.comicUrlId!;
 
   return (
-    <ComicStudioStateProvider comicUrlId={comicUrlId}>
-      <ComicStudio />
-    </ComicStudioStateProvider>
+    <div className="comic-studio-outer-container">
+      <ComicStudioStateProvider comicUrlId={comicUrlId}>
+        <ComicStudio />
+      </ComicStudioStateProvider>
+    </div>
   );
 }
