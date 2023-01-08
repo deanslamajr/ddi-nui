@@ -145,6 +145,7 @@ const GallerySearch: FC<{}> = ({}) => {
       {showGallerySearchModal && (
         <Modal
           className="emoji-picker-modal"
+          fullHeight
           header={
             showEmojiPicker
               ? null
