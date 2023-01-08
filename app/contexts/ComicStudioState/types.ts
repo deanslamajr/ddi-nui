@@ -34,10 +34,19 @@ export type MoveEmojiAction = {
   };
 };
 
+export type AddEmojiAction = {
+  type: "ADD_EMOIJ";
+  data: {
+    cellUrlId: string;
+    newEmoji: string;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
-  | MoveEmojiAction;
+  | MoveEmojiAction
+  | AddEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

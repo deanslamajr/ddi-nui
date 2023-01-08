@@ -1,4 +1,9 @@
-import { MoveEmojiAction, RedoCellAction, UndoCellAction } from "./types";
+import {
+  AddEmojiAction,
+  MoveEmojiAction,
+  RedoCellAction,
+  UndoCellAction,
+} from "./types";
 
 export const moveEmoji = ({
   cellUrlId,
@@ -17,6 +22,20 @@ export const moveEmoji = ({
     emojiId,
     xDiff,
     yDiff,
+  },
+});
+
+export const addEmoji = ({
+  newEmoji,
+  cellUrlId,
+}: {
+  newEmoji: string;
+  cellUrlId: string;
+}): AddEmojiAction => ({
+  type: "ADD_EMOIJ",
+  data: {
+    newEmoji,
+    cellUrlId,
   },
 });
 

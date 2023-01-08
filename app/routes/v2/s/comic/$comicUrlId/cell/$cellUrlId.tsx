@@ -24,7 +24,7 @@ import EmojiCanvas, {
   links as emojiCanvasStylesUrl,
 } from "~/components/EmojiCanvas";
 
-import { moveEmoji } from "~/contexts/ComicStudioState/actions";
+import { addEmoji, moveEmoji } from "~/contexts/ComicStudioState/actions";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/cell/$cellUrlId.css";
 
@@ -150,7 +150,7 @@ export default function CellStudioRoute() {
           <EmojiPicker
             initialValue=""
             onSelect={(emoji) => {
-              // onSearchEmoji(emoji);
+              dispatch(addEmoji({ newEmoji: emoji, cellUrlId }));
               setShowEmojiPicker(false);
             }}
           />

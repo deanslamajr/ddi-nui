@@ -3,7 +3,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { Stage, Layer, Rect, Text, Group } from "react-konva";
 import Konva from "konva";
 
-import { EmojiConfigSerialized, EmojiConfigJs } from "~/interfaces/studioState";
+import { EmojiConfigSerialized, EmojiConfigJs } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 
 import {
