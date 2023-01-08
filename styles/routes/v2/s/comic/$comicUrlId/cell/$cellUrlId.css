@@ -2,4 +2,34 @@
   min-width: inherit;
   position: fixed;
   top: 0;
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+  bottom: 0;
+  margin-bottom: 0;
+}
+
+/* .emoji-picker-modal {
+  height: 100%;
+  max-height: calc(100% - (var(--buttonDiameter) + (2 * 0.5rem)));
+  margin-bottom: 0;
+
+  @media (max-width: 599px) {
+    .emoji-picker-modal {
+      max-height: calc(100% - (var(--buttonDiameter) + (2 * 4px)));
+    }
+  }
+} */
+
+.cell-studio-modal.modal-container {
+  max-height: calc(100% - (var(--buttonDiameter) + (2 * 0.5rem)));
+}
+
+@media (max-width: 599px) {
+  .cell-studio-modal.modal-container {
+    max-height: calc(100% - (var(--buttonDiameter) + (2 * 4px)));
+  }
 }
