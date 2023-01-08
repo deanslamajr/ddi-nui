@@ -28,12 +28,14 @@ export type Props = React.PropsWithChildren<{
   footer?: React.ReactNode;
   header?: React.ReactNode;
   onCancelClick?: () => void;
+  fullHeight?: boolean;
 }>;
 
 const Modal: React.FC<Props> = ({
   children,
   className,
   footer,
+  fullHeight,
   header,
   onCancelClick,
 }) => {
@@ -50,7 +52,11 @@ const Modal: React.FC<Props> = ({
 
   return (
     <div className="background-mask">
-      <div className={classNames(className, "modal-container")}>
+      <div
+        className={classNames(className, "modal-container", {
+          ["full-height"]: fullHeight,
+        })}
+      >
         {header ? (
           <div className="modal-header">{header}</div>
         ) : header !== null ? (

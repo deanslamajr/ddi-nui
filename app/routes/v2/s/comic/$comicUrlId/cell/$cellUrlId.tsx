@@ -1,3 +1,4 @@
+import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
@@ -17,6 +18,9 @@ import {
 import CellStudio, {
   links as cellStudioStylesUrl,
 } from "~/components/CellStudio";
+import EmojiPicker, {
+  links as emojiPickerStylesUrl,
+} from "~/components/EmojiPicker";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/cell/$cellUrlId.css";
 
@@ -24,6 +28,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStudioStylesUrl(),
     ...modalStylesUrl(),
+    ...emojiPickerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -33,6 +38,8 @@ export const links: LinksFunction = () => {
  */
 export default function CellStudioRoute() {
   const navigate = useNavigate();
+
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
 
   const params = useParams();
   const comicUrlId = params.comicUrlId!;
@@ -65,6 +72,7 @@ export default function CellStudioRoute() {
             <CellStudio
               cellStudioState={cellState.studioState}
               cellUrlId={cellUrlId}
+              onShowEmojiPickerButtonClick={() => setShowEmojiPicker(true)}
             />
           )}
           {prevCellChangeId && (
@@ -91,6 +99,23 @@ export default function CellStudioRoute() {
           )}
         </>
       </Modal>
+      {showEmojiPicker && (
+        <Modal
+          header={null}
+          footer={null}
+          onCancelClick={() => setShowEmojiPicker(false)}
+          className="emoji-picker-modal"
+          fullHeight
+        >
+          <EmojiPicker
+            initialValue=""
+            onSelect={(emoji) => {
+              // onSearchEmoji(emoji);
+              setShowEmojiPicker(false);
+            }}
+          />
+        </Modal>
+      )}
     </>
   );
 }
