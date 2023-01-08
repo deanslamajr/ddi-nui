@@ -1,7 +1,7 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
-import Modal, { links as modalStylesUrl } from "~/components/Modal";
+
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
@@ -13,22 +13,27 @@ import {
   getNextCellChangeId,
   getPreviousCellChangeId,
 } from "~/contexts/ComicStudioState/selectors";
-// import { hasUndo } from "~/utils/studioStateMachine";
 
-import CellStudio, {
-  links as cellStudioStylesUrl,
-} from "~/components/CellStudio";
 import EmojiPicker, {
   links as emojiPickerStylesUrl,
 } from "~/components/EmojiPicker";
+import Modal, { links as modalStylesUrl } from "~/components/Modal";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import EmojiCanvas, {
+  EmojiRefs,
+  links as emojiCanvasStylesUrl,
+} from "~/components/EmojiCanvas";
+
+import { moveEmoji } from "~/contexts/ComicStudioState/actions";
 
 import stylesUrl from "~/styles/routes/v2/s/comic/$comicUrlId/cell/$cellUrlId.css";
 
 export const links: LinksFunction = () => {
   return [
-    ...cellStudioStylesUrl(),
     ...modalStylesUrl(),
     ...emojiPickerStylesUrl(),
+    ...buttonStylesUrl(),
+    ...emojiCanvasStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -50,6 +55,8 @@ export default function CellStudioRoute() {
   const prevCellChangeId = getPreviousCellChangeId(comicStudioState, cellUrlId);
   const nextCellChangeId = getNextCellChangeId(comicStudioState, cellUrlId);
 
+  const emojiRefs = React.useRef({} as EmojiRefs);
+
   const navigateToComicStudioPage = () => {
     const comicStudioPageUrl = DDI_APP_PAGES.comicStudio({
       comicUrlId,
@@ -59,6 +66,25 @@ export default function CellStudioRoute() {
     });
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }) => {
+    if (cellState?.studioState) {
+      dispatch(
+        moveEmoji({
+          cellUrlId,
+          emojiId: cellState.studioState.activeEmojiId,
+          xDiff,
+          yDiff,
+        })
+      );
+    }
+  };
+
   return (
     <>
       <Modal
@@ -66,14 +92,28 @@ export default function CellStudioRoute() {
         footer={null}
         onCancelClick={navigateToComicStudioPage}
         className="cell-studio-modal"
+        fullHeight
       >
         <>
           {cellState?.studioState && (
-            <CellStudio
-              cellStudioState={cellState.studioState}
-              cellUrlId={cellUrlId}
-              onShowEmojiPickerButtonClick={() => setShowEmojiPicker(true)}
-            />
+            <>
+              <EmojiCanvas
+                activeEmojiId={cellState.studioState.activeEmojiId}
+                backgroundColor={cellState.studioState.backgroundColor}
+                emojiConfigs={Object.values(cellState.studioState.emojis)}
+                emojiRefs={emojiRefs.current}
+                handleDragEnd={handleDragEnd}
+              />
+              <div>
+                <MenuButton
+                  accented
+                  className="cell-studio-menu-button"
+                  onClick={() => setShowEmojiPicker(true)}
+                >
+                  +
+                </MenuButton>
+              </div>
+            </>
           )}
           {prevCellChangeId && (
             <div className="nav-button top-right secondary large-icon">
