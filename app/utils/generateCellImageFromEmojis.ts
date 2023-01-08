@@ -7,7 +7,7 @@ import { S3_ASSET_FILETYPE } from "~/utils/constants";
 
 import type { CellFromClientCache } from "~/utils/clientCache/cell";
 
-import { EmojiConfigSerialized } from "~/interfaces/studioState";
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 const CELL_IMAGE_ID = "CELL_IMAGE_ID";
 

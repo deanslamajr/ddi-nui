@@ -1,5 +1,6 @@
-import { EmojiConfigSerialized, EmojiConfigJs } from "~/interfaces/studioState";
+import { EmojiConfigSerialized, EmojiConfigJs } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
+import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
 
 import Konva from "konva";
 
@@ -25,28 +26,6 @@ export const konvaCacheConfig = {
   pixelRatio: 1, /// fixes android graphics glitch
   //drawBorder: true /// set 'true' for debugging image drawing
 };
-
-// @ts-ignore
-export function createNewEmojiComponentState(emoji, currentEmojiId) {
-  return {
-    emoji,
-    id: currentEmojiId,
-    order: currentEmojiId,
-    filters: undefined,
-    selectedEmoji: undefined,
-    x: 100,
-    y: 100,
-    scaleX: 1,
-    scaleY: 1,
-    rotation: 0,
-    size: 100,
-    alpha: 0.5,
-    red: 125,
-    green: 0,
-    blue: 0,
-    opacity: 1,
-  };
-}
 
 export const getEmojiConfigs = (
   emojis: EmojiConfigSerialized[]

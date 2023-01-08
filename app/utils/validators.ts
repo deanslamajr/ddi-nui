@@ -2,14 +2,12 @@ import shortid from "shortid";
 
 import { EMOJI_CONFIG } from "./constants";
 
-import {
-  AllEmojiConfigs,
-  AllStudioStateVersions,
-  EmojiConfigSerialized,
-  StudioState,
-} from "~/interfaces/studioState";
+import { AllStudioStateVersions, StudioState } from "~/interfaces/studioState";
+import { AllEmojiConfigs, EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { theme } from "~/utils/stylesTheme";
+
+import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
 
 const {
   MAX_EMOJIS_COUNT,
@@ -31,26 +29,6 @@ const {
   FILTERS_LIST,
 } = EMOJI_CONFIG;
 
-const DEFAULT_EMOJI_CONFIG: EmojiConfigSerialized = {
-  emoji: "🤙",
-  filters: undefined,
-  id: 0,
-  opacity: 1,
-  order: 0,
-  size: 100,
-  skewX: 0,
-  skewY: 0,
-  rotation: 0,
-  x: 100,
-  y: 100,
-  scaleX: 1,
-  scaleY: 1,
-  alpha: 0.5,
-  red: 125,
-  green: 0,
-  blue: 0,
-};
-
 export const DEFAULT_STUDIO_STATE: StudioState = {
   activeEmojiId: 1,
   backgroundColor: theme.colors.white,
@@ -66,7 +44,6 @@ const ERR_CANNOT_BE_NEGATIVE = "cannot be a negative value";
 const ERR_INCORRECT_SCALE_VALUE = "must be either -1 or 1";
 const ERR_MUST_BE_A_NUMBER = "must be a number type";
 const ERR_MUST_BE_A_STRING = "must be a string type";
-const ERR_VALUE_MUST_BE_SET = "must be set";
 const ERR_EXCEED_MAX_EMOJIS = `Emojis datastructure cannot exceed a count of ${MAX_EMOJIS_COUNT} emojis`;
 const ERR_MUST_BE_A_HEX_COLOR = "must be a valid hex color string";
 

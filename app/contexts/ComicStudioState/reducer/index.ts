@@ -1,5 +1,6 @@
 import { ComicStudioState, ComicStudioStateAction } from "../types";
 import moveEmoji from "./moveEmoji";
+import addEmoji from "./addEmoji";
 import undoCellUpdate from "./undoCellUpdate";
 import redoCellUpdate from "./redoCellUpdate";
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
@@ -46,6 +47,9 @@ export const reducer = (
   switch (action.type) {
     case "MOVE_EMOIJ":
       newState = moveEmoji(state, action);
+      break;
+    case "ADD_EMOIJ":
+      newState = addEmoji(state, action);
       break;
     case "UNDO_CELL":
       newState = undoCellUpdate(state, action);
