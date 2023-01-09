@@ -3,7 +3,36 @@ import {
   MoveEmojiAction,
   RedoCellAction,
   UndoCellAction,
+  ResizeEmojiAction,
 } from "./types";
+
+export const undoCellUpdate = ({
+  cellUrlId,
+  prevCellChangeId,
+}: {
+  cellUrlId: string;
+  prevCellChangeId: string;
+}): UndoCellAction => ({
+  type: "UNDO_CELL",
+  data: {
+    cellUrlId,
+    prevCellChangeId,
+  },
+});
+
+export const redoCellUpdate = ({
+  cellUrlId,
+  nextCellChangeId,
+}: {
+  cellUrlId: string;
+  nextCellChangeId: string;
+}): RedoCellAction => ({
+  type: "REDO_CELL",
+  data: {
+    cellUrlId,
+    nextCellChangeId,
+  },
+});
 
 export const moveEmoji = ({
   cellUrlId,
@@ -39,30 +68,19 @@ export const addEmoji = ({
   },
 });
 
-export const undoCellUpdate = ({
+export const resizeEmoji = ({
+  newSize,
   cellUrlId,
-  prevCellChangeId,
+  shouldSaveChange,
 }: {
+  newSize: number;
   cellUrlId: string;
-  prevCellChangeId: string;
-}): UndoCellAction => ({
-  type: "UNDO_CELL",
+  shouldSaveChange: boolean;
+}): ResizeEmojiAction => ({
+  type: "RESIZE_EMOIJ",
   data: {
+    newSize,
     cellUrlId,
-    prevCellChangeId,
-  },
-});
-
-export const redoCellUpdate = ({
-  cellUrlId,
-  nextCellChangeId,
-}: {
-  cellUrlId: string;
-  nextCellChangeId: string;
-}): RedoCellAction => ({
-  type: "REDO_CELL",
-  data: {
-    cellUrlId,
-    nextCellChangeId,
+    shouldSaveChange,
   },
 });
