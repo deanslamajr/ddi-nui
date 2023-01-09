@@ -42,11 +42,21 @@ export type AddEmojiAction = {
   };
 };
 
+export type ResizeEmojiAction = {
+  type: "RESIZE_EMOIJ";
+  data: {
+    cellUrlId: string;
+    newSize: number;
+    shouldSaveChange: boolean;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
   | MoveEmojiAction
-  | AddEmojiAction;
+  | AddEmojiAction
+  | ResizeEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

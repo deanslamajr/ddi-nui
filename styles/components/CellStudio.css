@@ -12,7 +12,15 @@
   margin-bottom: 0;
 }
 
+.submenu-container {
+  margin-top: 0.5rem;
+}
+
 .cell-studio-menu-button {
   width: var(--canvasWidth);
   font-size: 2.5rem;
+}
+
+.cell-studio-menu-button.medium-font {
+  font-size: 1.5rem;
 }
