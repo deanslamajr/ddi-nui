@@ -113,7 +113,7 @@ const DraftsModal: React.FC<{
             className="add-cell-button"
             onClick={() => (location.href = DDI_APP_PAGES.comicStudio())}
           >
-            CREAT NEW COMIC
+            CREATE NEW COMIC
           </MenuButton>
         </CenteredContainer>
       }
