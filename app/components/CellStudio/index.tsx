@@ -59,6 +59,10 @@ const CellStudio: React.FC<{}> = ({}) => {
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellState = getCellState(comicStudioState, cellUrlId);
 
+  const totalEmojiCount = Object.values(
+    cellState?.studioState?.emojis || {}
+  ).length;
+
   const prevCellChangeId = getPreviousCellChangeId(comicStudioState, cellUrlId);
   const nextCellChangeId = getNextCellChangeId(comicStudioState, cellUrlId);
 
@@ -102,7 +106,7 @@ const CellStudio: React.FC<{}> = ({}) => {
         fullHeight
       >
         <>
-          {cellState?.studioState && (
+          {cellState?.studioState && totalEmojiCount !== 0 && (
             <>
               <EmojiCanvas
                 activeEmojiId={cellState.studioState.activeEmojiId}
@@ -159,11 +163,15 @@ const CellStudio: React.FC<{}> = ({}) => {
           )}
         </>
       </Modal>
-      {showEmojiPicker && (
+      {(showEmojiPicker || totalEmojiCount === 0) && (
         <Modal
           header={null}
           footer={null}
-          onCancelClick={() => setShowEmojiPicker(false)}
+          onCancelClick={
+            totalEmojiCount > 0
+              ? () => setShowEmojiPicker(false)
+              : navigateToComicStudioPage
+          }
           className="emoji-picker-modal"
           fullHeight
         >
