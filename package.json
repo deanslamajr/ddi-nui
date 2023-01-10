@@ -85,5 +85,5 @@
   "engines": {
     "node": ">=14"
   },
-  "version": "1.12.6"
+  "version": "1.12.7"
 }
