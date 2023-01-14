@@ -13,8 +13,9 @@ export const MenuButton: React.FC<
     accented?: boolean;
     className?: string;
     onClick?: () => void;
+    noSpinner?: boolean;
   }>
-> = ({ children, className, accented, onClick }) => {
+> = ({ children, className, accented, onClick, noSpinner }) => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   return (
@@ -29,7 +30,7 @@ export const MenuButton: React.FC<
         [`${className}`]: className,
       })}
     >
-      {isLoading ? <span className="loading">🤙</span> : children}
+      {isLoading && !noSpinner ? <span className="loading">🤙</span> : children}
     </span>
   );
 };

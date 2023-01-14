@@ -50,6 +50,7 @@
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^2.1.0",
     "react-hotkeys-hook": "^3.4.7",
+    "react-icons": "^4.7.1",
     "react-image": "^4.0.3",
     "react-konva": "^18.2.3",
     "react-page-visibility": "^7.0.0",

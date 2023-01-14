@@ -28,7 +28,6 @@ export type MoveEmojiAction = {
   type: "MOVE_EMOIJ";
   data: {
     cellUrlId: string;
-    emojiId: number;
     xDiff: number;
     yDiff: number;
   };

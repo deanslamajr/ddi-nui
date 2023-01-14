@@ -19,8 +19,21 @@
 .cell-studio-menu-button {
   width: var(--canvasWidth);
   font-size: 2.5rem;
+
+  &.half-width {
+    width: calc(0.5 * var(--canvasWidth));
+    margin: 0.5rem auto;
+  }
 }
 
 .cell-studio-menu-button.medium-font {
   font-size: 1.5rem;
+}
+
+.button-row {
+  display: flex;
+
+  & .half-width {
+    margin: 0.5rem;
+  }
 }

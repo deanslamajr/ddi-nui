@@ -36,19 +36,16 @@ export const redoCellUpdate = ({
 
 export const moveEmoji = ({
   cellUrlId,
-  emojiId,
   xDiff,
   yDiff,
 }: {
   cellUrlId: string;
-  emojiId: number;
   xDiff: number;
   yDiff: number;
 }): MoveEmojiAction => ({
   type: "MOVE_EMOIJ",
   data: {
     cellUrlId,
-    emojiId,
     xDiff,
     yDiff,
   },

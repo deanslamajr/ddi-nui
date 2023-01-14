@@ -28,6 +28,7 @@ import MainMenu, { links as mainMenuStylesUrl } from "./MainMenu";
 import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
 import CellMenu, { links as cellMenuStylesUrl } from "./CellMenu";
 import SizeMenu, { links as sizeMenuStylesUrl } from "./SizeMenu";
+import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -40,11 +41,12 @@ export const links: LinksFunction = () => {
     ...emojiMenuStylesUrl(),
     ...cellMenuStylesUrl(),
     ...sizeMenuStylesUrl(),
+    ...positionMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
 
-type Submenu = "MAIN" | "EMOJI" | "CELL" | "SIZE";
+type Submenu = "MAIN" | "EMOJI" | "CELL" | "SIZE" | "POSITION";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
@@ -122,6 +124,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onEmojiButtonClick={() => setCurrentSubmenu("EMOJI")}
                     onCellButtonClick={() => setCurrentSubmenu("CELL")}
                     onSizeButtonClick={() => setCurrentSubmenu("SIZE")}
+                    onPositionButtonClick={() => setCurrentSubmenu("POSITION")}
                   />
                 ) : currentSubmenu === "EMOJI" ? (
                   <EmojiMenu
@@ -133,6 +136,10 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "SIZE" ? (
                   <SizeMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "POSITION" ? (
+                  <PositionMenu
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : null}

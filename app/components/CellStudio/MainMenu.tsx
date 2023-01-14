@@ -13,11 +13,13 @@ const MainMenu: React.FC<{
   onAddButtonClick: () => void;
   onEmojiButtonClick: () => void;
   onCellButtonClick: () => void;
+  onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
 }> = ({
   onAddButtonClick,
   onEmojiButtonClick,
   onCellButtonClick,
+  onPositionButtonClick,
   onSizeButtonClick,
 }) => {
   return (
@@ -49,7 +51,7 @@ const MainMenu: React.FC<{
       </MenuButton>
       <MenuButton
         className="cell-studio-menu-button"
-        onClick={() => console.log("clicked!")}
+        onClick={onPositionButtonClick}
       >
         POSITION
       </MenuButton>
