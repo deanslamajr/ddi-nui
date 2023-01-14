@@ -21,8 +21,11 @@
   font-size: 2.5rem;
 
   &.half-width {
-    width: calc(0.5 * var(--canvasWidth));
-    margin: 0.5rem auto;
+    width: calc((0.5 * var(--canvasWidth)) - 0.5rem);
+
+    &.with-margin {
+      margin: 0.5rem auto;
+    }
   }
 }
 
@@ -33,7 +36,11 @@
 .button-row {
   display: flex;
 
-  & .half-width {
+  & .half-width:first-of-type {
+    margin-right: 0.5rem;
+  }
+
+  & .half-width.with-margin {
     margin: 0.5rem;
   }
 }
