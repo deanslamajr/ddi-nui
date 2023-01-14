@@ -3,23 +3,18 @@ import classNames from "classnames";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
 import {
-  RxDoubleArrowUp,
   RxArrowUp,
   RxArrowLeft,
-  RxDoubleArrowLeft,
   RxArrowRight,
-  RxDoubleArrowRight,
   RxArrowDown,
-  RxDoubleArrowDown,
 } from "react-icons/rx";
-import { TiArrowBackOutline } from "react-icons/ti";
-
-import { EMOJI_CONFIG } from "~/utils/constants";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { moveEmoji } from "~/contexts/ComicStudioState/actions";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+
+import { BackMenuButton } from "./MainMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -39,14 +34,7 @@ const PositionMenu: React.FC<{
 
   return (
     <>
-      <MenuButton
-        accented
-        className="cell-studio-menu-button"
-        noSpinner
-        onClick={onBackButtonClick}
-      >
-        <TiArrowBackOutline />
-      </MenuButton>
+      <BackMenuButton onBackButtonClick={onBackButtonClick} />
 
       <MenuButton
         className="cell-studio-menu-button half-width"

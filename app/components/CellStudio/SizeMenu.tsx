@@ -12,6 +12,8 @@ import { getEmojiSize } from "~/contexts/ComicStudioState/selectors";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import Slider, { links as sliderStylesUrl } from "~/components/Slider";
 
+import { BackMenuButton } from "./MainMenu";
+
 import stylesUrl from "~/styles/components/CellStudio.css";
 
 export const links: LinksFunction = () => {
@@ -45,13 +47,7 @@ const SizeMenu: React.FC<{
 
   return (
     <>
-      <MenuButton
-        accented
-        className="cell-studio-menu-button"
-        onClick={onBackButtonClick}
-      >
-        🔙
-      </MenuButton>
+      <BackMenuButton onBackButtonClick={onBackButtonClick} />
       {emojiSize !== null ? (
         <SliderContainer>
           <Label>SIZE</Label>
