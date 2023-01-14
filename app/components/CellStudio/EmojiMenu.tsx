@@ -3,6 +3,8 @@ import type { LinksFunction } from "@remix-run/node";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
+import { BackMenuButton } from "./MainMenu";
+
 import stylesUrl from "~/styles/components/CellStudio.css";
 
 export const links: LinksFunction = () => {
@@ -14,13 +16,7 @@ const EmojiMenu: React.FC<{
 }> = ({ onBackButtonClick }) => {
   return (
     <>
-      <MenuButton
-        accented
-        className="cell-studio-menu-button"
-        onClick={onBackButtonClick}
-      >
-        🔙
-      </MenuButton>
+      <BackMenuButton onBackButtonClick={onBackButtonClick} />
       <MenuButton
         className="cell-studio-menu-button medium-font"
         onClick={() => console.log("clicked!")}

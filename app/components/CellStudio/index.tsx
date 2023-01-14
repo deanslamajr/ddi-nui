@@ -1,6 +1,7 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams, useNavigate } from "@remix-run/react";
+import { CgUndo, CgRedo } from "react-icons/cg";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
@@ -86,16 +87,13 @@ const CellStudio: React.FC<{}> = ({}) => {
     xDiff: number;
     yDiff: number;
   }) => {
-    if (cellState?.studioState) {
-      dispatch(
-        moveEmoji({
-          cellUrlId,
-          emojiId: cellState.studioState.activeEmojiId,
-          xDiff,
-          yDiff,
-        })
-      );
-    }
+    dispatch(
+      moveEmoji({
+        cellUrlId,
+        xDiff,
+        yDiff,
+      })
+    );
   };
 
   return (
@@ -153,7 +151,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                   dispatch(undoCellUpdate({ cellUrlId, prevCellChangeId }))
                 }
               >
-                ↶
+                <CgUndo />
               </button>
             </div>
           )}
@@ -164,7 +162,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                   dispatch(redoCellUpdate({ cellUrlId, nextCellChangeId }))
                 }
               >
-                ↷
+                <CgRedo />
               </button>
             </div>
           )}

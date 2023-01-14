@@ -1,5 +1,7 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
+import { IoMdPersonAdd } from "react-icons/io";
+import { TiArrowBackOutline } from "react-icons/ti";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
@@ -7,6 +9,21 @@ import stylesUrl from "~/styles/components/CellStudio.css";
 
 export const links: LinksFunction = () => {
   return [...buttonStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+};
+
+export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
+  onBackButtonClick,
+}) => {
+  return (
+    <MenuButton
+      accented
+      className="cell-studio-menu-button"
+      noSpinner
+      onClick={onBackButtonClick}
+    >
+      <TiArrowBackOutline />
+    </MenuButton>
+  );
 };
 
 const MainMenu: React.FC<{
@@ -29,7 +46,7 @@ const MainMenu: React.FC<{
         className="cell-studio-menu-button"
         onClick={onAddButtonClick}
       >
-        +
+        <IoMdPersonAdd />
       </MenuButton>
       <MenuButton
         className="cell-studio-menu-button"
