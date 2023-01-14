@@ -48,18 +48,20 @@ const MainMenu: React.FC<{
       >
         <IoMdPersonAdd />
       </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
-        onClick={onCellButtonClick}
-      >
-        CELL
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
-        onClick={onEmojiButtonClick}
-      >
-        EMOJI
-      </MenuButton>
+      <div className="button-row">
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={onCellButtonClick}
+        >
+          CELL
+        </MenuButton>
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={onEmojiButtonClick}
+        >
+          EMOJI
+        </MenuButton>
+      </div>
       <MenuButton
         className="cell-studio-menu-button"
         onClick={onSizeButtonClick}
