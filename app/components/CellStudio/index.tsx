@@ -20,7 +20,6 @@ import EmojiPicker, {
   links as emojiPickerStylesUrl,
 } from "~/components/EmojiPicker";
 import EmojiCanvas, {
-  EmojiRefs,
   links as emojiCanvasStylesUrl,
 } from "~/components/EmojiCanvas";
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
@@ -69,8 +68,6 @@ const CellStudio: React.FC<{}> = ({}) => {
   const prevCellChangeId = getPreviousCellChangeId(comicStudioState, cellUrlId);
   const nextCellChangeId = getNextCellChangeId(comicStudioState, cellUrlId);
 
-  const emojiRefs = React.useRef({} as EmojiRefs);
-
   const navigateToComicStudioPage = () => {
     const comicStudioPageUrl = DDI_APP_PAGES.comicStudio({
       comicUrlId,
@@ -112,7 +109,6 @@ const CellStudio: React.FC<{}> = ({}) => {
                 activeEmojiId={cellState.studioState.activeEmojiId}
                 backgroundColor={cellState.studioState.backgroundColor}
                 emojiConfigs={Object.values(cellState.studioState.emojis)}
-                emojiRefs={emojiRefs.current}
                 handleDragEnd={handleDragEnd}
               />
               <div className="submenu-container">

@@ -11,12 +11,16 @@ import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import CellPreview from "~/components/ComicStudio/CellPreview";
-import { EmojiIcon } from "~/components/EmojiIcon";
+import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
 export const links: LinksFunction = () => {
-  return [...buttonStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+  return [
+    ...buttonStylesUrl(),
+    ...emojiIconStylesUrl(),
+    { rel: "stylesheet", href: stylesUrl },
+  ];
 };
 
 export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
@@ -51,7 +55,6 @@ const MainMenu: React.FC<{
   onPositionButtonClick,
   onSizeButtonClick,
 }) => {
-  console.log("activeEmojiConfig", activeEmojiConfig);
   return (
     <>
       <div className="button-row">

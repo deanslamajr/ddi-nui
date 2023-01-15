@@ -11,6 +11,7 @@ import { getEmojiSize } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import Slider, { links as sliderStylesUrl } from "~/components/Slider";
+import DPad, { links as dPadStylesUrl } from "~/components/DPad";
 
 import { BackMenuButton } from "./MainMenu";
 
@@ -20,6 +21,7 @@ export const links: LinksFunction = () => {
   return [
     ...buttonStylesUrl(),
     ...sliderStylesUrl(),
+    ...dPadStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -74,6 +76,26 @@ const SizeMenu: React.FC<{
                 })
               )
             }
+          />
+          <DPad
+            horizontalActions={(multiplier) => ({
+              onLeftClick: () =>
+                dispatch(
+                  resizeEmoji({
+                    newSize: emojiSize - multiplier,
+                    cellUrlId,
+                    shouldSaveChange: true,
+                  })
+                ),
+              onRightClick: () =>
+                dispatch(
+                  resizeEmoji({
+                    newSize: emojiSize + multiplier,
+                    cellUrlId,
+                    shouldSaveChange: true,
+                  })
+                ),
+            })}
           />
         </SliderContainer>
       ) : (

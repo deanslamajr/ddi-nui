@@ -5,6 +5,9 @@ import Konva from "konva";
  * TYPES
  */
 
+export type EmojiRef = Konva.Text | null;
+export type EmojiRefs = Record<string, EmojiRef>;
+
 type EmojiConfigBase = {
   x: number;
   y: number;
@@ -45,6 +48,8 @@ export type EmojiConfigJs = LatestEmojiConfigBase & {
   opacity: number;
   text: string;
   useCache: boolean;
+  offsetX: number;
+  offsetY: number;
 };
 
 export type AllEmojiConfigs =
