@@ -1,12 +1,17 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { IoMdPersonAdd } from "react-icons/io";
+import { IoMdPersonAdd, IoIosColorFilter } from "react-icons/io";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { SlCursorMove } from "react-icons/sl";
 import { GiResize } from "react-icons/gi";
+import { TbRotate360 } from "react-icons/tb";
+import { GrTransaction } from "react-icons/gr";
+
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import CellPreview from "~/components/ComicStudio/CellPreview";
+import { EmojiIcon } from "~/components/EmojiIcon";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -30,6 +35,7 @@ export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
 };
 
 const MainMenu: React.FC<{
+  activeEmojiConfig: EmojiConfigSerialized;
   cellUrlId: string;
   onAddButtonClick: () => void;
   onEmojiButtonClick: () => void;
@@ -37,6 +43,7 @@ const MainMenu: React.FC<{
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
 }> = ({
+  activeEmojiConfig,
   cellUrlId,
   onAddButtonClick,
   onEmojiButtonClick,
@@ -44,17 +51,12 @@ const MainMenu: React.FC<{
   onPositionButtonClick,
   onSizeButtonClick,
 }) => {
+  console.log("activeEmojiConfig", activeEmojiConfig);
   return (
     <>
-      <MenuButton
-        accented
-        className="cell-studio-menu-button"
-        onClick={onAddButtonClick}
-      >
-        <IoMdPersonAdd />
-      </MenuButton>
       <div className="button-row">
         <MenuButton
+          isSecondary
           className="cell-studio-menu-button half-width"
           onClick={onCellButtonClick}
         >
@@ -66,41 +68,53 @@ const MainMenu: React.FC<{
           />
         </MenuButton>
         <MenuButton
+          isSecondary
           className="cell-studio-menu-button half-width"
           onClick={onEmojiButtonClick}
         >
-          EMOJI
+          <EmojiIcon config={activeEmojiConfig} />
+        </MenuButton>
+      </div>
+      <MenuButton
+        accented
+        className="cell-studio-menu-button"
+        onClick={onAddButtonClick}
+      >
+        <IoMdPersonAdd />
+      </MenuButton>
+      <div className="button-row">
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={onSizeButtonClick}
+        >
+          <GiResize />
+        </MenuButton>
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={onPositionButtonClick}
+        >
+          <SlCursorMove />
+        </MenuButton>
+      </div>
+      <div className="button-row">
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={() => console.log("clicked!")}
+        >
+          <TbRotate360 />
+        </MenuButton>
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={() => console.log("clicked!")}
+        >
+          <GrTransaction />
         </MenuButton>
       </div>
       <MenuButton
         className="cell-studio-menu-button"
-        onClick={onSizeButtonClick}
-      >
-        <GiResize />
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
-        onClick={onPositionButtonClick}
-      >
-        <SlCursorMove />
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
         onClick={() => console.log("clicked!")}
       >
-        ROTATION
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
-        onClick={() => console.log("clicked!")}
-      >
-        SKEW
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button"
-        onClick={() => console.log("clicked!")}
-      >
-        FILTERS
+        <IoIosColorFilter />
       </MenuButton>
     </>
   );

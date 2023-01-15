@@ -12,10 +12,11 @@ export const MenuButton: React.FC<
   React.PropsWithChildren<{
     accented?: boolean;
     className?: string;
+    isSecondary?: boolean;
     onClick?: () => void;
     noSpinner?: boolean;
   }>
-> = ({ children, className, accented, onClick, noSpinner }) => {
+> = ({ children, className, accented, isSecondary, onClick, noSpinner }) => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   return (
@@ -27,6 +28,7 @@ export const MenuButton: React.FC<
       }}
       className={classNames("button", {
         accented,
+        secondary: isSecondary,
         [`${className}`]: className,
       })}
     >

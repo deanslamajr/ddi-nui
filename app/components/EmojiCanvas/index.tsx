@@ -100,8 +100,6 @@ const EmojiCanvas: FC<{
     outlineConfig.opacity = 0;
   }
 
-  console.dir(emojiKonvaConfigs);
-
   return (
     <div className="emoji-canvas">
       <Stage width={theme.canvas.width} height={theme.canvas.height}>
