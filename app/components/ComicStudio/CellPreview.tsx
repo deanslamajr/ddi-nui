@@ -16,7 +16,7 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 
-import stylesUrl from "~/styles/components/ComicStudio.css";
+import stylesUrl from "~/styles/components/CellPreview.css";
 
 export const links: LinksFunction = () => {
   return [
@@ -27,12 +27,19 @@ export const links: LinksFunction = () => {
 };
 
 const SIDE_BUTTONS_SPACER = 0;
-const cellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
+const defaultCellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
 
 const CellPreview: React.FC<{
   cellUrlId: string;
+  cellWidth?: string;
+  isButtonIcon?: boolean;
   onCellClick: (cell: CellFromClientCache) => void;
-}> = ({ cellUrlId, onCellClick }) => {
+}> = ({
+  cellUrlId,
+  cellWidth = defaultCellWidth,
+  isButtonIcon,
+  onCellClick,
+}) => {
   const [comicStudioState] = useComicStudioState();
   const cell = getCellState(comicStudioState, cellUrlId);
 
@@ -49,22 +56,34 @@ const CellPreview: React.FC<{
   }, [cell]);
 
   return cell && generatedImageUrl ? (
-    <div onClick={() => onCellClick(cell)}>
-      {cell.isDirty && (
-        <div className="unpublished-changes">Unpublished Changes</div>
-      )}
+    isButtonIcon ? (
       <Cell
         clickable
-        className="studio-cell"
-        imageUrl={generatedImageUrl || ""}
+        className="cell-preview-as-icon"
+        imageUrl={generatedImageUrl}
         isImageUrlAbsolute={true}
         schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-        caption={cell.studioState?.caption || ""}
         cellWidth={cellWidth}
         containerWidth={cellWidth}
       />
-    </div>
-  ) : (
+    ) : (
+      <div onClick={() => onCellClick(cell)}>
+        {cell.isDirty && (
+          <div className="unpublished-changes">Unpublished Changes</div>
+        )}
+        <Cell
+          clickable
+          className="cell-preview-as-studio-cell"
+          imageUrl={generatedImageUrl}
+          isImageUrlAbsolute={true}
+          schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+          caption={cell.studioState?.caption || ""}
+          cellWidth={cellWidth}
+          containerWidth={cellWidth}
+        />
+      </div>
+    )
+  ) : isButtonIcon ? null : (
     <CellWithLoadSpinner />
   );
 };

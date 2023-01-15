@@ -99,7 +99,7 @@ const Cell: FC<{
     marginRight: schemaVersion === 1 ? "3px" : "1px",
     padding: schemaVersion === 1 ? "0" : "1px",
     cursor: clickable ? "pointer" : "default",
-    background: schemaVersion === 1 ? "inherit" : "var(--lightGray)",
+    // background: schemaVersion === 1 ? "inherit" : "var(--lightGray)",
   };
 
   if (containerWidth) {

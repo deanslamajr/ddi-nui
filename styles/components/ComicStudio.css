@@ -10,10 +10,6 @@
   width: var(--comicWidth);
 }
 
-.studio-cell {
-  margin: 0 auto;
-}
-
 .unpublished-changes {
   z-index: 999;
   position: absolute;

@@ -118,6 +118,7 @@ const CellStudio: React.FC<{}> = ({}) => {
               <div className="submenu-container">
                 {currentSubmenu === "MAIN" ? (
                   <MainMenu
+                    cellUrlId={cellUrlId}
                     onAddButtonClick={() => setShowEmojiPicker(true)}
                     onEmojiButtonClick={() => setCurrentSubmenu("EMOJI")}
                     onCellButtonClick={() => setCurrentSubmenu("CELL")}

@@ -36,44 +36,50 @@ const PositionMenu: React.FC<{
     <>
       <BackMenuButton onBackButtonClick={onBackButtonClick} />
 
-      <MenuButton
-        className="cell-studio-menu-button half-width"
-        noSpinner
-        onClick={() =>
-          dispatch(moveEmoji({ cellUrlId, xDiff: 0, yDiff: -1 * multiplier }))
-        }
-      >
-        <RxArrowUp />
-      </MenuButton>
-      <div className="button-row">
+      <div className="d-pad">
         <MenuButton
           className="cell-studio-menu-button half-width"
           noSpinner
           onClick={() =>
-            dispatch(moveEmoji({ cellUrlId, xDiff: -1 * multiplier, yDiff: 0 }))
+            dispatch(moveEmoji({ cellUrlId, xDiff: 0, yDiff: -1 * multiplier }))
           }
         >
-          <RxArrowLeft />
+          <RxArrowUp />
         </MenuButton>
+        <div className="button-row">
+          <MenuButton
+            className="cell-studio-menu-button half-width"
+            noSpinner
+            onClick={() =>
+              dispatch(
+                moveEmoji({ cellUrlId, xDiff: -1 * multiplier, yDiff: 0 })
+              )
+            }
+          >
+            <RxArrowLeft />
+          </MenuButton>
+          <MenuButton
+            className="cell-studio-menu-button half-width"
+            noSpinner
+            onClick={() =>
+              dispatch(
+                moveEmoji({ cellUrlId, xDiff: 1 * multiplier, yDiff: 0 })
+              )
+            }
+          >
+            <RxArrowRight />
+          </MenuButton>
+        </div>
         <MenuButton
           className="cell-studio-menu-button half-width"
           noSpinner
           onClick={() =>
-            dispatch(moveEmoji({ cellUrlId, xDiff: 1 * multiplier, yDiff: 0 }))
+            dispatch(moveEmoji({ cellUrlId, xDiff: 0, yDiff: 1 * multiplier }))
           }
         >
-          <RxArrowRight />
+          <RxArrowDown />
         </MenuButton>
       </div>
-      <MenuButton
-        className="cell-studio-menu-button half-width"
-        noSpinner
-        onClick={() =>
-          dispatch(moveEmoji({ cellUrlId, xDiff: 0, yDiff: 1 * multiplier }))
-        }
-      >
-        <RxArrowDown />
-      </MenuButton>
 
       <MenuButton
         className={classNames("cell-studio-menu-button", {
