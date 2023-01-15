@@ -29,11 +29,26 @@
   &.accented {
     background-color: var(--pink);
     color: var(--white);
+
+    &:hover {
+      background-color: var(--pinkWhite);
+      color: var(--black);
+    }
+  }
+
+  &.secondary {
+    background-color: var(--pinkWhite);
+    color: var(--black);
+
+    &:hover {
+      background-color: var(--pink);
+      color: var(--black);
+    }
   }
 
   &:hover {
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--pinkWhite);
+    color: var(--black);
 
     &.disabled {
       background-color: var(--white);

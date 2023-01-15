@@ -27,10 +27,8 @@ export const konvaCacheConfig = {
   //drawBorder: true /// set 'true' for debugging image drawing
 };
 
-export const getEmojiConfigs = (
-  emojis: EmojiConfigSerialized[]
-): EmojiConfigJs[] => {
-  return emojis.sort(sortByOrder).map((emoji) => ({
+export const getEmojiConfig = (emoji: EmojiConfigSerialized): EmojiConfigJs => {
+  return {
     "data-id": emoji.id,
     filters: emoji.filters
       ? emoji.filters.filter((filter) => Boolean(filter))
@@ -53,7 +51,13 @@ export const getEmojiConfigs = (
         ? emoji.opacity
         : 1 /* backwards compatibility */,
     useCache: true,
-  }));
+  };
+};
+
+export const getEmojiConfigs = (
+  emojis: EmojiConfigSerialized[]
+): EmojiConfigJs[] => {
+  return emojis.sort(sortByOrder).map((emoji) => getEmojiConfig(emoji));
 };
 
 export const generateCellImage = (
