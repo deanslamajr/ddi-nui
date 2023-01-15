@@ -21,7 +21,7 @@
   font-size: 2.5rem;
 
   &.half-width {
-    width: calc((0.5 * var(--canvasWidth)) - 0.5rem);
+    width: calc((0.3 * var(--canvasWidth)) - 0.5rem);
 
     &.with-margin {
       margin: 0.5rem auto;
@@ -31,21 +31,4 @@
 
 .cell-studio-menu-button.medium-font {
   font-size: 1.5rem;
-}
-
-.button-row {
-  display: flex;
-
-  & .half-width:first-of-type {
-    margin-right: 0.5rem;
-  }
-
-  & .half-width.with-margin {
-    margin: 0.5rem;
-  }
-}
-
-.d-pad {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
 }

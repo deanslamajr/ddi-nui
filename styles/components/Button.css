@@ -68,3 +68,19 @@
     /* color: var(--black); */
   }
 }
+
+.button-row {
+  display: flex;
+
+  & .half-width {
+    margin-right: 0.5rem;
+  }
+
+  & .half-width:last-of-type {
+    margin-right: 0;
+  }
+
+  & .half-width.with-margin {
+    margin: 0.5rem;
+  }
+}

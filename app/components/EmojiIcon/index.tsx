@@ -1,41 +1,60 @@
 import React from "react";
 import { Layer, Stage, Text } from "react-konva";
 
-import { EmojiRefs } from "../EmojiCanvas";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
-import { getEmojiConfig } from "~/utils/konva";
+
+import KonvaEmoji from "~/components/KonvaEmoji";
+
+import type { LinksFunction } from "@remix-run/node";
+import stylesUrl from "~/styles/components/EmojiIcon.css";
+
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: stylesUrl }];
+};
 
 export const EmojiIcon: React.FC<{
   config: EmojiConfigSerialized;
-  emojiRefs?: EmojiRefs;
-}> = ({ config, emojiRefs }) => {
-  const emojiKonvaConfig = getEmojiConfig(config);
+}> = ({ config }) => {
+  const emojiIconRef = React.useRef<HTMLDivElement>(null);
+  const [stageDimensions, setStageDimensions] = React.useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
-  const textConfig = {
-    ...emojiKonvaConfig,
-    x: 0,
-    y: 5,
-    fontSize: 166,
-    scaleX: 0.17,
-    scaleY: 0.17,
-    useCache: true,
-  };
+  React.useEffect(() => {
+    if (emojiIconRef.current) {
+      setStageDimensions({
+        width: emojiIconRef.current.clientWidth,
+        height: emojiIconRef.current.clientHeight,
+      });
+    }
+  }, [emojiIconRef.current]);
 
-  console.log("textConfig", textConfig);
+  const emojiConfig: EmojiConfigSerialized | null = React.useMemo(() => {
+    if (!stageDimensions) {
+      return null;
+    }
+
+    return {
+      ...config,
+      x: stageDimensions.width / 2,
+      y: stageDimensions.height / 2,
+      size: 166,
+      scaleX: 0.17,
+      scaleY: 0.17,
+      // useCache: true,
+    };
+  }, [config, stageDimensions]);
 
   return (
-    <div className="emoji-canvas">
-      <Stage width={35} height={35}>
-        <Layer>
-          <Text
-            {...textConfig}
-
-            // ref={(ref) => (emojiRefs[emojiKonvaConfig["data-id"]] = ref)}
-            // key={`${config["data-id"]}${config.text}`}
-            // id={`${config["data-id"]}`}
-          />
-        </Layer>
-      </Stage>
+    <div className="emoji-icon-container" ref={emojiIconRef}>
+      {stageDimensions && emojiConfig && (
+        <Stage width={stageDimensions.width} height={stageDimensions.height}>
+          <Layer>
+            <KonvaEmoji emojiConfig={emojiConfig} />
+          </Layer>
+        </Stage>
+      )}
     </div>
   );
 };

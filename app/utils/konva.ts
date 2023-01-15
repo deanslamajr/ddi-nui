@@ -1,6 +1,6 @@
 import { EmojiConfigSerialized, EmojiConfigJs } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
-import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
+import { EmojiRef, EmojiRefs } from "~/models/emojiConfig";
 
 import Konva from "konva";
 
@@ -21,13 +21,23 @@ const konvaFiltersEnabledInDdi = {
 export const EMOJI_MASK_REF_ID = "EMOJI_MASK_REF_ID";
 export const EMOJI_MASK_OUTLINE_REF_ID = "EMOJI_MASK_OUTLINE_REF_ID";
 
-export const konvaCacheConfig = {
-  offset: 30,
-  pixelRatio: 1, /// fixes android graphics glitch
-  //drawBorder: true /// set 'true' for debugging image drawing
+const getOffsetsFromTextRef = (
+  emojiRef?: EmojiRef
+): { offsetX: number; offsetY: number } => {
+  const offsetX = emojiRef ? emojiRef.width() / 2 : 0;
+  const offsetY = emojiRef ? emojiRef.height() / 2 : 0;
+  return {
+    offsetX,
+    offsetY,
+  };
 };
 
-export const getEmojiConfig = (emoji: EmojiConfigSerialized): EmojiConfigJs => {
+export const getKonvaConfigFromEmojiConfig = (
+  emoji: EmojiConfigSerialized,
+  emojiRef?: EmojiRef
+): EmojiConfigJs => {
+  const { offsetX, offsetY } = getOffsetsFromTextRef(emojiRef);
+
   return {
     "data-id": emoji.id,
     filters: emoji.filters
@@ -51,13 +61,19 @@ export const getEmojiConfig = (emoji: EmojiConfigSerialized): EmojiConfigJs => {
         ? emoji.opacity
         : 1 /* backwards compatibility */,
     useCache: true,
+    offsetX,
+    offsetY,
   };
 };
 
 export const getEmojiConfigs = (
-  emojis: EmojiConfigSerialized[]
+  emojis: EmojiConfigSerialized[],
+  emojiRefs?: EmojiRefs
 ): EmojiConfigJs[] => {
-  return emojis.sort(sortByOrder).map((emoji) => getEmojiConfig(emoji));
+  return emojis.sort(sortByOrder).map((emoji) => {
+    const emojiRef = emojiRefs && emojiRefs[emoji.id];
+    return getKonvaConfigFromEmojiConfig(emoji, emojiRef);
+  });
 };
 
 export const generateCellImage = (
@@ -91,7 +107,21 @@ export const generateCellImage = (
   // Add emojis
   getEmojiConfigs(Object.values(emojis)).forEach((config) => {
     const emoji = new Konva.Text({ ...config });
-    emoji.cache(konvaCacheConfig);
+
+    const { offsetX, offsetY } = getOffsetsFromTextRef(emoji);
+
+    emoji.offsetX(offsetX);
+    emoji.offsetY(offsetY);
+
+    emoji.cache({
+      // offset: 100,
+      x: offsetX - emoji.getAbsolutePosition().x,
+      y: offsetY - emoji.getAbsolutePosition().y,
+      pixelRatio: 2, /// fixes android graphics glitch
+      // drawBorder: true, /// set 'true' for debugging image drawing
+      width: theme.canvas.width,
+      height: theme.canvas.height,
+    });
     layer.add(emoji);
   });
 

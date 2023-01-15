@@ -1,16 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { Stage, Layer, Rect, Text, Group } from "react-konva";
+import { Stage, Layer, Rect, Group } from "react-konva";
 import Konva from "konva";
 
-import { EmojiConfigSerialized, EmojiConfigJs } from "~/models/emojiConfig";
+import { EmojiConfigSerialized, EmojiRefs } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 
-import {
-  getEmojiConfigs,
-  EMOJI_MASK_REF_ID,
-  EMOJI_MASK_OUTLINE_REF_ID,
-} from "~/utils/konva";
+import KonvaEmoji from "~/components/KonvaEmoji";
 
 import stylesUrl from "~/styles/components/EmojiCanvas.css";
 
@@ -18,36 +14,12 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-const getOutlineConfig = (config: EmojiConfigJs) => {
-  const { x, y, scaleX, scaleY, rotation, fontSize, useCache } = config;
-
-  return {
-    x,
-    y,
-    scaleX,
-    scaleY,
-    rotation,
-    text: "    ",
-    fontSize,
-    useCache,
-  } as EmojiConfigJs;
-};
-
-export type EmojiRefs = Record<string, Konva.Text | null>;
-
 const EmojiCanvas: FC<{
   activeEmojiId: number;
   backgroundColor: string;
   emojiConfigs: EmojiConfigSerialized[];
-  emojiRefs: EmojiRefs;
   handleDragEnd: (args: { xDiff: number; yDiff: number }) => void;
-}> = ({
-  activeEmojiId,
-  backgroundColor,
-  emojiConfigs,
-  emojiRefs,
-  handleDragEnd,
-}) => {
+}> = ({ activeEmojiId, backgroundColor, emojiConfigs, handleDragEnd }) => {
   const [state, setState] = useState<{
     isDragging: boolean;
     prevX: number;
@@ -57,8 +29,6 @@ const EmojiCanvas: FC<{
     prevX: 0,
     prevY: 0,
   });
-
-  const emojiKonvaConfigs = getEmojiConfigs(emojiConfigs);
 
   const onDragStart = () => {
     setState((prevState) => ({ ...prevState, isDragging: true }));
@@ -84,21 +54,42 @@ const EmojiCanvas: FC<{
     }));
   };
 
-  if (emojiKonvaConfigs === null) {
-    return null;
-  }
-
   const activeEmojiConfig =
-    emojiKonvaConfigs.find((config) => config["data-id"] === activeEmojiId) ||
-    ({} as EmojiConfigJs);
+    emojiConfigs.find((config) => config.id === activeEmojiId) ||
+    ({} as EmojiConfigSerialized);
 
-  const outlineConfig = getOutlineConfig(activeEmojiConfig);
+  const outlineConfig = useMemo(() => {
+    const getOutlineConfig = (
+      config: EmojiConfigSerialized
+    ): EmojiConfigSerialized => {
+      const { x, y, scaleX, scaleY, rotation, size } = config;
 
-  // hide active emoji during drag action
-  if (state.isDragging) {
-    activeEmojiConfig!.opacity = 0;
-    outlineConfig.opacity = 0;
-  }
+      return {
+        x,
+        y,
+        scaleX,
+        scaleY,
+        rotation,
+        emoji: "    ",
+        size,
+        filters: [Konva.Filters.RGBA],
+        alpha: 1,
+        red: 255,
+        green: 76,
+        blue: 127,
+      } as EmojiConfigSerialized;
+    };
+    const config = getOutlineConfig(activeEmojiConfig);
+    config.opacity = state.isDragging ? 0 : 0.5;
+    return config;
+  }, [activeEmojiConfig, state.isDragging]);
+
+  const modifiedActiveEmojiConfig = useMemo(() => {
+    return {
+      ...activeEmojiConfig,
+      opacity: state.isDragging ? 0.25 : 0,
+    };
+  }, [activeEmojiConfig, state.isDragging]);
 
   return (
     <div className="emoji-canvas">
@@ -127,13 +118,10 @@ const EmojiCanvas: FC<{
               image={this.state.emojiImageObj}
             />} */}
 
-          {emojiKonvaConfigs.map((config) => (
-            <Text
-              {...config}
-              useCache
-              ref={(ref) => (emojiRefs[config["data-id"]] = ref)}
-              key={`${config["data-id"]}${config.text}`}
-              id={`${config["data-id"]}`}
+          {emojiConfigs.map((config) => (
+            <KonvaEmoji
+              emojiConfig={config}
+              key={`${config.id}${config.emoji}`}
             />
           ))}
 
@@ -151,22 +139,8 @@ const EmojiCanvas: FC<{
               x={state.prevX}
               y={state.prevX}
             />
-            <Text
-              {...activeEmojiConfig}
-              useCache
-              ref={(ref) => (emojiRefs[EMOJI_MASK_REF_ID] = ref)}
-              opacity={state.isDragging ? 0.25 : 0}
-            />
-            <Text
-              {...outlineConfig}
-              ref={(ref) => (emojiRefs[EMOJI_MASK_OUTLINE_REF_ID] = ref)}
-              filters={[Konva.Filters.RGBA]}
-              alpha={1}
-              red={255}
-              green={76}
-              blue={127}
-              opacity={0.5}
-            />
+            <KonvaEmoji emojiConfig={modifiedActiveEmojiConfig} />
+            <KonvaEmoji emojiConfig={outlineConfig} />
           </Group>
         </Layer>
       </Stage>
