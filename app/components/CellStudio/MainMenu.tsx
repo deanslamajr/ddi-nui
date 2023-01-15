@@ -2,8 +2,11 @@ import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { IoMdPersonAdd } from "react-icons/io";
 import { TiArrowBackOutline } from "react-icons/ti";
+import { SlCursorMove } from "react-icons/sl";
+import { GiResize } from "react-icons/gi";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import CellPreview from "~/components/ComicStudio/CellPreview";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -27,12 +30,14 @@ export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
 };
 
 const MainMenu: React.FC<{
+  cellUrlId: string;
   onAddButtonClick: () => void;
   onEmojiButtonClick: () => void;
   onCellButtonClick: () => void;
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
 }> = ({
+  cellUrlId,
   onAddButtonClick,
   onEmojiButtonClick,
   onCellButtonClick,
@@ -53,7 +58,12 @@ const MainMenu: React.FC<{
           className="cell-studio-menu-button half-width"
           onClick={onCellButtonClick}
         >
-          CELL
+          <CellPreview
+            cellUrlId={cellUrlId}
+            cellWidth="40px"
+            isButtonIcon
+            onCellClick={() => {}}
+          />
         </MenuButton>
         <MenuButton
           className="cell-studio-menu-button half-width"
@@ -66,13 +76,13 @@ const MainMenu: React.FC<{
         className="cell-studio-menu-button"
         onClick={onSizeButtonClick}
       >
-        SIZE
+        <GiResize />
       </MenuButton>
       <MenuButton
         className="cell-studio-menu-button"
         onClick={onPositionButtonClick}
       >
-        POSITION
+        <SlCursorMove />
       </MenuButton>
       <MenuButton
         className="cell-studio-menu-button"
