@@ -39,6 +39,7 @@ const undoCellUpdate: ComicStudioStateReducer<UndoCellAction> = (
 
     return clonedState;
   } catch (e) {
+    console.error(e);
     return state;
   }
 };

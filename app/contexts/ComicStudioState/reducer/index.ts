@@ -5,6 +5,7 @@ import redoCellUpdate from "./redoCellUpdate";
 import moveEmoji from "./moveEmoji";
 import addEmoji from "./addEmoji";
 import resizeEmoji from "./resizeEmoji";
+import rotateEmoji from "./rotateEmoji";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -62,6 +63,9 @@ export const reducer = (
       break;
     case "RESIZE_EMOIJ":
       newState = resizeEmoji(state, action);
+      break;
+    case "ROTATE_EMOIJ":
+      newState = rotateEmoji(state, action);
       break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");

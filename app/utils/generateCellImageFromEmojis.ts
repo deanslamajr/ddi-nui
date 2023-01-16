@@ -46,11 +46,17 @@ export const generateCellImage = async (
   cell: CellFromClientCache,
   filename?: string
 ) => {
-  const cellImageElement = document.createElement("div");
-  cellImageElement.hidden = true;
   const cellImageElementId = `${CELL_IMAGE_ID}-${cell.urlId}`;
-  cellImageElement.id = cellImageElementId;
-  document.body.appendChild(cellImageElement);
+  let cellImageElement = document.getElementById(cellImageElementId);
+
+  // Only create the element if it doesn't already exist
+  // Reuse existing element to avoid overloading DOM
+  if (!cellImageElement) {
+    cellImageElement = document.createElement("div");
+    cellImageElement.hidden = true;
+    cellImageElement.id = cellImageElementId;
+    document.body.appendChild(cellImageElement);
+  }
 
   const { file, url } = await generateCellImageFromEmojis({
     emojis: cell.studioState?.emojis || {},

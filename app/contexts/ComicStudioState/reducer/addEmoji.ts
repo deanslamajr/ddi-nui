@@ -29,7 +29,9 @@ const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
 
     const cellState = getCellState(clonedState, action.data.cellUrlId);
     if (!cellState || !cellState.studioState) {
-      throw new Error("Cell state not found!");
+      throw new Error(
+        `Cell state not found for cellUrlId:${action.data.cellUrlId}!`
+      );
     }
 
     createNewEmojiConfigAndUpdateStudioState(cellState.studioState, action);
@@ -37,6 +39,7 @@ const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
 
     return clonedState;
   } catch (e) {
+    console.error(e);
     return state;
   }
 };

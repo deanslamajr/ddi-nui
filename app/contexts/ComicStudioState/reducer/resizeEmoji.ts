@@ -29,6 +29,7 @@ const resizeEmoji: ComicStudioStateReducer<ResizeEmojiAction> = (
 
     return clonedState;
   } catch (e) {
+    console.error(e);
     return state;
   }
 };

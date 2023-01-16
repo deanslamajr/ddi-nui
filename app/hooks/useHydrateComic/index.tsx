@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { hydrateComicFromClientCache } from "~/utils/clientCache";
 import { HydratedComic } from "~/utils/clientCache/comic";
 import { doesComicUrlIdExist as doesComicExistInClientCache } from "~/utils/clientCache/comic";
-import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 import { sortCellsV4 } from "~/utils/sortCells";
 
 import { hydrateFromNetwork as hydrateComicFromNetwork } from "~/data/client/comic";
@@ -41,15 +40,6 @@ const hydrateComic = async (
   if (!hydratedComic) {
     return null;
   }
-
-  // generate images for any unpublished cell
-  const cells = Object.values(hydratedComic.cells || {});
-  const cellsWithUnpublishedImages = cells.filter((cell) => cell.hasNewImage);
-  await Promise.all(
-    cellsWithUnpublishedImages.map((cellFromClientCache) =>
-      generateCellImage(cellFromClientCache)
-    )
-  );
 
   return hydratedComic;
 };

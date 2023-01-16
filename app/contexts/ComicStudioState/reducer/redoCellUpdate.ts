@@ -38,6 +38,7 @@ const redoCellUpdate: ComicStudioStateReducer<RedoCellAction> = (
 
     return clonedState;
   } catch (e) {
+    console.error(e);
     return state;
   }
 };

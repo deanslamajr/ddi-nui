@@ -46,6 +46,7 @@ const MainMenu: React.FC<{
   onCellButtonClick: () => void;
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
+  onRotateButtonClick: () => void;
 }> = ({
   activeEmojiConfig,
   cellUrlId,
@@ -54,6 +55,7 @@ const MainMenu: React.FC<{
   onCellButtonClick,
   onPositionButtonClick,
   onSizeButtonClick,
+  onRotateButtonClick,
 }) => {
   return (
     <>
@@ -102,7 +104,7 @@ const MainMenu: React.FC<{
       <div className="button-row">
         <MenuButton
           className="cell-studio-menu-button half-width"
-          onClick={() => console.log("clicked!")}
+          onClick={onRotateButtonClick}
         >
           <TbRotate360 />
         </MenuButton>
