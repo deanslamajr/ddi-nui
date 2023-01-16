@@ -1,10 +1,13 @@
 import cloneDeep from "fast-clone";
 
-import { ComicStudioStateReducer, MoveEmojiAction } from "../types";
+import { ComicStudioStateReducer, RotateEmojiAction } from "../types";
 import { getActiveEmoji, getCellState } from "../selectors";
 import { addNewCellChangeToHistory } from "~/models/cellChange";
 
-const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
+const resizeEmoji: ComicStudioStateReducer<RotateEmojiAction> = (
+  state,
+  action
+) => {
   try {
     const clonedState = cloneDeep(state);
 
@@ -13,15 +16,16 @@ const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
       throw new Error("Active Emoji not found!");
     }
 
-    activeEmoji.x = activeEmoji.x + action.data.xDiff;
-    activeEmoji.y = activeEmoji.y + action.data.yDiff;
+    activeEmoji.rotation = action.data.newRotation;
 
     const cellState = getCellState(clonedState, action.data.cellUrlId);
     if (!cellState || !cellState.studioState) {
       throw new Error("Cell state not found!");
     }
 
-    addNewCellChangeToHistory(cellState);
+    if (action.data.shouldSaveChange) {
+      addNewCellChangeToHistory(cellState);
+    }
 
     return clonedState;
   } catch (e) {
@@ -30,4 +34,4 @@ const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
   }
 };
 
-export default moveEmoji;
+export default resizeEmoji;

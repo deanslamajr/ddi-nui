@@ -29,6 +29,7 @@ import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
 import CellMenu, { links as cellMenuStylesUrl } from "./CellMenu";
 import SizeMenu, { links as sizeMenuStylesUrl } from "./SizeMenu";
 import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
+import RotationMenu, { links as rotationMenuStylesUrl } from "./RotationMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -42,11 +43,12 @@ export const links: LinksFunction = () => {
     ...cellMenuStylesUrl(),
     ...sizeMenuStylesUrl(),
     ...positionMenuStylesUrl(),
+    ...rotationMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
 
-type Submenu = "MAIN" | "EMOJI" | "CELL" | "SIZE" | "POSITION";
+type Submenu = "MAIN" | "EMOJI" | "CELL" | "SIZE" | "POSITION" | "ROTATE";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
@@ -125,6 +127,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onCellButtonClick={() => setCurrentSubmenu("CELL")}
                     onSizeButtonClick={() => setCurrentSubmenu("SIZE")}
                     onPositionButtonClick={() => setCurrentSubmenu("POSITION")}
+                    onRotateButtonClick={() => setCurrentSubmenu("ROTATE")}
                   />
                 ) : currentSubmenu === "EMOJI" ? (
                   <EmojiMenu
@@ -140,6 +143,10 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "POSITION" ? (
                   <PositionMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "ROTATE" ? (
+                  <RotationMenu
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : null}

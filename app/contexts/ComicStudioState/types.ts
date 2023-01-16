@@ -50,12 +50,22 @@ export type ResizeEmojiAction = {
   };
 };
 
+export type RotateEmojiAction = {
+  type: "ROTATE_EMOIJ";
+  data: {
+    cellUrlId: string;
+    newRotation: number;
+    shouldSaveChange: boolean;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
   | MoveEmojiAction
   | AddEmojiAction
-  | ResizeEmojiAction;
+  | ResizeEmojiAction
+  | RotateEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

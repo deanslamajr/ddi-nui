@@ -4,6 +4,7 @@ import {
   RedoCellAction,
   UndoCellAction,
   ResizeEmojiAction,
+  RotateEmojiAction,
 } from "./types";
 
 export const undoCellUpdate = ({
@@ -77,6 +78,23 @@ export const resizeEmoji = ({
   type: "RESIZE_EMOIJ",
   data: {
     newSize,
+    cellUrlId,
+    shouldSaveChange,
+  },
+});
+
+export const rotateEmoji = ({
+  newRotation,
+  cellUrlId,
+  shouldSaveChange,
+}: {
+  newRotation: number;
+  cellUrlId: string;
+  shouldSaveChange: boolean;
+}): RotateEmojiAction => ({
+  type: "ROTATE_EMOIJ",
+  data: {
+    newRotation,
     cellUrlId,
     shouldSaveChange,
   },

@@ -19,6 +19,18 @@ export const getEmojiSize = (state: ComicStudioState, cellUrlId: string) => {
   return activeEmoji.size;
 };
 
+export const getEmojiRotation = (
+  state: ComicStudioState,
+  cellUrlId: string
+) => {
+  const activeEmoji = getActiveEmoji(state, cellUrlId);
+  if (!activeEmoji) {
+    return null;
+  }
+
+  return activeEmoji.rotation;
+};
+
 export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null
