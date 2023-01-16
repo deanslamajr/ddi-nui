@@ -127,12 +127,15 @@ export const generateCellImage = (
 
   return new Promise((resolve, reject) => {
     try {
-      // @ts-ignore there are examples in docs of not passing a config
-      stage.toCanvas().toBlob((blob) => {
-        if (!blob) {
-          throw new Error("Konva`s stage.toCanvas.toBlob returned `null`.");
-        }
-        resolve(blob);
+      stage.toBlob({
+        pixelRatio: 2,
+        quality: 1,
+        callback: (blob) => {
+          if (!blob) {
+            throw new Error("Konva`s stage.toCanvas.toBlob returned `null`.");
+          }
+          resolve(blob);
+        },
       });
     } catch (err) {
       // @todo log error
