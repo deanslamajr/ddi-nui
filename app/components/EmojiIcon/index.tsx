@@ -40,9 +40,9 @@ export const EmojiIcon: React.FC<{
       x: stageDimensions.width / 2,
       y: stageDimensions.height / 2,
       size: 166,
-      scaleX: 0.17,
-      scaleY: 0.17,
-      // useCache: true,
+      scaleX: config.scaleX < 0 ? -0.17 : 0.17, // icon should represent result of emoji flip action
+      scaleY: config.scaleY < 0 ? -0.17 : 0.17, // icon should represent result of emoji flip action
+      useCache: true,
     };
   }, [config, stageDimensions]);
 

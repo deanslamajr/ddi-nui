@@ -30,6 +30,9 @@ import CellMenu, { links as cellMenuStylesUrl } from "./CellMenu";
 import SizeMenu, { links as sizeMenuStylesUrl } from "./SizeMenu";
 import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
 import RotationMenu, { links as rotationMenuStylesUrl } from "./RotationMenu";
+import FlipAndSkewMenu, {
+  links as flipAndSkewMenuStylesUrl,
+} from "./FlipAndSkewMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -44,11 +47,19 @@ export const links: LinksFunction = () => {
     ...sizeMenuStylesUrl(),
     ...positionMenuStylesUrl(),
     ...rotationMenuStylesUrl(),
+    ...flipAndSkewMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
 
-type Submenu = "MAIN" | "EMOJI" | "CELL" | "SIZE" | "POSITION" | "ROTATE";
+type Submenu =
+  | "MAIN"
+  | "EMOJI"
+  | "CELL"
+  | "SIZE"
+  | "POSITION"
+  | "ROTATE"
+  | "FLIP_AND_SKEW";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
@@ -128,6 +139,9 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onSizeButtonClick={() => setCurrentSubmenu("SIZE")}
                     onPositionButtonClick={() => setCurrentSubmenu("POSITION")}
                     onRotateButtonClick={() => setCurrentSubmenu("ROTATE")}
+                    onFlipAndSkewButtonClick={() =>
+                      setCurrentSubmenu("FLIP_AND_SKEW")
+                    }
                   />
                 ) : currentSubmenu === "EMOJI" ? (
                   <EmojiMenu
@@ -147,6 +161,10 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "ROTATE" ? (
                   <RotationMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "FLIP_AND_SKEW" ? (
+                  <FlipAndSkewMenu
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : null}

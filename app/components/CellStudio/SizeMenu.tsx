@@ -2,8 +2,10 @@ import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import styled from "styled-components";
 import { useParams } from "@remix-run/react";
+import { GiResize } from "react-icons/gi";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
+import { theme } from "~/utils/stylesTheme";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { resizeEmoji } from "~/contexts/ComicStudioState/actions";
@@ -52,7 +54,9 @@ const SizeMenu: React.FC<{
       <BackMenuButton onBackButtonClick={onBackButtonClick} />
       {emojiSize !== null ? (
         <SliderContainer>
-          <Label>SIZE</Label>
+          <Label>
+            <GiResize color={theme.colors.pink} size="2rem" />
+          </Label>
           <Slider
             min={EMOJI_CONFIG.MIN_SIZE}
             max={EMOJI_CONFIG.MAX_SIZE}

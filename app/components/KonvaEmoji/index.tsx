@@ -24,15 +24,18 @@ const KonvaEmoji: React.FC<{ emojiConfig: EmojiConfigSerialized }> = ({
         emojiCacheRef.current
       );
 
-      // emojiCacheRef.current.cache({
-      //   // offset: 100,
-      //   x: konvaConfig.offsetX - emojiCacheRef.current.getAbsolutePosition().x,
-      //   y: konvaConfig.offsetY - emojiCacheRef.current.getAbsolutePosition().y,
-      //   pixelRatio: 2, /// fixes android graphics glitch
-      //   // drawBorder: true, /// set 'true' for debugging image drawing
-      //   width: theme.canvas.width,
-      //   height: theme.canvas.height,
-      // });
+      // emojiCacheRef.current.clearCache();
+
+      emojiCacheRef.current.cache({
+        offset: 100,
+        x: konvaConfig.offsetX - emojiCacheRef.current.getAbsolutePosition().x,
+        y: konvaConfig.offsetY - emojiCacheRef.current.getAbsolutePosition().y,
+        pixelRatio: 2, /// fixes android graphics glitch
+        imageSmoothingEnabled: true,
+        // drawBorder: true, /// set 'true' for debugging image drawing
+        width: theme.canvas.width,
+        height: theme.canvas.height,
+      });
 
       setKonvaEncodedConfig(konvaConfig);
     }
