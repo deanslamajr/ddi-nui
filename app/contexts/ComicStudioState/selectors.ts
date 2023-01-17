@@ -31,6 +31,18 @@ export const getEmojiRotation = (
   return activeEmoji.rotation;
 };
 
+export const getEmojiSkew = (state: ComicStudioState, cellUrlId: string) => {
+  const activeEmoji = getActiveEmoji(state, cellUrlId);
+  if (!activeEmoji) {
+    return null;
+  }
+
+  return {
+    skewX: activeEmoji.skewX,
+    skewY: activeEmoji.skewY,
+  };
+};
+
 export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null

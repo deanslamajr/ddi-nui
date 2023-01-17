@@ -72,6 +72,10 @@
 .button-row {
   display: flex;
 
+  &.with-margin {
+    margin-top: 0.5rem;
+  }
+
   & .half-width {
     margin-right: 0.5rem;
   }

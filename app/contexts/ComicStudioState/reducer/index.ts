@@ -6,6 +6,8 @@ import moveEmoji from "./moveEmoji";
 import addEmoji from "./addEmoji";
 import resizeEmoji from "./resizeEmoji";
 import rotateEmoji from "./rotateEmoji";
+import flipEmoji from "./flipEmoji";
+import skewEmoji from "./skewEmoji";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -66,6 +68,12 @@ export const reducer = (
       break;
     case "ROTATE_EMOIJ":
       newState = rotateEmoji(state, action);
+      break;
+    case "FLIP_EMOIJ":
+      newState = flipEmoji(state, action);
+      break;
+    case "SKEW_EMOIJ":
+      newState = skewEmoji(state, action);
       break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");

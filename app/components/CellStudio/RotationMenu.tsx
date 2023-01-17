@@ -2,8 +2,10 @@ import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import styled from "styled-components";
 import { useParams } from "@remix-run/react";
+import { TbRotate360 } from "react-icons/tb";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
+import { theme } from "~/utils/stylesTheme";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { rotateEmoji } from "~/contexts/ComicStudioState/actions";
@@ -52,7 +54,9 @@ const RotationMenu: React.FC<{
       <BackMenuButton onBackButtonClick={onBackButtonClick} />
       {emojiRotation !== null ? (
         <SliderContainer>
-          <Label>ROTATION</Label>
+          <Label>
+            <TbRotate360 color={theme.colors.pink} size="2rem" />
+          </Label>
           <Slider
             min={EMOJI_CONFIG.MIN_ROTATION}
             max={EMOJI_CONFIG.MAX_ROTATION}

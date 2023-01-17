@@ -5,6 +5,8 @@ import {
   UndoCellAction,
   ResizeEmojiAction,
   RotateEmojiAction,
+  FlipEmojiAction,
+  SkewEmojiAction,
 } from "./types";
 
 export const undoCellUpdate = ({
@@ -96,6 +98,40 @@ export const rotateEmoji = ({
   data: {
     newRotation,
     cellUrlId,
+    shouldSaveChange,
+  },
+});
+
+export const flipEmoji = ({
+  cellUrlId,
+  type,
+}: {
+  cellUrlId: string;
+  type: "HORIZONTAL" | "VERTICAL";
+}): FlipEmojiAction => ({
+  type: "FLIP_EMOIJ",
+  data: {
+    cellUrlId,
+    type,
+  },
+});
+
+export const skewEmoji = ({
+  cellUrlId,
+  type,
+  newSkewValue,
+  shouldSaveChange,
+}: {
+  cellUrlId: string;
+  type: "HORIZONTAL" | "VERTICAL";
+  newSkewValue: number;
+  shouldSaveChange: boolean;
+}): SkewEmojiAction => ({
+  type: "SKEW_EMOIJ",
+  data: {
+    cellUrlId,
+    type,
+    newSkewValue,
     shouldSaveChange,
   },
 });

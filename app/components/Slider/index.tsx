@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 
 import stylesUrl from "~/styles/components/Slider.css";
@@ -7,49 +6,6 @@ import stylesUrl from "~/styles/components/Slider.css";
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
-
-const SlideContainer = styled.div`
-  width: 100%;
-`;
-
-const Sslider = styled.input`
-  appearance: none;
-  width: 100%;
-  height: 15px;
-  border-radius: 5px;
-  background: ${(props) => props.theme.colors.lightGray};
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
-  user-select: none;
-  margin: 0;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-
-  &:hover {
-    opacity: 1; /* Fully shown on mouse-over */
-  }
-
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: ${(props) => props.theme.colors.white};
-    cursor: pointer;
-  }
-
-  &::-moz-range-thumb {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: ${(props) => props.theme.colors.white};
-    cursor: pointer;
-  }
-`;
 
 const Slider: React.FC<{
   min: number;
@@ -85,8 +41,9 @@ const Slider: React.FC<{
   };
 
   return (
-    <SlideContainer>
-      <Sslider
+    <div className="slider-container">
+      <input
+        className="slider"
         type="range"
         min={min}
         max={max}
@@ -96,7 +53,7 @@ const Slider: React.FC<{
         onMouseUp={parseOnFinishValue}
         onTouchEnd={parseOnFinishValue}
       />
-    </SlideContainer>
+    </div>
   );
 };
 

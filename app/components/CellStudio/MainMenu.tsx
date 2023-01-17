@@ -47,6 +47,7 @@ const MainMenu: React.FC<{
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
   onRotateButtonClick: () => void;
+  onFlipAndSkewButtonClick: () => void;
 }> = ({
   activeEmojiConfig,
   cellUrlId,
@@ -56,6 +57,7 @@ const MainMenu: React.FC<{
   onPositionButtonClick,
   onSizeButtonClick,
   onRotateButtonClick,
+  onFlipAndSkewButtonClick,
 }) => {
   return (
     <>
@@ -110,7 +112,7 @@ const MainMenu: React.FC<{
         </MenuButton>
         <MenuButton
           className="cell-studio-menu-button half-width"
-          onClick={() => console.log("clicked!")}
+          onClick={onFlipAndSkewButtonClick}
         >
           <GrTransaction />
         </MenuButton>
