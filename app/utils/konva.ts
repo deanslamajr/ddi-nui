@@ -114,7 +114,7 @@ export const generateCellImage = (
     emoji.offsetY(offsetY);
 
     emoji.cache({
-      // offset: 100,
+      offset: 100,
       x: offsetX - emoji.getAbsolutePosition().x,
       y: offsetY - emoji.getAbsolutePosition().y,
       pixelRatio: 2, /// fixes android graphics glitch

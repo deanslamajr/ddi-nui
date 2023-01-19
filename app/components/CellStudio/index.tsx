@@ -118,12 +118,14 @@ const CellStudio: React.FC<{}> = ({}) => {
         <>
           {cellState?.studioState && totalEmojiCount !== 0 && (
             <>
-              <EmojiCanvas
-                activeEmojiId={cellState.studioState.activeEmojiId}
-                backgroundColor={cellState.studioState.backgroundColor}
-                emojiConfigs={Object.values(cellState.studioState.emojis)}
-                handleDragEnd={handleDragEnd}
-              />
+              {currentSubmenu !== "SIZE" && (
+                <EmojiCanvas
+                  activeEmojiId={cellState.studioState.activeEmojiId}
+                  backgroundColor={cellState.studioState.backgroundColor}
+                  emojiConfigs={Object.values(cellState.studioState.emojis)}
+                  handleDragEnd={handleDragEnd}
+                />
+              )}
               <div className="submenu-container">
                 {currentSubmenu === "MAIN" ? (
                   <MainMenu
@@ -153,6 +155,10 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "SIZE" ? (
                   <SizeMenu
+                    activeEmojiId={cellState.studioState.activeEmojiId}
+                    backgroundColor={cellState.studioState.backgroundColor}
+                    emojiConfigs={cellState.studioState.emojis}
+                    handleDragEnd={handleDragEnd}
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : currentSubmenu === "POSITION" ? (
