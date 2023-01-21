@@ -5,6 +5,7 @@ import Konva from "konva";
 
 import { EmojiConfigSerialized, EmojiRefs } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
+import sortEmojis from "~/utils/sortEmoijs";
 
 import KonvaEmoji from "~/components/KonvaEmoji";
 
@@ -12,6 +13,13 @@ import stylesUrl from "~/styles/components/EmojiCanvas.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
+};
+
+const getSortedEmojisArray = (
+  emojisRecord: Record<string, EmojiConfigSerialized>
+): EmojiConfigSerialized[] => {
+  const emojisArray = Object.values(emojisRecord);
+  return sortEmojis(emojisArray);
 };
 
 const EmojiCanvas: FC<{
@@ -30,11 +38,11 @@ const EmojiCanvas: FC<{
   const [localEmojiConfigs, setLocalEmojiConfigs] = useState<
     EmojiConfigSerialized[]
   >(() => {
-    return Object.values(emojiConfigs);
+    return getSortedEmojisArray(emojiConfigs);
   });
 
   useEffect(() => {
-    const newLocalEmojiConfigs = Object.values(emojiConfigs);
+    const newLocalEmojiConfigs = getSortedEmojisArray(emojiConfigs);
     setLocalEmojiConfigs(newLocalEmojiConfigs);
   }, [emojiConfigs]);
 
