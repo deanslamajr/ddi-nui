@@ -12,7 +12,6 @@ import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { resizeEmoji } from "~/contexts/ComicStudioState/actions";
-// import { getEmojiSize } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import Slider, { links as sliderStylesUrl } from "~/components/Slider";
@@ -65,22 +64,18 @@ const SizeMenu: React.FC<{
 
   const [state, setState] = React.useState<{
     emojiSize: number;
-    localEmojiConfigs: EmojiConfigSerialized[];
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
   }>(() => {
-    const localEmojiConfigs = Object.values(emojiConfigs);
     const activeEmoji = emojiConfigs[activeEmojiId];
     return {
       emojiSize: activeEmoji.size,
-      localEmojiConfigs,
+      localEmojiConfigs: emojiConfigs,
     };
   });
-  // const [activeEmoji] = React.useState(emojiConfigs[activeEmojiId]);
 
   const resizeLocalEmoji = (newSize: number): void => {
     const clonedEmojiConfigs = cloneDeep(state.localEmojiConfigs);
-    const clonedActiveEmoji = clonedEmojiConfigs.find(
-      (e) => e.id === activeEmojiId
-    ); //clonedEmojiConfigs[activeEmojiId];
+    const clonedActiveEmoji = clonedEmojiConfigs[activeEmojiId];
     if (!clonedActiveEmoji) {
       return;
     }
@@ -88,7 +83,7 @@ const SizeMenu: React.FC<{
     setState({ emojiSize: newSize, localEmojiConfigs: clonedEmojiConfigs });
   };
 
-  const [comicStudioState, dispatch] = useComicStudioState();
+  const [_, dispatch] = useComicStudioState();
   const saveAndGoBack = () => {
     dispatch(
       resizeEmoji({
@@ -100,8 +95,6 @@ const SizeMenu: React.FC<{
     onBackButtonClick();
   };
 
-  // const emojiSize = getEmojiSize(comicStudioState, cellUrlId);
-
   return (
     <>
       <EmojiCanvas
@@ -109,6 +102,7 @@ const SizeMenu: React.FC<{
         backgroundColor={backgroundColor}
         emojiConfigs={state.localEmojiConfigs}
         handleDragEnd={handleDragEnd}
+        isDraggable={false}
       />
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
       {state.emojiSize !== null ? (
@@ -121,26 +115,8 @@ const SizeMenu: React.FC<{
             max={EMOJI_CONFIG.MAX_SIZE}
             step={10}
             value={state.emojiSize}
-            onChange={
-              (value) => resizeLocalEmoji(value)
-              // dispatch(
-              //   resizeEmoji({
-              //     newSize: value,
-              //     cellUrlId,
-              //     shouldSaveChange: false,
-              //   })
-              // )
-            }
-            onRelease={
-              (value) => resizeLocalEmoji(value)
-              // dispatch(
-              //   resizeEmoji({
-              //     newSize: value,
-              //     cellUrlId,
-              //     shouldSaveChange: true,
-              //   })
-              // )
-            }
+            onChange={(value) => resizeLocalEmoji(value)}
+            onRelease={(value) => resizeLocalEmoji(value)}
           />
           <DPad
             horizontalActions={(multiplier) => ({
@@ -151,22 +127,8 @@ const SizeMenu: React.FC<{
                 }
                 resizeLocalEmoji(newValue);
               },
-              // dispatch(
-              //   resizeEmoji({
-              //     newSize: emojiSize - multiplier,
-              //     cellUrlId,
-              //     shouldSaveChange: true,
-              //   })
-              // ),
               onRightClick: () =>
                 resizeLocalEmoji(state.emojiSize + multiplier),
-              // dispatch(
-              //   resizeEmoji({
-              //     newSize: emojiSize + multiplier,
-              //     cellUrlId,
-              //     shouldSaveChange: true,
-              //   })
-              // ),
             })}
           />
         </SliderContainer>
