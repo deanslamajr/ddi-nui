@@ -112,13 +112,9 @@ export const generateCellImage = (
     emoji.offsetY(offsetY);
 
     emoji.cache({
-      offset: 100,
-      x: offsetX - emoji.getAbsolutePosition().x,
-      y: offsetY - emoji.getAbsolutePosition().y,
-      pixelRatio: 2, /// fixes android graphics glitch
-      // drawBorder: true, /// set 'true' for debugging image drawing
-      width: theme.canvas.width,
-      height: theme.canvas.height,
+      offset: 100, // to account for larger sized emojis
+      pixelRatio: 2,
+      // drawBorder: true, // set 'true' for debugging coverage of cache
     });
     layer.add(emoji);
   });

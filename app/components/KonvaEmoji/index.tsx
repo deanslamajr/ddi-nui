@@ -52,8 +52,9 @@ const KonvaEmoji: React.FC<{
 
       const cacheConfig = {
         offset: 100,
-        pixelRatio: 2, /// fixes android graphics glitch
+        pixelRatio: 2,
         imageSmoothingEnabled: true,
+        // drawBorder: true,
       };
 
       emojiCacheRef.current.cache(cacheConfig);
