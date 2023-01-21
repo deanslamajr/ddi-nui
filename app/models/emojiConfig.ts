@@ -47,7 +47,7 @@ export type EmojiConfigJs = LatestEmojiConfigBase & {
   fontSize: number;
   opacity: number;
   text: string;
-  useCache: boolean;
+  // useCache: boolean;
   offsetX: number;
   offsetY: number;
 };

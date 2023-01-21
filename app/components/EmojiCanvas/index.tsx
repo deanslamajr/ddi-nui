@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { Stage, Layer, Rect, Group } from "react-konva";
 import Konva from "konva";
@@ -17,9 +17,27 @@ export const links: LinksFunction = () => {
 const EmojiCanvas: FC<{
   activeEmojiId: number;
   backgroundColor: string;
-  emojiConfigs: EmojiConfigSerialized[];
+  emojiConfigs: Record<string, EmojiConfigSerialized>;
   handleDragEnd: (args: { xDiff: number; yDiff: number }) => void;
-}> = ({ activeEmojiId, backgroundColor, emojiConfigs, handleDragEnd }) => {
+  isDraggable: boolean;
+}> = ({
+  activeEmojiId,
+  backgroundColor,
+  emojiConfigs,
+  handleDragEnd,
+  isDraggable,
+}) => {
+  const [localEmojiConfigs, setLocalEmojiConfigs] = useState<
+    EmojiConfigSerialized[]
+  >(() => {
+    return Object.values(emojiConfigs);
+  });
+
+  useEffect(() => {
+    const newLocalEmojiConfigs = Object.values(emojiConfigs);
+    setLocalEmojiConfigs(newLocalEmojiConfigs);
+  }, [emojiConfigs]);
+
   const [state, setState] = useState<{
     isDragging: boolean;
     prevX: number;
@@ -54,9 +72,12 @@ const EmojiCanvas: FC<{
     }));
   };
 
-  const activeEmojiConfig =
-    emojiConfigs.find((config) => config.id === activeEmojiId) ||
-    ({} as EmojiConfigSerialized);
+  const activeEmojiConfig = useMemo(() => {
+    return (
+      localEmojiConfigs.find((config) => config.id === activeEmojiId) ||
+      ({} as EmojiConfigSerialized)
+    );
+  }, [activeEmojiId, localEmojiConfigs]);
 
   const outlineConfig = useMemo(() => {
     const getOutlineConfig = (
@@ -118,29 +139,37 @@ const EmojiCanvas: FC<{
               image={this.state.emojiImageObj}
             />} */}
 
-          {emojiConfigs.map((config) => (
+          {localEmojiConfigs.map((config) => (
             <KonvaEmoji
-              emojiConfig={config}
+              emojiConfig={{ ...config }}
               key={`${config.id}${config.emoji}`}
             />
           ))}
 
           {/* Draggable layer */}
           <Group
-            draggable
+            draggable={isDraggable}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
             x={state.prevX}
             y={state.prevX}
           >
+            {/* "Glass pane" */}
             <Rect
               width={theme.canvas.width}
               height={theme.canvas.height}
               x={state.prevX}
               y={state.prevX}
             />
-            <KonvaEmoji emojiConfig={modifiedActiveEmojiConfig} />
-            <KonvaEmoji emojiConfig={outlineConfig} />
+            <KonvaEmoji
+              key="active-emoji-ghost"
+              emojiConfig={modifiedActiveEmojiConfig}
+            />
+            <KonvaEmoji
+              key="active-emoji-outline"
+              emojiConfig={outlineConfig}
+              useOutline
+            />
           </Group>
         </Layer>
       </Stage>

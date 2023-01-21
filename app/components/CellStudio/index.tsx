@@ -122,8 +122,9 @@ const CellStudio: React.FC<{}> = ({}) => {
                 <EmojiCanvas
                   activeEmojiId={cellState.studioState.activeEmojiId}
                   backgroundColor={cellState.studioState.backgroundColor}
-                  emojiConfigs={Object.values(cellState.studioState.emojis)}
+                  emojiConfigs={cellState.studioState.emojis}
                   handleDragEnd={handleDragEnd}
+                  isDraggable={false}
                 />
               )}
               <div className="submenu-container">

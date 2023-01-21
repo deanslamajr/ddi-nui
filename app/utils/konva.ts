@@ -21,7 +21,7 @@ const konvaFiltersEnabledInDdi = {
 export const EMOJI_MASK_REF_ID = "EMOJI_MASK_REF_ID";
 export const EMOJI_MASK_OUTLINE_REF_ID = "EMOJI_MASK_OUTLINE_REF_ID";
 
-const getOffsetsFromTextRef = (
+export const getOffsetsFromTextRef = (
   emojiRef?: EmojiRef
 ): { offsetX: number; offsetY: number } => {
   const offsetX = emojiRef ? emojiRef.width() / 2 : 0;
@@ -37,7 +37,6 @@ export const getKonvaConfigFromEmojiConfig = (
   emojiRef?: EmojiRef
 ): EmojiConfigJs => {
   const { offsetX, offsetY } = getOffsetsFromTextRef(emojiRef);
-
   return {
     "data-id": emoji.id,
     filters: emoji.filters
@@ -60,7 +59,6 @@ export const getKonvaConfigFromEmojiConfig = (
       typeof emoji.opacity !== "undefined"
         ? emoji.opacity
         : 1 /* backwards compatibility */,
-    useCache: true,
     offsetX,
     offsetY,
   };
