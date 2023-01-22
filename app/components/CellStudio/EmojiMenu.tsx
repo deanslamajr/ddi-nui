@@ -1,5 +1,6 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
+import { DndContext, useDroppable } from "@dnd-kit/core";
 
 import sortEmojis from "~/utils/sortEmoijs";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
@@ -17,6 +18,14 @@ export const links: LinksFunction = () => {
     ...emojiIconStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
+};
+
+const Droppable: React.FC<{ dropId: string }> = ({ dropId }) => {
+  const { isOver, setNodeRef } = useDroppable({
+    id: dropId,
+  });
+
+  return <span ref={setNodeRef} className="button"></span>;
 };
 
 const EmojiMenu: React.FC<{
@@ -49,16 +58,24 @@ const EmojiMenu: React.FC<{
       >
         DUPLICATE EMOJI
       </MenuButton>
-      {state.localEmojiConfigs.map((emoji) => (
-        <MenuButton
-          key={`${emoji.emoji}-${emoji.id}`}
-          isSecondary={emoji.id === activeEmojiId}
-          className="cell-studio-menu-button"
-          // onClick={onEmojiButtonClick}
-        >
-          <EmojiIcon config={emoji} />
-        </MenuButton>
-      ))}
+
+      <DndContext>
+        {state.localEmojiConfigs.map((emoji) => (
+          <>
+            <Droppable dropId={emoji.id.toString()} />
+            <MenuButton
+              key={`${emoji.emoji}-${emoji.id}`}
+              dragId={emoji.id.toString()}
+              isSecondary={emoji.id === activeEmojiId}
+              className="cell-studio-menu-button"
+              // onClick={onEmojiButtonClick}
+            >
+              <EmojiIcon config={emoji} />
+            </MenuButton>
+          </>
+        ))}
+        <Droppable dropId={"bottom"} />
+      </DndContext>
     </>
   );
 };
