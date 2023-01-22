@@ -31,12 +31,35 @@ export const links: LinksFunction = () => {
   ];
 };
 
-const Droppable: React.FC<{ dropId: string }> = ({ dropId }) => {
+const Droppable: React.FC<{
+  dropId: string;
+  activeEmojiId: number;
+  emoji: EmojiConfigSerialized;
+}> = ({ activeEmojiId, dropId, emoji }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: dropId,
   });
 
-  return <span ref={setNodeRef} className="button"></span>;
+  const className = isOver
+    ? "cell-studio-menu-button secondary"
+    : "cell-studio-menu-button";
+
+  return (
+    <div ref={setNodeRef}>
+      <Draggable
+        key={`${emoji.emoji}-${emoji.id}-draggable`}
+        draggableId={emoji.id.toString()}
+      >
+        <MenuButton
+          isSecondary={emoji.id === activeEmojiId}
+          className={className}
+          // onClick={onEmojiButtonClick}
+        >
+          <EmojiIcon config={emoji} />
+        </MenuButton>
+      </Draggable>
+    </div>
+  );
 };
 
 const EmojiMenu: React.FC<{
@@ -74,19 +97,15 @@ const EmojiMenu: React.FC<{
   const sensors = useSensors(mouseSensor, touchSensor);
 
   const handleDragStart = (event: DragStartEvent) => {
-    console.log("drag start", event);
-    console.log("state.localEmojiConfigs", state.localEmojiConfigs);
     const draggedEmoji = state.localEmojiConfigs.find(
       (e) => e.id.toString() === event.active.id.toString()
     );
-    console.log("draggedEmoji", draggedEmoji);
     if (draggedEmoji) {
       setEmojiBeingDragged(draggedEmoji);
     }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log("drag end", event);
     setEmojiBeingDragged(null);
   };
 
@@ -112,26 +131,13 @@ const EmojiMenu: React.FC<{
         onDragEnd={handleDragEnd}
       >
         {state.localEmojiConfigs.map((emoji) => (
-          <>
-            <Droppable
-              key={`${emoji.emoji}-${emoji.id}-droppable`}
-              dropId={emoji.id.toString()}
-            />
-            <Draggable
-              key={`${emoji.emoji}-${emoji.id}-draggable`}
-              draggableId={emoji.id.toString()}
-            >
-              <MenuButton
-                isSecondary={emoji.id === activeEmojiId}
-                className="cell-studio-menu-button"
-                // onClick={onEmojiButtonClick}
-              >
-                <EmojiIcon config={emoji} />
-              </MenuButton>
-            </Draggable>
-          </>
+          <Droppable
+            activeEmojiId={activeEmojiId}
+            emoji={emoji}
+            key={`${emoji.emoji}-${emoji.id}-droppable`}
+            dropId={emoji.id.toString()}
+          />
         ))}
-        <Droppable dropId={"bottom"} />
         <DragOverlay>
           {emojiBeingDragged && (
             <MenuButton
