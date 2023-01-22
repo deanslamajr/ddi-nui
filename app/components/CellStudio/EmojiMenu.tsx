@@ -1,12 +1,19 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import { DndContext, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  DragStartEvent,
+  DragEndEvent,
+  useDroppable,
+} from "@dnd-kit/core";
 
 import sortEmojis from "~/utils/sortEmoijs";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
+import Draggable from "~/components/Draggable";
 
 import { BackMenuButton } from "./MainMenu";
 
@@ -42,6 +49,25 @@ const EmojiMenu: React.FC<{
       localEmojiConfigs: sortedEmojiConfigs,
     };
   });
+  const [emojiBeingDragged, setEmojiBeingDragged] =
+    React.useState<EmojiConfigSerialized | null>(null);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log("drag start", event);
+    console.log("state.localEmojiConfigs", state.localEmojiConfigs);
+    const draggedEmoji = state.localEmojiConfigs.find(
+      (e) => e.id.toString() === event.active.id.toString()
+    );
+    console.log("draggedEmoji", draggedEmoji);
+    if (draggedEmoji) {
+      setEmojiBeingDragged(draggedEmoji);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    console.log("drag end", event);
+    setEmojiBeingDragged(null);
+  };
 
   return (
     <>
@@ -59,22 +85,39 @@ const EmojiMenu: React.FC<{
         DUPLICATE EMOJI
       </MenuButton>
 
-      <DndContext>
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {state.localEmojiConfigs.map((emoji) => (
           <>
-            <Droppable dropId={emoji.id.toString()} />
-            <MenuButton
-              key={`${emoji.emoji}-${emoji.id}`}
-              dragId={emoji.id.toString()}
-              isSecondary={emoji.id === activeEmojiId}
-              className="cell-studio-menu-button"
-              // onClick={onEmojiButtonClick}
+            <Droppable
+              key={`${emoji.emoji}-${emoji.id}-droppable`}
+              dropId={emoji.id.toString()}
+            />
+            <Draggable
+              key={`${emoji.emoji}-${emoji.id}-draggable`}
+              draggableId={emoji.id.toString()}
             >
-              <EmojiIcon config={emoji} />
-            </MenuButton>
+              <MenuButton
+                isSecondary={emoji.id === activeEmojiId}
+                className="cell-studio-menu-button"
+                // onClick={onEmojiButtonClick}
+              >
+                <EmojiIcon config={emoji} />
+              </MenuButton>
+            </Draggable>
           </>
         ))}
         <Droppable dropId={"bottom"} />
+        <DragOverlay>
+          {emojiBeingDragged && (
+            <MenuButton
+              key={`${emojiBeingDragged.emoji}-${emojiBeingDragged.id}`}
+              isSecondary={emojiBeingDragged.id === activeEmojiId}
+              className="cell-studio-menu-button"
+            >
+              <EmojiIcon config={emojiBeingDragged} />
+            </MenuButton>
+          )}
+        </DragOverlay>
       </DndContext>
     </>
   );
