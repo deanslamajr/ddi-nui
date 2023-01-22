@@ -6,6 +6,10 @@ import {
   DragStartEvent,
   DragEndEvent,
   useDroppable,
+  useSensor,
+  useSensors,
+  MouseSensor,
+  TouchSensor,
 } from "@dnd-kit/core";
 
 import sortEmojis from "~/utils/sortEmoijs";
@@ -52,6 +56,23 @@ const EmojiMenu: React.FC<{
   const [emojiBeingDragged, setEmojiBeingDragged] =
     React.useState<EmojiConfigSerialized | null>(null);
 
+  const mouseSensor = useSensor(MouseSensor, {
+    // Require the mouse to move by 10 pixels before activating
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+  const touchSensor = useSensor(TouchSensor, {
+    // detection of touch intent requires
+    // long-press equal or greater than 50ms, during which no more than 5px of movement of the long-press gesture
+    activationConstraint: {
+      delay: 50,
+      tolerance: 5,
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
+
   const handleDragStart = (event: DragStartEvent) => {
     console.log("drag start", event);
     console.log("state.localEmojiConfigs", state.localEmojiConfigs);
@@ -85,7 +106,11 @@ const EmojiMenu: React.FC<{
         DUPLICATE EMOJI
       </MenuButton>
 
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         {state.localEmojiConfigs.map((emoji) => (
           <>
             <Droppable
