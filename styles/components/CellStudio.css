@@ -27,8 +27,57 @@
       margin: 0.5rem auto;
     }
   }
+
+  &.emoji-menu-button {
+    opacity: 1;
+
+    &:hover {
+      background-color: var(--white);
+      color: inherit;
+      opacity: 0.75;
+
+      &.drag-overlay {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.draggable-is-over-droppable {
+    opacity: 0.75;
+  }
 }
 
 .cell-studio-menu-button.medium-font {
   font-size: 1.5rem;
+}
+
+.quarter-button {
+  width: 25%;
+  height: 100%;
+}
+
+.handle {
+  background-color: var(--lightGray);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selector {
+  /* background-color: var(--pinkWhite); */
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 0.5rem;
+  color: var(--darkGray);
+
+  &.active {
+    color: var(--pink);
+  }
+}
+
+.scroll-container {
+  /* needed for restrictToFirstScrollableAncestor */
+  overflow: auto;
 }

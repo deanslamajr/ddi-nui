@@ -5,19 +5,32 @@ import {
   DragOverlay,
   DragStartEvent,
   DragEndEvent,
+  useDraggable,
   useDroppable,
   useSensor,
   useSensors,
   MouseSensor,
   TouchSensor,
 } from "@dnd-kit/core";
+import {
+  restrictToVerticalAxis,
+  restrictToFirstScrollableAncestor,
+} from "@dnd-kit/modifiers";
+import { RxDragHandleHorizontal } from "react-icons/rx";
+import { TbReplace } from "react-icons/tb";
+import { BiDuplicate } from "react-icons/bi";
+import {
+  RiCheckboxBlankCircleLine,
+  RiCheckboxCircleFill,
+} from "react-icons/ri";
+import classNames from "classnames";
 
+import { theme } from "~/utils/stylesTheme";
 import sortEmojis from "~/utils/sortEmoijs";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
-import Draggable from "~/components/Draggable";
 
 import { BackMenuButton } from "./MainMenu";
 
@@ -32,32 +45,48 @@ export const links: LinksFunction = () => {
 };
 
 const Droppable: React.FC<{
-  dropId: string;
+  dragDropId: string;
   activeEmojiId: number;
   emoji: EmojiConfigSerialized;
-}> = ({ activeEmojiId, dropId, emoji }) => {
+}> = ({ activeEmojiId, dragDropId, emoji }) => {
   const { isOver, setNodeRef } = useDroppable({
-    id: dropId,
+    id: dragDropId,
+  });
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDraggableNodeRef,
+  } = useDraggable({
+    id: dragDropId,
   });
 
   const className = isOver
-    ? "cell-studio-menu-button secondary"
-    : "cell-studio-menu-button";
+    ? "cell-studio-menu-button emoji-menu-button draggable-is-over-droppable"
+    : "cell-studio-menu-button emoji-menu-button";
+
+  const isActive = emoji.id === activeEmojiId;
 
   return (
     <div ref={setNodeRef}>
-      <Draggable
-        key={`${emoji.emoji}-${emoji.id}-draggable`}
-        draggableId={emoji.id.toString()}
-      >
-        <MenuButton
-          isSecondary={emoji.id === activeEmojiId}
-          className={className}
-          // onClick={onEmojiButtonClick}
-        >
-          <EmojiIcon config={emoji} />
+      <div ref={setDraggableNodeRef} {...attributes}>
+        <MenuButton noSpinner className={className}>
+          <span
+            className={classNames("quarter-button", "selector", {
+              active: isActive,
+            })}
+          >
+            {isActive ? (
+              <RiCheckboxCircleFill color={theme.colors.pink} />
+            ) : (
+              <RiCheckboxBlankCircleLine />
+            )}
+          </span>
+          <EmojiIcon config={emoji} withHandles />
+          <span className="quarter-button handle" {...listeners}>
+            <RxDragHandleHorizontal color={theme.colors.lightBlack} />
+          </span>
         </MenuButton>
-      </Draggable>
+      </div>
     </div>
   );
 };
@@ -87,7 +116,8 @@ const EmojiMenu: React.FC<{
   });
   const touchSensor = useSensor(TouchSensor, {
     // detection of touch intent requires
-    // long-press equal or greater than 50ms, during which no more than 5px of movement of the long-press gesture
+    // long-press equal or greater than 50ms,
+    // during which no more than 5px of movement of the long-press gesture
     activationConstraint: {
       delay: 50,
       tolerance: 5,
@@ -112,40 +142,49 @@ const EmojiMenu: React.FC<{
   return (
     <>
       <BackMenuButton onBackButtonClick={onBackButtonClick} />
-      <MenuButton
-        className="cell-studio-menu-button medium-font"
-        onClick={() => console.log("clicked!")}
-      >
-        CHANGE EMOJI
-      </MenuButton>
-      <MenuButton
-        className="cell-studio-menu-button medium-font"
-        onClick={() => console.log("clicked!")}
-      >
-        DUPLICATE EMOJI
-      </MenuButton>
+      <div className="button-row">
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={() => console.log("clicked!")}
+        >
+          <TbReplace />
+        </MenuButton>
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={() => console.log("clicked!")}
+        >
+          <BiDuplicate />
+        </MenuButton>
+      </div>
 
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
       >
-        {state.localEmojiConfigs.map((emoji) => (
-          <Droppable
-            activeEmojiId={activeEmojiId}
-            emoji={emoji}
-            key={`${emoji.emoji}-${emoji.id}-droppable`}
-            dropId={emoji.id.toString()}
-          />
-        ))}
+        <div className="scroll-container">
+          {state.localEmojiConfigs.map((emoji) => (
+            <Droppable
+              activeEmojiId={activeEmojiId}
+              emoji={emoji}
+              key={`${emoji.emoji}-${emoji.id}-droppable`}
+              dragDropId={emoji.id.toString()}
+            />
+          ))}
+        </div>
         <DragOverlay>
           {emojiBeingDragged && (
             <MenuButton
               key={`${emojiBeingDragged.emoji}-${emojiBeingDragged.id}`}
               isSecondary={emojiBeingDragged.id === activeEmojiId}
-              className="cell-studio-menu-button"
+              className="cell-studio-menu-button emoji-menu-button drag-overlay"
             >
-              <EmojiIcon config={emojiBeingDragged} />
+              <span className="quarter-button" />
+              <EmojiIcon config={emojiBeingDragged} withHandles />
+              <span className="quarter-button handle">
+                <RxDragHandleHorizontal color={theme.colors.lightBlack} />
+              </span>
             </MenuButton>
           )}
         </DragOverlay>
