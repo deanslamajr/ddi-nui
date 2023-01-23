@@ -58,11 +58,12 @@ export const EmojiIcon: React.FC<{
       ref={emojiIconRef}
     >
       {stageDimensions && emojiConfig && (
-        <Stage width={STAGE_WIDTH} height={stageDimensions.height}>
-          <Layer>
-            <KonvaEmoji emojiConfig={emojiConfig} />
-          </Layer>
-        </Stage>
+        // <Stage width={STAGE_WIDTH} height={stageDimensions.height}>
+        //   <Layer>
+        //     <KonvaEmoji emojiConfig={emojiConfig} />
+        //   </Layer>
+        // </Stage>
+        <div>{emojiConfig.emoji}</div>
       )}
     </span>
   );
