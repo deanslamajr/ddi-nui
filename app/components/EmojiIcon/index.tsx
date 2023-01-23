@@ -1,5 +1,6 @@
 import React from "react";
 import { Layer, Stage, Text } from "react-konva";
+import classNames from "classnames";
 
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
@@ -12,9 +13,12 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
+const STAGE_WIDTH = 125;
+
 export const EmojiIcon: React.FC<{
   config: EmojiConfigSerialized;
-}> = ({ config }) => {
+  withHandles?: boolean;
+}> = ({ config, withHandles }) => {
   const emojiIconRef = React.useRef<HTMLDivElement>(null);
   const [stageDimensions, setStageDimensions] = React.useState<{
     width: number;
@@ -38,7 +42,7 @@ export const EmojiIcon: React.FC<{
     return {
       ...config,
       id: 1,
-      x: stageDimensions.width / 2,
+      x: STAGE_WIDTH / 2,
       y: stageDimensions.height / 2,
       size: 166,
       scaleX: config.scaleX < 0 ? -0.17 : 0.17, // icon should represent result of emoji flip action
@@ -47,14 +51,19 @@ export const EmojiIcon: React.FC<{
   }, [config, stageDimensions]);
 
   return (
-    <div className="emoji-icon-container" ref={emojiIconRef}>
+    <span
+      className={classNames("emoji-icon-container", {
+        "with-handles": withHandles,
+      })}
+      ref={emojiIconRef}
+    >
       {stageDimensions && emojiConfig && (
-        <Stage width={stageDimensions.width} height={stageDimensions.height}>
+        <Stage width={STAGE_WIDTH} height={stageDimensions.height}>
           <Layer>
             <KonvaEmoji emojiConfig={emojiConfig} />
           </Layer>
         </Stage>
       )}
-    </div>
+    </span>
   );
 };
