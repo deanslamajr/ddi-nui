@@ -47,6 +47,7 @@
     "emoji-mart": "^5.4.0",
     "eruda": "^2.5.0",
     "fast-clone": "^1.5.13",
+    "hash-it": "^6.0.0",
     "konva": "^8.3.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

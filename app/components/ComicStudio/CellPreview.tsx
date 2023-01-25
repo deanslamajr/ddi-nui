@@ -1,8 +1,5 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import useDeepCompareEffect from "use-deep-compare-effect";
-
-import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
 
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
@@ -11,6 +8,7 @@ import { theme } from "~/utils/stylesTheme";
 
 import { getCellState } from "~/contexts/ComicStudioState/selectors";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
+import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
@@ -43,24 +41,14 @@ const CellPreview: React.FC<{
   const [comicStudioState] = useComicStudioState();
   const cell = getCellState(comicStudioState, cellUrlId);
 
-  const [generatedImageUrl, setGeneratedImageUrl] = React.useState<
-    string | null
-  >(null);
+  const { imageUrl } = useCellImageGenerator(cell);
 
-  useDeepCompareEffect(() => {
-    if (cell) {
-      generateCellImage(cell).then(({ url: latestImageUrl }) =>
-        setGeneratedImageUrl(latestImageUrl)
-      );
-    }
-  }, [cell]);
-
-  return cell && generatedImageUrl ? (
+  return cell && imageUrl ? (
     isButtonIcon ? (
       <Cell
         clickable
         className="cell-preview-as-icon"
-        imageUrl={generatedImageUrl}
+        imageUrl={imageUrl}
         isImageUrlAbsolute={true}
         schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
         cellWidth={cellWidth}
@@ -74,7 +62,7 @@ const CellPreview: React.FC<{
         <Cell
           clickable
           className="cell-preview-as-studio-cell"
-          imageUrl={generatedImageUrl}
+          imageUrl={imageUrl}
           isImageUrlAbsolute={true}
           schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
           caption={cell.studioState?.caption || ""}

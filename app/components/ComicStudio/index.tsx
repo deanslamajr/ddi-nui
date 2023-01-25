@@ -191,7 +191,7 @@ export const ComicStudio: FC<{}> = ({}) => {
   const renderedComicPreview = useMemo(() => {
     return sortedCells.map((cell) => (
       <CellPreview
-        key={cell.imageUrl}
+        key={cell.urlId}
         cellUrlId={cell.urlId}
         onCellClick={handleCellClick}
       />

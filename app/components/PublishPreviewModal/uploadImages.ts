@@ -1,4 +1,4 @@
-import { generateCellImage } from "~/utils/generateCellImageFromEmojis";
+import { generateCellImage } from "~/contexts/CellImageGenerator/generateCellImageFromEmojis";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { CAPTCHA_ACTIONS } from "~/utils/constants";
 
