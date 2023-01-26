@@ -1,19 +1,17 @@
 import React from "react";
-import { Layer, Stage, Text } from "react-konva";
 import classNames from "classnames";
+import type { LinksFunction } from "@remix-run/node";
 
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
+import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
+import { StudioStateImageData } from "~/interfaces/studioState";
+import { theme } from "~/utils/stylesTheme";
 
-import KonvaEmoji from "~/components/KonvaEmoji";
-
-import type { LinksFunction } from "@remix-run/node";
 import stylesUrl from "~/styles/components/EmojiIcon.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
-
-const STAGE_WIDTH = 125;
 
 export const EmojiIcon: React.FC<{
   config: EmojiConfigSerialized;
@@ -34,21 +32,28 @@ export const EmojiIcon: React.FC<{
     }
   }, [emojiIconRef.current]);
 
-  const emojiConfig: EmojiConfigSerialized | null = React.useMemo(() => {
+  const emojiConfig: StudioStateImageData | null = React.useMemo(() => {
     if (!stageDimensions) {
       return null;
     }
 
     return {
-      ...config,
-      id: 1,
-      x: STAGE_WIDTH / 2,
-      y: stageDimensions.height / 2,
-      size: 166,
-      scaleX: config.scaleX < 0 ? -0.17 : 0.17, // icon should represent result of emoji flip action
-      scaleY: config.scaleY < 0 ? -0.17 : 0.17, // icon should represent result of emoji flip action
+      emojis: {
+        [config.id]: {
+          ...config,
+          id: 1,
+          x: theme.canvas.width / 2,
+          y: theme.canvas.height / 2,
+          size: theme.canvas.height / 2,
+          scaleX: config.scaleX < 0 ? -1 : 1, // icon should represent result of emoji flip action
+          scaleY: config.scaleY < 0 ? -1 : 1, // icon should represent result of emoji flip action
+        },
+      },
+      backgroundColor: null,
     };
   }, [config, stageDimensions]);
+
+  const { imageUrl } = useCellImageGenerator(emojiConfig);
 
   return (
     <span
@@ -57,13 +62,8 @@ export const EmojiIcon: React.FC<{
       })}
       ref={emojiIconRef}
     >
-      {stageDimensions && emojiConfig && (
-        // <Stage width={STAGE_WIDTH} height={stageDimensions.height}>
-        //   <Layer>
-        //     <KonvaEmoji emojiConfig={emojiConfig} />
-        //   </Layer>
-        // </Stage>
-        <div>{emojiConfig.emoji}</div>
+      {stageDimensions && emojiConfig && imageUrl && (
+        <img className="emoji-icon-image" src={imageUrl} />
       )}
     </span>
   );

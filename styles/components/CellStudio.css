@@ -57,11 +57,14 @@
 }
 
 .handle {
-  background-color: var(--lightGray);
   cursor: grab;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    background-color: var(--pinkWhite);
+  }
 }
 
 .selector {

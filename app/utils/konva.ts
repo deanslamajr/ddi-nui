@@ -76,7 +76,7 @@ export const getEmojiConfigs = (
 
 export const generateCellImage = (
   emojis: Record<string, EmojiConfigSerialized>,
-  backgroundColor: string,
+  backgroundColor: string | null,
   htmlElementId: string
 ): Promise<Blob> => {
   const stageHeight = theme.canvas.height;
@@ -92,15 +92,17 @@ export const generateCellImage = (
   // add the layer to the stage
   stage.add(layer);
 
-  // Add Canvas
-  const canvas = new Konva.Rect({
-    x: 0,
-    y: 0,
-    width: theme.canvas.width,
-    height: theme.canvas.height,
-    fill: backgroundColor,
-  });
-  layer.add(canvas);
+  // optionally: Add Canvas
+  if (backgroundColor) {
+    const canvas = new Konva.Rect({
+      x: 0,
+      y: 0,
+      width: theme.canvas.width,
+      height: theme.canvas.height,
+      fill: backgroundColor,
+    });
+    layer.add(canvas);
+  }
 
   // Add emojis
   getEmojiConfigs(Object.values(emojis)).forEach((config) => {

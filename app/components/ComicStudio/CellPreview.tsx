@@ -41,7 +41,7 @@ const CellPreview: React.FC<{
   const [comicStudioState] = useComicStudioState();
   const cell = getCellState(comicStudioState, cellUrlId);
 
-  const { imageUrl } = useCellImageGenerator(cell);
+  const { imageUrl } = useCellImageGenerator(cell?.studioState || null);
 
   return cell && imageUrl ? (
     isButtonIcon ? (

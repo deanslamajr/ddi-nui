@@ -9,25 +9,32 @@ export type AllStudioStateVersions =
   | StudioStateFromGetComic
   | OlderStudioStateFromGetComic;
 
-type StudioStateBase = {
+type StudioStateEditorState = {
   activeEmojiId: number;
   currentEmojiId: number;
 };
 
-export type StudioState = StudioStateBase & {
-  backgroundColor: string;
-  caption: string;
+export type StudioStateImageData = {
+  backgroundColor?: string | null; // null for opting out of background rendering e.g. for emoji icons
   emojis: Record<string, EmojiConfigSerialized>;
 };
 
+type StudioStateCellData = {
+  caption: string;
+};
+
+export type StudioState = StudioStateEditorState &
+  StudioStateImageData &
+  StudioStateCellData;
+
 // This version is returned from GET comic/:comicUrlId
-export type StudioStateFromGetComic = StudioStateBase & {
+export type StudioStateFromGetComic = StudioStateEditorState & {
   backgroundColor: string;
   caption: string;
   emojis: Record<string, EmojiConfigFromGetComic>;
 };
 
-export type OlderStudioStateFromGetComic = StudioStateBase & {
+export type OlderStudioStateFromGetComic = StudioStateEditorState & {
   showEmojiPicker: boolean;
   title: string;
   emojis: Record<string, EmojiConfigFromOlderGetComic>;
