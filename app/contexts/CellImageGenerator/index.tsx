@@ -1,7 +1,7 @@
 import React from "react";
 import hash from "hash-it";
 
-import { CellFromClientCache } from "~/utils/clientCache/cell";
+import { StudioStateImageData } from "~/interfaces/studioState";
 import { generateCellImage as generateCellImageFromEmojis } from "./generateCellImageFromEmojis";
 
 type CacheItem = {
@@ -10,8 +10,12 @@ type CacheItem = {
 };
 export type GeneratedCellImageContext =
   | {
-      getCellCache: (cell: CellFromClientCache) => CacheItem | null;
-      generateCellImage: (cell: CellFromClientCache) => Promise<void>;
+      getCellCache: (
+        studioStateImageData: StudioStateImageData
+      ) => CacheItem | null;
+      generateCellImage: (
+        studioStateImageData: StudioStateImageData
+      ) => Promise<void>;
     }
   | undefined;
 
@@ -23,14 +27,16 @@ const CellImageProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const [cache, setCache] = React.useState<Record<string, CacheItem>>({});
 
   const contextValue = React.useMemo(() => {
-    const getCellCache = (cell: CellFromClientCache) => {
+    const getCellCache = (studioStateImageData: StudioStateImageData) => {
       // generate cache key
-      const cacheKey = hash(cell.studioState);
+      const cacheKey = hash(studioStateImageData);
       return cache[cacheKey] || null;
     };
 
-    const generateCellImage = async (cell: CellFromClientCache) => {
-      const cacheKey = hash(cell.studioState);
+    const generateCellImage = async (
+      studioStateImageData: StudioStateImageData
+    ) => {
+      const cacheKey = hash(studioStateImageData);
       setCache((prevCache) => ({
         ...prevCache,
         [cacheKey]: {
@@ -40,7 +46,10 @@ const CellImageProvider: React.FC<React.PropsWithChildren<{}>> = ({
       }));
 
       // generate new image
-      const cellGenerationResponse = await generateCellImageFromEmojis(cell);
+      const cellGenerationResponse = await generateCellImageFromEmojis(
+        studioStateImageData,
+        cacheKey
+      );
 
       // cache new image
       setCache((prevCache) => ({
@@ -58,29 +67,30 @@ const CellImageProvider: React.FC<React.PropsWithChildren<{}>> = ({
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 };
 
-const useCellImage = (cell: CellFromClientCache | null): CacheItem => {
+const useCellImage = (
+  cellStudioStateImageData: StudioStateImageData | null
+): CacheItem => {
   const [state, setState] = React.useState<CacheItem>({
     imageUrl: null,
     isLoading: false,
   });
 
   const context = React.useContext(Context);
-  console.log("context", context);
   if (context === undefined) {
     throw new Error("useCellImage must be used within a CellImageProvider");
   }
 
   React.useEffect(() => {
-    if (cell) {
+    if (cellStudioStateImageData) {
       // check for cache hit
-      const cacheHit = context.getCellCache(cell);
+      const cacheHit = context.getCellCache(cellStudioStateImageData);
       if (cacheHit) {
         setState(cacheHit);
       } else {
-        context.generateCellImage(cell);
+        context.generateCellImage(cellStudioStateImageData);
       }
     }
-  }, [cell, context]);
+  }, [cellStudioStateImageData, context]);
 
   return state;
 };

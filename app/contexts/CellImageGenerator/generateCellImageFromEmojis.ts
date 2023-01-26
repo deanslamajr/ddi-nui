@@ -2,11 +2,8 @@ import shortid from "shortid";
 
 import { theme } from "~/utils/stylesTheme";
 import { generateCellImage as createCellImageFromKonva } from "~/utils/konva";
-
 import { S3_ASSET_FILETYPE } from "~/utils/constants";
-
-import type { CellFromClientCache } from "~/utils/clientCache/cell";
-
+import { StudioStateImageData } from "~/interfaces/studioState";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 const CELL_IMAGE_ID = "CELL_IMAGE_ID";
@@ -21,7 +18,7 @@ export const generateCellImageFromEmojis = async ({
   filename = generateFilename(),
   htmlElementId,
 }: {
-  backgroundColor: string;
+  backgroundColor: string | null;
   emojis: Record<string, EmojiConfigSerialized>;
   filename?: string;
   htmlElementId: string;
@@ -43,10 +40,11 @@ export const generateCellImageFromEmojis = async ({
 };
 
 export const generateCellImage = async (
-  cell: CellFromClientCache,
+  studioStateImageData: StudioStateImageData,
+  domIdKey: number | string,
   filename?: string
 ) => {
-  const cellImageElementId = `${CELL_IMAGE_ID}-${cell.urlId}`;
+  const cellImageElementId = `${CELL_IMAGE_ID}-${domIdKey}`;
   let cellImageElement = document.getElementById(cellImageElementId);
 
   // Only create the element if it doesn't already exist
@@ -59,8 +57,11 @@ export const generateCellImage = async (
   }
 
   const { file, url } = await generateCellImageFromEmojis({
-    emojis: cell.studioState?.emojis || {},
-    backgroundColor: cell.studioState?.backgroundColor || theme.colors.white,
+    emojis: studioStateImageData.emojis || {},
+    backgroundColor:
+      studioStateImageData.backgroundColor === null
+        ? null // opt out of a background e.g. for emoji icons
+        : studioStateImageData?.backgroundColor || theme.colors.white,
     filename,
     htmlElementId: cellImageElementId,
   });
