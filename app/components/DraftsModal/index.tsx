@@ -12,13 +12,14 @@ import CellWithLoadSpinner, {
 } from "~/components/CellWithLoadSpinner";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
-
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import useHydrateComic from "~/hooks/useHydrateComic";
-
+import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { HydratedComic } from "~/utils/clientCache/comic";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
+import { getClientVariable } from "~/utils/environment-variables";
 
 import stylesUrl from "~/styles/components/DraftsModal.css";
 
@@ -30,6 +31,34 @@ export const links: LinksFunction = () => {
     ...cellStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
+};
+
+const DraftComicPreviewCell: React.FC<{ cell: CellFromClientCache }> = ({
+  cell,
+}) => {
+  const { imageUrl: generatedImageUrl, isLoading } = useCellImageGenerator(
+    cell?.studioState || null,
+    !cell.hasNewImage
+  );
+
+  const imageUrl = cell.hasNewImage
+    ? generatedImageUrl ||
+      `${getClientVariable("ASSETS_URL_WITH_PROTOCOL")}/error.png`
+    : cell.imageUrl!;
+
+  return isLoading ? (
+    <CellWithLoadSpinner />
+  ) : (
+    <Cell
+      imageUrl={imageUrl}
+      isImageUrlAbsolute={Boolean(cell.hasNewImage)}
+      schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+      caption={cell.studioState?.caption || ""}
+      cellWidth={theme.cell.width}
+      clickable
+      removeBorders
+    />
+  );
 };
 
 const DraftComicPreview: React.FC<{
@@ -81,15 +110,7 @@ const DraftComicPreview: React.FC<{
       ) : (
         <>
           {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
-          <Cell
-            imageUrl={initialCell.imageUrl || ""}
-            isImageUrlAbsolute={initialCell.hasNewImage || false}
-            schemaVersion={SCHEMA_VERSION}
-            caption={initialCell.studioState?.caption || ""}
-            cellWidth={theme.cell.width}
-            clickable
-            removeBorders
-          />
+          <DraftComicPreviewCell cell={initialCell} />
         </>
       )}
     </div>
