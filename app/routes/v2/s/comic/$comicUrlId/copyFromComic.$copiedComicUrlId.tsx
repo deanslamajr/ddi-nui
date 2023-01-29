@@ -75,6 +75,7 @@ export default function CopyFromComicRoute() {
 
   return (
     <Modal
+      fullHeight
       className="copy-from-comic-modal"
       header={
         isLoadingComic ? undefined : (

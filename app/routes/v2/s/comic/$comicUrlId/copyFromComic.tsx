@@ -47,14 +47,21 @@ export default function IndexRoute() {
   const data = useLoaderData<LoaderData>();
 
   const returnToParent = () => {
-    navigate(`${DDI_APP_PAGES.comicStudio({ comicUrlId })}${queryString}`, {
-      state: { scroll: false },
-    });
+    // if this is part of the create new comic workflow
+    // return to gallery
+    if (comicUrlId === "new") {
+      navigate(DDI_APP_PAGES.gallery());
+    } else {
+      navigate(`${DDI_APP_PAGES.comicStudio({ comicUrlId })}${queryString}`, {
+        state: { scroll: false },
+      });
+    }
   };
 
   return (
     <>
       <Modal
+        fullHeight
         header={
           <>
             <GallerySearchNavButton />
