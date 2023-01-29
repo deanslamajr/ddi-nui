@@ -50,7 +50,7 @@ const SizeMenu: React.FC<{
   activeEmojiId: number;
   emojiConfigs: Record<string, EmojiConfigSerialized>;
   handleDragEnd: (args: { xDiff: number; yDiff: number }) => void;
-  backgroundColor: string;
+  backgroundColor?: string | null;
   onBackButtonClick: () => void;
 }> = ({
   activeEmojiId,

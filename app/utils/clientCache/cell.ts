@@ -19,10 +19,10 @@ import {
 } from "./comic";
 
 export type CellFromClientCache = {
-  hasNewImage?: boolean;
   urlId: string;
   imageUrl?: string | null;
-  isDirty?: boolean;
+  isDirty?: boolean; // change has been made to cell
+  hasNewImage?: boolean; // a change that alters the image has been made to the cell
   comicUrlId: string;
   previousCellUrlId?: string | null;
   schemaVersion?: number | null;

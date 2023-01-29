@@ -29,7 +29,9 @@ const {
   FILTERS_LIST,
 } = EMOJI_CONFIG;
 
-export const DEFAULT_STUDIO_STATE: StudioState = {
+type RequiredProperty<T> = { [P in keyof T]: Required<NonNullable<T[P]>> };
+
+export const DEFAULT_STUDIO_STATE: RequiredProperty<StudioState> = {
   activeEmojiId: 1,
   backgroundColor: theme.colors.white,
   caption: "",

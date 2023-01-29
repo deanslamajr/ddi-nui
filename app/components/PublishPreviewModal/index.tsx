@@ -1,8 +1,6 @@
 import React from "react";
-import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 
-import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import Modal, {
   CenteredContainer,
   MessageContainer,
@@ -13,8 +11,6 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 
-import { theme } from "~/utils/stylesTheme";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { deleteComic as removeComicAndCellsFromClientCache } from "~/utils/clientCache/comic";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { isDraftId } from "~/utils/draftId";
@@ -30,12 +26,12 @@ import uploadImages from "./uploadImages";
 import PublishFailModal, {
   links as publishFailModalStylesUrl,
 } from "./PublishFailModal";
+import PublishPreviewCell from "./PublishPreviewCell";
 
 import stylesUrl from "~/styles/components/PublishPreviewModal.css";
 
 export const links: LinksFunction = () => {
   return [
-    ...cellStylesUrl(),
     ...modalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...menuButtonStylesUrl(),
@@ -43,11 +39,6 @@ export const links: LinksFunction = () => {
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
-
-const StudioCell = styled(Cell)<{ widthOverride: number }>`
-  margin: 0 auto;
-  width: ${(props) => props.widthOverride}px;
-`;
 
 const PublishPreviewModal: React.FC<{
   cells: CellFromClientCache[];
@@ -195,17 +186,7 @@ const PublishPreviewModal: React.FC<{
           />
         ) : (
           cells.map((cell) => (
-            <div className="cell-container" key={cell.imageUrl}>
-              <StudioCell
-                cellWidth={theme.cell.width}
-                imageUrl={cell.imageUrl!}
-                isImageUrlAbsolute={Boolean(cell.hasNewImage)}
-                schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-                caption={cell.studioState?.caption}
-                widthOverride={theme.layout.width}
-                removeBorders
-              />
-            </div>
+            <PublishPreviewCell key={cell.urlId} cell={cell} />
           ))
         )}
       </div>

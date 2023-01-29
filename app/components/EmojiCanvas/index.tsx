@@ -3,9 +3,10 @@ import type { LinksFunction } from "@remix-run/node";
 import { Stage, Layer, Rect, Group } from "react-konva";
 import Konva from "konva";
 
-import { EmojiConfigSerialized, EmojiRefs } from "~/models/emojiConfig";
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 import sortEmojis from "~/utils/sortEmoijs";
+import { DEFAULT_STUDIO_STATE } from "~/utils/validators";
 
 import KonvaEmoji from "~/components/KonvaEmoji";
 
@@ -24,7 +25,7 @@ const getSortedEmojisArray = (
 
 const EmojiCanvas: FC<{
   activeEmojiId: number;
-  backgroundColor: string;
+  backgroundColor?: string | null;
   emojiConfigs: Record<string, EmojiConfigSerialized>;
   handleDragEnd: (args: { xDiff: number; yDiff: number }) => void;
   isDraggable: boolean;
@@ -130,7 +131,7 @@ const EmojiCanvas: FC<{
             y={0}
             width={theme.canvas.width}
             height={theme.canvas.height}
-            fill={backgroundColor}
+            fill={backgroundColor || DEFAULT_STUDIO_STATE.backgroundColor}
           />
 
           {/* /**

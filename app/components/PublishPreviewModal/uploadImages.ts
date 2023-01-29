@@ -69,7 +69,13 @@ const uploadImages = async ({
         );
       }
 
-      const { file } = await generateCellImage(cellDraft, filename);
+      if (!cellDraft.studioState) {
+        throw new Error(
+          `The cell draft with cellUrlId:${draftUrlId} does not have associated studio state!`
+        );
+      }
+
+      const { file } = await generateCellImage(cellDraft.studioState, filename);
 
       await uploadImage(file, signData.signedRequest);
 

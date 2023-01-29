@@ -23,6 +23,8 @@ const resizeEmoji: ComicStudioStateReducer<RotateEmojiAction> = (
       throw new Error("Cell state not found!");
     }
 
+    cellState.isDirty = true;
+
     if (action.data.shouldSaveChange) {
       addNewCellChangeToHistory(cellState);
     }
