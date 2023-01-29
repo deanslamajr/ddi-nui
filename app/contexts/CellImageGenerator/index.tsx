@@ -68,7 +68,8 @@ const CellImageProvider: React.FC<React.PropsWithChildren<{}>> = ({
 };
 
 const useCellImage = (
-  cellStudioStateImageData: StudioStateImageData | null
+  cellStudioStateImageData: StudioStateImageData | null,
+  skip?: boolean
 ): CacheItem => {
   const [state, setState] = React.useState<CacheItem>({
     imageUrl: null,
@@ -81,7 +82,7 @@ const useCellImage = (
   }
 
   React.useEffect(() => {
-    if (cellStudioStateImageData) {
+    if (!skip && cellStudioStateImageData) {
       // check for cache hit
       const cacheHit = context.getCellCache(cellStudioStateImageData);
       if (cacheHit) {
@@ -90,7 +91,7 @@ const useCellImage = (
         context.generateCellImage(cellStudioStateImageData);
       }
     }
-  }, [cellStudioStateImageData, context]);
+  }, [cellStudioStateImageData, context, skip]);
 
   return state;
 };

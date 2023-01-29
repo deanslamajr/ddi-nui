@@ -19,9 +19,6 @@ import UnstyledLink, {
 import AddCellModal, {
   links as addCellModalStylesUrl,
 } from "~/components/AddCellModal";
-import CellActionsModal, {
-  links as cellActionsModalStylesUrl,
-} from "~/components/CellActionsModal";
 import ComicActionsModal, {
   links as comicActionsModalStylesUrl,
 } from "~/components/ComicActionsModal";
@@ -44,7 +41,6 @@ export const links: LinksFunction = () => {
     ...studioCellStylesUrl(),
     ...unstyledLinkStylesUrl(),
     ...addCellModalStylesUrl(),
-    ...cellActionsModalStylesUrl(),
     ...comicActionsModalStylesUrl(),
     ...publishPreviewModalStylesUrl(),
     ...reachedDirtyCellLimitModalStylesUrl(),
@@ -62,9 +58,6 @@ export const ComicStudio: FC<{}> = ({}) => {
   const comicUrlId = params.comicUrlId!;
   const isUninitializedComic = comicUrlId === "new";
 
-  const [activeCell, setActiveCell] = useState<CellFromClientCache | null>(
-    null
-  );
   const [showComicActionsModal, setShowComicActionsModal] = useState(false);
   const [showAddCellModal, setShowAddCellModal] =
     useState(isUninitializedComic);
@@ -114,7 +107,6 @@ export const ComicStudio: FC<{}> = ({}) => {
       }
     );
 
-    setActiveCell(null);
     setShowAddCellModal(false);
   };
 
@@ -139,7 +131,6 @@ export const ComicStudio: FC<{}> = ({}) => {
     if (!activeCell.isDirty && !canAddMoreCells()) {
       setShowCellAddLimitReachedModal(true);
     } else {
-      // setActiveCell(activeCell);
       navigate(
         DDI_APP_PAGES.cellStudio({ comicUrlId, cellUrlId: activeCell.urlId }),
         {
@@ -245,15 +236,6 @@ export const ComicStudio: FC<{}> = ({}) => {
             setShowComicActionsModal(false);
             setShowPreviewModal(true);
           }}
-        />
-      )}
-
-      {activeCell && (
-        <CellActionsModal
-          cell={activeCell}
-          comicUrlId={comicUrlId}
-          onCancelClick={() => setActiveCell(null)}
-          onDuplicateClick={() => navigateToCellStudio(activeCell.studioState)}
         />
       )}
 

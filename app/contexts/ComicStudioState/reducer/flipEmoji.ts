@@ -26,6 +26,8 @@ const flipEmoji: ComicStudioStateReducer<FlipEmojiAction> = (state, action) => {
       );
     }
 
+    cellState.isDirty = true;
+
     addNewCellChangeToHistory(cellState);
 
     return clonedState;

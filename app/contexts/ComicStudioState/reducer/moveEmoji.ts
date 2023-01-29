@@ -21,6 +21,8 @@ const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
       throw new Error("Cell state not found!");
     }
 
+    cellState.isDirty = true;
+
     addNewCellChangeToHistory(cellState);
 
     return clonedState;

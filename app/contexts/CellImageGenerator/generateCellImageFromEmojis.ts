@@ -66,7 +66,5 @@ export const generateCellImage = async (
     htmlElementId: cellImageElementId,
   });
 
-  // cell.imageUrl = url;
-
   return { file, url };
 };
