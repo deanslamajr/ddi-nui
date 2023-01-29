@@ -22,6 +22,7 @@ const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
     }
 
     cellState.isDirty = true;
+    cellState.hasNewImage = true;
 
     addNewCellChangeToHistory(cellState);
 

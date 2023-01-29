@@ -10,6 +10,9 @@ import {
 } from "@remix-run/react";
 import { ErrorBoundaryComponent, LinksFunction, json } from "@remix-run/node";
 import { ThemeProvider } from "styled-components";
+import { MdErrorOutline } from "react-icons/md";
+import React from "react";
+import StackTracey from "stacktracey";
 
 import rootStylesPath from "~/styles/root.css";
 import navButtonStylesPath from "~/styles/nav-button.css";
@@ -18,9 +21,15 @@ import cssThemePath from "~/styles/theme.css";
 import { theme } from "~/utils/stylesTheme";
 import { getClientVariable } from "~/utils/environment-variables";
 import { DEBUGGER_SEARCH_KEY } from "~/utils/constants";
-
+import { CellImageProvider } from "~/contexts/CellImageGenerator";
 import Debugger from "~/components/Debugger";
 import ConditionalScrollRestoration from "~/components/ConditionalScrollRestoration";
+import Modal, {
+  MessageContainer as Message,
+  CenteredContainer,
+  links as modalStylesUrl,
+} from "./components/Modal";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import { ClientEnvironmentVariables } from "~/interfaces/environment-variables";
 
@@ -69,6 +78,8 @@ export const links: LinksFunction = () => {
     { rel: "stylesheet", href: rootStylesPath },
     { rel: "stylesheet", href: navButtonStylesPath },
     { rel: "stylesheet", href: cssThemePath },
+    ...modalStylesUrl(),
+    ...buttonStylesUrl(),
     ...favicons,
   ];
 };
@@ -120,7 +131,9 @@ export default function App() {
       <body>
         {isDebuggerEnabled && <Debugger />}
         <ThemeProvider theme={theme}>
-          <Outlet />
+          <CellImageProvider>
+            <Outlet />
+          </CellImageProvider>
         </ThemeProvider>
         <ConditionalScrollRestoration />
         <script
@@ -136,7 +149,26 @@ export default function App() {
 }
 
 export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
-  console.error(error);
+  const [stackTraceJsx, setStackTraceJsx] = React.useState<
+    JSX.Element[] | null[] | null
+  >(null);
+
+  const onShowErrorClicked = async () => {
+    const prettyPrintedString = (
+      await new StackTracey(error).withSourcesAsync()
+    ).asTable();
+    const jsx = prettyPrintedString
+      ? prettyPrintedString.split("\n").map((item) => {
+          return (
+            <code key={item}>
+              {item}
+              <br />
+            </code>
+          );
+        })
+      : [null];
+    setStackTraceJsx(jsx);
+  };
   return (
     <html>
       <head>
@@ -145,7 +177,47 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
         <Links />
       </head>
       <body>
-        Sorry, there was an error. Please try refreshing the page.
+        <Modal
+          header={<Message>Sorry, there was an error.</Message>}
+          footer={
+            <>
+              <CenteredContainer>
+                <div>Please try one of the following</div>
+              </CenteredContainer>
+              <CenteredContainer>
+                <MenuButton onClick={() => location.reload()}>
+                  Refresh the page
+                </MenuButton>
+              </CenteredContainer>
+
+              <CenteredContainer>
+                <MenuButton onClick={() => history.back()}>
+                  Return to the previous page
+                </MenuButton>
+              </CenteredContainer>
+
+              <CenteredContainer>
+                <MenuButton accented onClick={() => location.replace("/")}>
+                  Return to gallery
+                </MenuButton>
+              </CenteredContainer>
+            </>
+          }
+        >
+          <div onClick={() => !stackTraceJsx && onShowErrorClicked()}>
+            <CenteredContainer>
+              <MdErrorOutline size="3rem" color={theme.colors.pink} />
+            </CenteredContainer>
+          </div>
+          {stackTraceJsx && (
+            <section
+              style={{ whiteSpace: "pre", margin: "2rem", overflow: "auto" }}
+            >
+              <h2>{error.message}</h2>
+              <p>{stackTraceJsx}</p>
+            </section>
+          )}
+        </Modal>
         <Scripts />
       </body>
     </html>

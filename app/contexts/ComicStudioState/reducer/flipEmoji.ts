@@ -27,6 +27,7 @@ const flipEmoji: ComicStudioStateReducer<FlipEmojiAction> = (state, action) => {
     }
 
     cellState.isDirty = true;
+    cellState.hasNewImage = true;
 
     addNewCellChangeToHistory(cellState);
 

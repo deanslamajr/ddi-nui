@@ -5,7 +5,7 @@ import {
   ComicStudioStateProvider,
   links as comicStudioStateProviderStylesUrl,
 } from "~/contexts/ComicStudioState";
-import { CellImageProvider } from "~/contexts/CellImageGenerator";
+
 import {
   ComicStudio,
   links as comicStudioStylesUrl,
@@ -28,9 +28,7 @@ export default function ComicStudioRoute() {
   return (
     <div className="comic-studio-outer-container">
       <ComicStudioStateProvider comicUrlId={comicUrlId}>
-        <CellImageProvider>
-          <ComicStudio />
-        </CellImageProvider>
+        <ComicStudio />
       </ComicStudioStateProvider>
     </div>
   );

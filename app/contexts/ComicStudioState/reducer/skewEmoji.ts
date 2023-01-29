@@ -27,6 +27,7 @@ const skewEmoji: ComicStudioStateReducer<SkewEmojiAction> = (state, action) => {
     }
 
     cellState.isDirty = true;
+    cellState.hasNewImage = true;
 
     if (action.data.shouldSaveChange) {
       addNewCellChangeToHistory(cellState);

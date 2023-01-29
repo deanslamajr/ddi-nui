@@ -24,6 +24,7 @@ const resizeEmoji: ComicStudioStateReducer<ResizeEmojiAction> = (
     }
 
     cellState.isDirty = true;
+    cellState.hasNewImage = true;
 
     if (action.data.shouldSaveChange) {
       addNewCellChangeToHistory(cellState);

@@ -35,6 +35,7 @@ const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
     }
 
     cellState.isDirty = true;
+    cellState.hasNewImage = true;
 
     createNewEmojiConfigAndUpdateStudioState(cellState.studioState, action);
     addNewCellChangeToHistory(cellState);
