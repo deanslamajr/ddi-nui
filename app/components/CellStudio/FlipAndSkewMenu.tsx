@@ -1,6 +1,5 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import styled from "styled-components";
 import { useParams } from "@remix-run/react";
 import {
   CgEditFlipH,
@@ -35,18 +34,6 @@ export const links: LinksFunction = () => {
   ];
 };
 
-const SliderContainer = styled.div`
-  width: 100%;
-  padding: 0.5rem 0 0;
-`;
-
-const Label = styled.span`
-  margin: 0.1rem auto;
-  display: flex;
-  justify-content: center;
-  user-select: none;
-`;
-
 const FlipAndSkewMenu: React.FC<{
   onBackButtonClick: () => void;
 }> = ({ onBackButtonClick }) => {
@@ -75,10 +62,10 @@ const FlipAndSkewMenu: React.FC<{
       </div>
       {emojiSkew !== null ? (
         <>
-          <SliderContainer>
-            <Label>
+          <div className="submenu-slider-container">
+            <span className="submenu-label">
               <CgArrowsExchangeAlt color={theme.colors.pink} size="3rem" />
-            </Label>
+            </span>
             <Slider
               min={EMOJI_CONFIG.MIN_SKEW}
               max={EMOJI_CONFIG.MAX_SKEW}
@@ -129,11 +116,11 @@ const FlipAndSkewMenu: React.FC<{
                   ),
               })}
             />
-          </SliderContainer>
-          <SliderContainer>
-            <Label>
+          </div>
+          <div className="submenu-slider-container">
+            <span className="submenu-label">
               <CgArrowsExchangeV color={theme.colors.pink} size="3rem" />
-            </Label>
+            </span>
             <Slider
               min={EMOJI_CONFIG.MIN_SKEW}
               max={EMOJI_CONFIG.MAX_SKEW}
@@ -184,7 +171,7 @@ const FlipAndSkewMenu: React.FC<{
                   ),
               })}
             />
-          </SliderContainer>
+          </div>
         </>
       ) : (
         <MenuButton className="cell-studio-menu-button">ERROR!!!</MenuButton>

@@ -1,19 +1,25 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import styled from "styled-components";
 import { useParams } from "@remix-run/react";
 import { TbRotate360 } from "react-icons/tb";
+import cloneDeep from "fast-clone";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
-
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { rotateEmoji } from "~/contexts/ComicStudioState/actions";
-import { getEmojiRotation } from "~/contexts/ComicStudioState/selectors";
+import {
+  getActiveEmojiId,
+  getCellStudioState,
+} from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import Slider, { links as sliderStylesUrl } from "~/components/Slider";
 import DPad, { links as dPadStylesUrl } from "~/components/DPad";
+import EmojiCanvas, {
+  links as emojiCanvasStylesUrl,
+} from "~/components/EmojiCanvas";
 
 import { BackMenuButton } from "./MainMenu";
 
@@ -24,21 +30,10 @@ export const links: LinksFunction = () => {
     ...buttonStylesUrl(),
     ...sliderStylesUrl(),
     ...dPadStylesUrl(),
+    ...emojiCanvasStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
-
-const SliderContainer = styled.div`
-  width: 100%;
-  padding: 0.5rem 0 1.5rem;
-`;
-
-const Label = styled.span`
-  margin: 0.1rem auto;
-  display: flex;
-  justify-content: center;
-  user-select: none;
-`;
 
 const RotationMenu: React.FC<{
   onBackButtonClick: () => void;
@@ -47,61 +42,85 @@ const RotationMenu: React.FC<{
   const cellUrlId = params.cellUrlId!;
 
   const [comicStudioState, dispatch] = useComicStudioState();
-  const emojiRotation = getEmojiRotation(comicStudioState, cellUrlId);
+  const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
+  const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+
+  const [state, setState] = React.useState<{
+    localRotation: number;
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    if (!cellStudioState || !activeEmojiId) {
+      return null;
+    }
+
+    const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
+
+    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
+    return {
+      localRotation: activeEmoji.rotation,
+      localEmojiConfigs: clonedEmojiConfigs,
+    };
+  });
+
+  const rotateLocalEmoji = (newRotation: number): void => {
+    setState((prevState) => {
+      const activeEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
+      if (!activeEmoji) {
+        return prevState;
+      }
+      activeEmoji.rotation = newRotation;
+
+      return {
+        localRotation: newRotation,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
+      };
+    });
+  };
+
+  const saveAndGoBack = () => {
+    dispatch(
+      rotateEmoji({
+        newRotation: state!.localRotation,
+        cellUrlId,
+        shouldSaveChange: true,
+      })
+    );
+    onBackButtonClick();
+  };
 
   return (
     <>
-      <BackMenuButton onBackButtonClick={onBackButtonClick} />
-      {emojiRotation !== null ? (
-        <SliderContainer>
-          <Label>
+      {cellStudioState && state && (
+        <EmojiCanvas
+          activeEmojiId={activeEmojiId}
+          backgroundColor={cellStudioState.backgroundColor}
+          emojiConfigs={state.localEmojiConfigs}
+          isDraggable={false}
+        />
+      )}
+      <BackMenuButton onBackButtonClick={saveAndGoBack} />
+      {state!.localRotation !== null ? (
+        <div className="submenu-slider-container">
+          <span className="submenu-label">
             <TbRotate360 color={theme.colors.pink} size="2rem" />
-          </Label>
+          </span>
           <Slider
             min={EMOJI_CONFIG.MIN_ROTATION}
             max={EMOJI_CONFIG.MAX_ROTATION}
             step={1}
-            value={emojiRotation}
-            onChange={(value) =>
-              dispatch(
-                rotateEmoji({
-                  newRotation: value,
-                  cellUrlId,
-                  shouldSaveChange: false,
-                })
-              )
-            }
-            onRelease={(value) =>
-              dispatch(
-                rotateEmoji({
-                  newRotation: value,
-                  cellUrlId,
-                  shouldSaveChange: true,
-                })
-              )
-            }
+            value={state!.localRotation}
+            onChange={(value) => rotateLocalEmoji(value)}
+            onRelease={(value) => rotateLocalEmoji(value)}
           />
           <DPad
             horizontalActions={(multiplier) => ({
               onLeftClick: () =>
-                dispatch(
-                  rotateEmoji({
-                    newRotation: emojiRotation - multiplier,
-                    cellUrlId,
-                    shouldSaveChange: true,
-                  })
-                ),
+                rotateLocalEmoji(state!.localRotation - multiplier),
               onRightClick: () =>
-                dispatch(
-                  rotateEmoji({
-                    newRotation: emojiRotation + multiplier,
-                    cellUrlId,
-                    shouldSaveChange: true,
-                  })
-                ),
+                rotateLocalEmoji(state!.localRotation + multiplier),
             })}
           />
-        </SliderContainer>
+        </div>
       ) : (
         <MenuButton className="cell-studio-menu-button">ERROR!!!</MenuButton>
       )}

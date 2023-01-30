@@ -61,18 +61,12 @@ const PositionMenu: React.FC<{
     xDiff: number;
     yDiff: number;
   }): void => {
-    console.log("diff", { xDiff, yDiff });
     setState((prevState) => {
-      console.log("prevState!.localPosition.x", prevState!.localPosition.x);
-      console.log("prevState!.localPosition.y", prevState!.localPosition.y);
       const newX = prevState!.localPosition.x + xDiff;
       const newY = prevState!.localPosition.y + yDiff;
 
-      console.log("newX, newY", { newX, newY });
+      const clonedActiveEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
 
-      const clonedEmojiConfigs = prevState!.localEmojiConfigs; //cloneDeep(prevState!.localEmojiConfigs);
-      const clonedActiveEmoji = clonedEmojiConfigs[activeEmojiId!];
-      console.log("clonedActiveEmoji", clonedActiveEmoji);
       if (!clonedActiveEmoji) {
         return prevState;
       }
@@ -80,7 +74,7 @@ const PositionMenu: React.FC<{
       clonedActiveEmoji.y = newY;
 
       return {
-        localEmojiConfigs: clonedEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
         localPosition: { x: newX, y: newY },
       };
     });

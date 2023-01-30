@@ -71,7 +71,7 @@
   /* background-color: var(--pinkWhite); */
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   padding-left: 0.5rem;
   color: var(--darkGray);
 
@@ -83,4 +83,16 @@
 .scroll-container {
   /* needed for restrictToFirstScrollableAncestor */
   overflow: auto;
+}
+
+.submenu-label {
+  margin: 0.1rem auto;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+}
+
+.submenu-slider-container {
+  width: 100%;
+  padding: 0.5rem 0 1.5rem;
 }
