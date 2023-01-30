@@ -64,15 +64,20 @@ const RotationMenu: React.FC<{
 
   const rotateLocalEmoji = (newRotation: number): void => {
     setState((prevState) => {
-      const activeEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
-      if (!activeEmoji) {
+      const prevActiveEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
+      if (!prevActiveEmoji) {
         return prevState;
       }
-      activeEmoji.rotation = newRotation;
+
+      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
+      newEmojiConfigs[activeEmojiId!] = {
+        ...prevActiveEmoji,
+        rotation: newRotation,
+      };
 
       return {
         localRotation: newRotation,
-        localEmojiConfigs: prevState!.localEmojiConfigs,
+        localEmojiConfigs: newEmojiConfigs,
       };
     });
   };

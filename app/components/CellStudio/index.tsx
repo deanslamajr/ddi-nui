@@ -93,7 +93,8 @@ const CellStudio: React.FC<{}> = ({}) => {
   const isInSubMenu =
     currentSubmenu === "SIZE" ||
     currentSubmenu === "POSITION" ||
-    currentSubmenu === "ROTATE";
+    currentSubmenu === "ROTATE" ||
+    currentSubmenu === "FLIP_AND_SKEW";
 
   return (
     <>
