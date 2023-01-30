@@ -103,15 +103,6 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
     ): EmojiConfigSerialized => {
       const { x, y, scaleX, scaleY, rotation, size } = config;
 
-      console.log("{ x, y, scaleX, scaleY, rotation, size }", {
-        x,
-        y,
-        scaleX,
-        scaleY,
-        rotation,
-        size,
-      });
-
       return {
         x,
         y,
