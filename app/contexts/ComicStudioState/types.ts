@@ -69,21 +69,18 @@ export type RotateEmojiAction = {
   };
 };
 
-export type FlipEmojiAction = {
-  type: "FLIP_EMOIJ";
+export type FlipAndSkewEmojiAction = {
+  type: "FLIP_SKEW_EMOIJ";
   data: {
     cellUrlId: string;
-    type: "HORIZONTAL" | "VERTICAL";
-  };
-};
-
-export type SkewEmojiAction = {
-  type: "SKEW_EMOIJ";
-  data: {
-    cellUrlId: string;
-    newSkewValue: number;
-    type: "HORIZONTAL" | "VERTICAL";
-    shouldSaveChange: boolean;
+    newSkew: {
+      x: number;
+      y: number;
+    };
+    newScale: {
+      x: number;
+      y: number;
+    };
   };
 };
 
@@ -94,8 +91,7 @@ export type ComicStudioStateAction =
   | AddEmojiAction
   | ResizeEmojiAction
   | RotateEmojiAction
-  | FlipEmojiAction
-  | SkewEmojiAction;
+  | FlipAndSkewEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

@@ -90,11 +90,8 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
     }
   };
 
-  const activeEmojiConfig = useMemo(() => {
-    return (
-      localEmojiConfigs.find((config) => config.id === activeEmojiId) || null
-    );
-  }, [activeEmojiId, localEmojiConfigs]);
+  const activeEmojiConfig =
+    localEmojiConfigs.find((config) => config.id === activeEmojiId) || null;
 
   const outlineConfig = useMemo(() => {
     if (!activeEmojiConfig) {
@@ -105,6 +102,15 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
       config: EmojiConfigSerialized
     ): EmojiConfigSerialized => {
       const { x, y, scaleX, scaleY, rotation, size } = config;
+
+      console.log("{ x, y, scaleX, scaleY, rotation, size }", {
+        x,
+        y,
+        scaleX,
+        scaleY,
+        rotation,
+        size,
+      });
 
       return {
         x,

@@ -65,16 +65,21 @@ const PositionMenu: React.FC<{
       const newX = prevState!.localPosition.x + xDiff;
       const newY = prevState!.localPosition.y + yDiff;
 
-      const clonedActiveEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
+      const prevActiveEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
 
-      if (!clonedActiveEmoji) {
+      if (!prevActiveEmoji) {
         return prevState;
       }
-      clonedActiveEmoji.x = newX;
-      clonedActiveEmoji.y = newY;
+
+      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
+      newEmojiConfigs[activeEmojiId!] = {
+        ...prevActiveEmoji,
+        x: newX,
+        y: newY,
+      };
 
       return {
-        localEmojiConfigs: prevState!.localEmojiConfigs,
+        localEmojiConfigs: newEmojiConfigs,
         localPosition: { x: newX, y: newY },
       };
     });

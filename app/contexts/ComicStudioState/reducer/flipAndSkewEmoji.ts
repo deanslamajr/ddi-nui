@@ -1,10 +1,13 @@
 import cloneDeep from "fast-clone";
 
-import { ComicStudioStateReducer, SkewEmojiAction } from "../types";
+import { ComicStudioStateReducer, FlipAndSkewEmojiAction } from "../types";
 import { getActiveEmoji, getCellState } from "../selectors";
 import { addNewCellChangeToHistory } from "~/models/cellChange";
 
-const skewEmoji: ComicStudioStateReducer<SkewEmojiAction> = (state, action) => {
+const flipAndSkewEmoji: ComicStudioStateReducer<FlipAndSkewEmojiAction> = (
+  state,
+  action
+) => {
   try {
     const clonedState = cloneDeep(state);
 
@@ -13,11 +16,10 @@ const skewEmoji: ComicStudioStateReducer<SkewEmojiAction> = (state, action) => {
       throw new Error("Active Emoji not found!");
     }
 
-    if (action.data.type === "HORIZONTAL") {
-      activeEmoji.skewX = action.data.newSkewValue;
-    } else {
-      activeEmoji.skewY = action.data.newSkewValue;
-    }
+    activeEmoji.skewX = action.data.newSkew.x;
+    activeEmoji.skewY = action.data.newSkew.y;
+    activeEmoji.scaleX = action.data.newScale.x;
+    activeEmoji.scaleY = action.data.newScale.y;
 
     const cellState = getCellState(clonedState, action.data.cellUrlId);
     if (!cellState || !cellState.studioState) {
@@ -29,9 +31,7 @@ const skewEmoji: ComicStudioStateReducer<SkewEmojiAction> = (state, action) => {
     cellState.isDirty = true;
     cellState.hasNewImage = true;
 
-    if (action.data.shouldSaveChange) {
-      addNewCellChangeToHistory(cellState);
-    }
+    addNewCellChangeToHistory(cellState);
 
     return clonedState;
   } catch (e) {
@@ -40,4 +40,4 @@ const skewEmoji: ComicStudioStateReducer<SkewEmojiAction> = (state, action) => {
   }
 };
 
-export default skewEmoji;
+export default flipAndSkewEmoji;
