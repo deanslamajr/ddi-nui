@@ -1,3 +1,4 @@
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { HydratedComic } from "~/utils/clientCache/comic";
 
 export type ComicStudioState = {
@@ -84,6 +85,14 @@ export type FlipAndSkewEmojiAction = {
   };
 };
 
+export type UpdateEmojisOrderAction = {
+  type: "REORDER_EMOIJS";
+  data: {
+    cellUrlId: string;
+    reorderedEmojis: Record<string, EmojiConfigSerialized>;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
@@ -91,7 +100,8 @@ export type ComicStudioStateAction =
   | AddEmojiAction
   | ResizeEmojiAction
   | RotateEmojiAction
-  | FlipAndSkewEmojiAction;
+  | FlipAndSkewEmojiAction
+  | UpdateEmojisOrderAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

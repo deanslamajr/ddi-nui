@@ -137,8 +137,6 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "EMOJI" ? (
                   <EmojiMenu
-                    activeEmojiId={cellState.studioState.activeEmojiId}
-                    emojiConfigs={cellState.studioState.emojis}
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : currentSubmenu === "CELL" ? (
