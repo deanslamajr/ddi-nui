@@ -13,8 +13,13 @@ const moveEmoji: ComicStudioStateReducer<MoveEmojiAction> = (state, action) => {
       throw new Error("Active Emoji not found!");
     }
 
-    activeEmoji.x = activeEmoji.x + action.data.xDiff;
-    activeEmoji.y = activeEmoji.y + action.data.yDiff;
+    if ("diff" in action.data) {
+      activeEmoji.x = activeEmoji.x + action.data.diff.x;
+      activeEmoji.y = activeEmoji.y + action.data.diff.y;
+    } else {
+      activeEmoji.x = action.data.abs.x;
+      activeEmoji.y = action.data.abs.y;
+    }
 
     const cellState = getCellState(clonedState, action.data.cellUrlId);
     if (!cellState || !cellState.studioState) {

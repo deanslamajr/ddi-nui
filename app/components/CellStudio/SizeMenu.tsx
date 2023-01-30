@@ -12,6 +12,10 @@ import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { resizeEmoji } from "~/contexts/ComicStudioState/actions";
+import {
+  getActiveEmojiId,
+  getCellStudioState,
+} from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import Slider, { links as sliderStylesUrl } from "~/components/Slider";
@@ -47,47 +51,51 @@ const Label = styled.span`
 `;
 
 const SizeMenu: React.FC<{
-  activeEmojiId: number;
-  emojiConfigs: Record<string, EmojiConfigSerialized>;
-  handleDragEnd: (args: { xDiff: number; yDiff: number }) => void;
-  backgroundColor?: string | null;
   onBackButtonClick: () => void;
-}> = ({
-  activeEmojiId,
-  backgroundColor,
-  emojiConfigs,
-  handleDragEnd,
-  onBackButtonClick,
-}) => {
+}> = ({ onBackButtonClick }) => {
   const params = useParams();
   const cellUrlId = params.cellUrlId!;
 
+  const [comicStudioState, dispatch] = useComicStudioState();
+  const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
+  const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+
   const [state, setState] = React.useState<{
-    emojiSize: number;
+    localSize: number;
     localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  }>(() => {
-    const activeEmoji = emojiConfigs[activeEmojiId];
+  } | null>(() => {
+    if (!cellStudioState || !activeEmojiId) {
+      return null;
+    }
+
+    const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
+
+    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      emojiSize: activeEmoji.size,
-      localEmojiConfigs: emojiConfigs,
+      localSize: activeEmoji.size,
+      localEmojiConfigs: clonedEmojiConfigs,
     };
   });
 
   const resizeLocalEmoji = (newSize: number): void => {
-    const clonedEmojiConfigs = cloneDeep(state.localEmojiConfigs);
-    const clonedActiveEmoji = clonedEmojiConfigs[activeEmojiId];
-    if (!clonedActiveEmoji) {
-      return;
-    }
-    clonedActiveEmoji.size = newSize;
-    setState({ emojiSize: newSize, localEmojiConfigs: clonedEmojiConfigs });
+    setState((prevState) => {
+      const activeEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
+      if (!activeEmoji) {
+        return prevState;
+      }
+      activeEmoji.size = newSize;
+
+      return {
+        localSize: newSize,
+        localEmojiConfigs: state!.localEmojiConfigs,
+      };
+    });
   };
 
-  const [_, dispatch] = useComicStudioState();
   const saveAndGoBack = () => {
     dispatch(
       resizeEmoji({
-        newSize: state.emojiSize,
+        newSize: state!.localSize,
         cellUrlId,
         shouldSaveChange: true,
       })
@@ -97,15 +105,16 @@ const SizeMenu: React.FC<{
 
   return (
     <>
-      <EmojiCanvas
-        activeEmojiId={activeEmojiId}
-        backgroundColor={backgroundColor}
-        emojiConfigs={state.localEmojiConfigs}
-        handleDragEnd={handleDragEnd}
-        isDraggable={false}
-      />
+      {cellStudioState && state && (
+        <EmojiCanvas
+          activeEmojiId={activeEmojiId}
+          backgroundColor={cellStudioState.backgroundColor}
+          emojiConfigs={state.localEmojiConfigs}
+          isDraggable={false}
+        />
+      )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
-      {state.emojiSize !== null ? (
+      {state !== null ? (
         <SliderContainer>
           <Label>
             <GiResize color={theme.colors.pink} size="2rem" />
@@ -114,21 +123,21 @@ const SizeMenu: React.FC<{
             min={EMOJI_CONFIG.MIN_SIZE}
             max={EMOJI_CONFIG.MAX_SIZE}
             step={10}
-            value={state.emojiSize}
+            value={state.localSize}
             onChange={(value) => resizeLocalEmoji(value)}
             onRelease={(value) => resizeLocalEmoji(value)}
           />
           <DPad
             horizontalActions={(multiplier) => ({
               onLeftClick: () => {
-                let newValue = state.emojiSize - multiplier;
+                let newValue = state.localSize - multiplier;
                 if (newValue <= 0) {
                   newValue = 0;
                 }
                 resizeLocalEmoji(newValue);
               },
               onRightClick: () =>
-                resizeLocalEmoji(state.emojiSize + multiplier),
+                resizeLocalEmoji(state.localSize + multiplier),
             })}
           />
         </SliderContainer>
