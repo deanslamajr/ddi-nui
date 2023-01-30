@@ -1,5 +1,6 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
+import { useParams } from "@remix-run/react";
 import {
   DndContext,
   DragOverlay,
@@ -24,14 +25,19 @@ import {
   RiCheckboxCircleFill,
 } from "react-icons/ri";
 import classNames from "classnames";
+import deepClone from "fast-clone";
 
 import { theme } from "~/utils/stylesTheme";
 import sortEmojis from "~/utils/sortEmoijs";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
-
+import { useComicStudioState } from "~/contexts/ComicStudioState";
+import {
+  getActiveEmojiId,
+  getCellStudioState,
+} from "~/contexts/ComicStudioState/selectors";
+import { updateEmojisOrder } from "~/contexts/ComicStudioState/actions";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
-
 import { BackMenuButton } from "./MainMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
@@ -46,7 +52,7 @@ export const links: LinksFunction = () => {
 
 const Droppable: React.FC<{
   dragDropId: string;
-  activeEmojiId: number;
+  activeEmojiId: number | null;
   emoji: EmojiConfigSerialized;
 }> = ({ activeEmojiId, dragDropId, emoji }) => {
   const { isOver, setNodeRef } = useDroppable({
@@ -92,14 +98,21 @@ const Droppable: React.FC<{
 };
 
 const EmojiMenu: React.FC<{
-  activeEmojiId: number;
-  emojiConfigs: Record<string, EmojiConfigSerialized>;
   onBackButtonClick: () => void;
-}> = ({ activeEmojiId, emojiConfigs, onBackButtonClick }) => {
+}> = ({ onBackButtonClick }) => {
+  const params = useParams();
+  const cellUrlId = params.cellUrlId!;
+
+  const [comicStudioState, dispatch] = useComicStudioState();
+  const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
+  const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+
   const [state, setState] = React.useState<{
     localEmojiConfigs: EmojiConfigSerialized[];
   }>(() => {
-    const localEmojiConfigs = emojiConfigs ? Object.values(emojiConfigs) : [];
+    const localEmojiConfigs = cellStudioState?.emojis
+      ? Object.values(cellStudioState?.emojis)
+      : [];
     const sortedEmojiConfigs = sortEmojis(localEmojiConfigs, true);
     return {
       localEmojiConfigs: sortedEmojiConfigs,
@@ -126,6 +139,49 @@ const EmojiMenu: React.FC<{
 
   const sensors = useSensors(mouseSensor, touchSensor);
 
+  const changeEmojiOrder = (
+    draggableEmojiId: string,
+    droppableEmojiId: string
+  ) => {
+    const draggableEmojiConfig = state.localEmojiConfigs.find(
+      (e) => e.id.toString() === draggableEmojiId
+    );
+    const droppableEmojiConfig = state.localEmojiConfigs.find(
+      (e) => e.id.toString() === droppableEmojiId
+    );
+
+    if (!draggableEmojiConfig || !droppableEmojiConfig) {
+      return;
+    }
+
+    const clonedEmojiConfigs = deepClone(state.localEmojiConfigs);
+
+    // make dragged emoji lower
+    if (draggableEmojiConfig.order > droppableEmojiConfig.order) {
+      console.log("dragged lower");
+      const clonedDraggableEmojiConfig = clonedEmojiConfigs.find(
+        (e) => e.id.toString() === draggableEmojiId
+      );
+
+      // all emojis with (order >= dropped.order && order <= dragged.order) increase order by 1
+      clonedEmojiConfigs.forEach((e) => {
+        if (
+          e.order >= droppableEmojiConfig.order &&
+          e.order < draggableEmojiConfig.order
+        ) {
+          e.order = e.order + 1;
+        }
+      });
+      clonedDraggableEmojiConfig!.order = droppableEmojiConfig.order;
+    } else {
+      console.log("dragged higher");
+    }
+
+    const sortedEmojiConfigs = sortEmojis(clonedEmojiConfigs, true);
+
+    setState({ localEmojiConfigs: sortedEmojiConfigs });
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     const draggedEmoji = state.localEmojiConfigs.find(
       (e) => e.id.toString() === event.active.id.toString()
@@ -137,11 +193,33 @@ const EmojiMenu: React.FC<{
 
   const handleDragEnd = (event: DragEndEvent) => {
     setEmojiBeingDragged(null);
+    if (
+      event.active.id &&
+      event.over?.id &&
+      event.active.id !== event.over.id
+    ) {
+      changeEmojiOrder(event.active.id as string, event.over.id as string);
+    }
+  };
+
+  const saveAndGoBack = () => {
+    dispatch(
+      updateEmojisOrder({
+        cellUrlId,
+        reorderedEmojis: state.localEmojiConfigs.reduce((acc, emojiConfig) => {
+          return {
+            ...acc,
+            [emojiConfig.id]: emojiConfig,
+          };
+        }, {}),
+      })
+    );
+    onBackButtonClick();
   };
 
   return (
     <>
-      <BackMenuButton onBackButtonClick={onBackButtonClick} />
+      <BackMenuButton onBackButtonClick={saveAndGoBack} />
       <div className="button-row">
         <MenuButton
           className="cell-studio-menu-button half-width"

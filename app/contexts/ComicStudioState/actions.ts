@@ -6,7 +6,9 @@ import {
   ResizeEmojiAction,
   RotateEmojiAction,
   FlipAndSkewEmojiAction,
+  UpdateEmojisOrderAction,
 } from "./types";
+import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 export const undoCellUpdate = ({
   cellUrlId,
@@ -140,5 +142,19 @@ export const flipAndSkewEmoji = ({
     cellUrlId,
     newSkew,
     newScale,
+  },
+});
+
+export const updateEmojisOrder = ({
+  cellUrlId,
+  reorderedEmojis,
+}: {
+  cellUrlId: string;
+  reorderedEmojis: Record<string, EmojiConfigSerialized>;
+}): UpdateEmojisOrderAction => ({
+  type: "REORDER_EMOIJS",
+  data: {
+    cellUrlId,
+    reorderedEmojis,
   },
 });
