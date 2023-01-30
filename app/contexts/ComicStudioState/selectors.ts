@@ -49,6 +49,22 @@ export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
     : null;
 };
 
+export const getCellStudioState = (
+  state: ComicStudioState,
+  cellUrlId: string
+) => {
+  const cellState = getCellState(state, cellUrlId);
+  return cellState && cellState.studioState ? cellState.studioState : null;
+};
+
+export const getActiveEmojiId = (
+  state: ComicStudioState,
+  cellUrlId: string
+) => {
+  const cellStudioState = getCellStudioState(state, cellUrlId);
+  return cellStudioState ? cellStudioState.activeEmojiId : null;
+};
+
 export const getPreviousCellChangeId = (
   state: ComicStudioState,
   cellUrlId: string

@@ -37,22 +37,41 @@ export const redoCellUpdate = ({
   },
 });
 
-export const moveEmoji = ({
-  cellUrlId,
-  xDiff,
-  yDiff,
-}: {
-  cellUrlId: string;
-  xDiff: number;
-  yDiff: number;
-}): MoveEmojiAction => ({
-  type: "MOVE_EMOIJ",
-  data: {
-    cellUrlId,
-    xDiff,
-    yDiff,
-  },
-});
+export const moveEmoji = (
+  details:
+    | {
+        cellUrlId: string;
+        diff: {
+          x: number;
+          y: number;
+        };
+      }
+    | {
+        cellUrlId: string;
+        abs: {
+          x: number;
+          y: number;
+        };
+      }
+): MoveEmojiAction => {
+  if ("diff" in details) {
+    return {
+      type: "MOVE_EMOIJ",
+      data: {
+        cellUrlId: details.cellUrlId,
+        diff: details.diff,
+      },
+    };
+  } else {
+    return {
+      type: "MOVE_EMOIJ",
+      data: {
+        cellUrlId: details.cellUrlId,
+        abs: details.abs,
+      },
+    };
+  }
+};
 
 export const addEmoji = ({
   newEmoji,

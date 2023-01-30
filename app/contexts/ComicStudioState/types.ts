@@ -26,11 +26,21 @@ export type RedoCellAction = {
 
 export type MoveEmojiAction = {
   type: "MOVE_EMOIJ";
-  data: {
-    cellUrlId: string;
-    xDiff: number;
-    yDiff: number;
-  };
+  data:
+    | {
+        cellUrlId: string;
+        diff: {
+          x: number;
+          y: number;
+        };
+      }
+    | {
+        cellUrlId: string;
+        abs: {
+          x: number;
+          y: number;
+        };
+      };
 };
 
 export type AddEmojiAction = {

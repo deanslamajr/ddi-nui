@@ -90,40 +90,26 @@ const CellStudio: React.FC<{}> = ({}) => {
     });
   };
 
-  const handleDragEnd = ({
-    xDiff,
-    yDiff,
-  }: {
-    xDiff: number;
-    yDiff: number;
-  }) => {
-    dispatch(
-      moveEmoji({
-        cellUrlId,
-        xDiff,
-        yDiff,
-      })
-    );
-  };
+  const isInSubMenu =
+    currentSubmenu === "SIZE" || currentSubmenu === "POSITION";
 
   return (
     <>
       <Modal
         header={null}
         footer={null}
-        onCancelClick={navigateToComicStudioPage}
+        onCancelClick={!isInSubMenu ? navigateToComicStudioPage : undefined}
         className="cell-studio-modal"
         fullHeight
       >
         <>
           {cellState?.studioState && totalEmojiCount !== 0 && (
             <>
-              {currentSubmenu !== "SIZE" && (
+              {!isInSubMenu && (
                 <EmojiCanvas
                   activeEmojiId={cellState.studioState.activeEmojiId}
                   backgroundColor={cellState.studioState.backgroundColor}
                   emojiConfigs={cellState.studioState.emojis}
-                  handleDragEnd={handleDragEnd}
                   isDraggable={false}
                 />
               )}
@@ -158,10 +144,6 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "SIZE" ? (
                   <SizeMenu
-                    activeEmojiId={cellState.studioState.activeEmojiId}
-                    backgroundColor={cellState.studioState.backgroundColor}
-                    emojiConfigs={cellState.studioState.emojis}
-                    handleDragEnd={handleDragEnd}
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : currentSubmenu === "POSITION" ? (
@@ -180,7 +162,7 @@ const CellStudio: React.FC<{}> = ({}) => {
               </div>
             </>
           )}
-          {prevCellChangeId && (
+          {prevCellChangeId && !isInSubMenu && (
             <div className="nav-button top-right secondary large-icon">
               <button
                 onClick={() =>
@@ -191,7 +173,7 @@ const CellStudio: React.FC<{}> = ({}) => {
               </button>
             </div>
           )}
-          {nextCellChangeId && (
+          {nextCellChangeId && !isInSubMenu && (
             <div className="nav-button top-right large-icon">
               <button
                 onClick={() =>
