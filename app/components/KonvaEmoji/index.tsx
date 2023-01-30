@@ -2,17 +2,18 @@ import React from "react";
 import { Rect, Text } from "react-konva";
 
 import { EmojiConfigSerialized, EmojiRef } from "~/models/emojiConfig";
-
 import {
   getKonvaConfigFromEmojiConfig,
   getOffsetsFromTextRef,
 } from "~/utils/konva";
+import { theme } from "~/utils/stylesTheme";
 
 const KonvaEmoji: React.FC<{
   emojiConfig: EmojiConfigSerialized;
   useOutline?: boolean;
 }> = ({ emojiConfig, useOutline = false }) => {
-  const isInitialRender = React.useRef(true);
+  // const isInitialRender = React.useRef(true);
+  const [isInitialRender, setIsInitialRender] = React.useState(true);
   const emojiCacheRef = React.useRef<EmojiRef>(null);
   const nonRotatingEmojiCacheRef = React.useRef<EmojiRef>(null);
 
@@ -38,35 +39,43 @@ const KonvaEmoji: React.FC<{
       );
       const boundingRect = nonRotatingEmojiCacheRef.current?.getClientRect();
 
-      if (isInitialRender.current) {
-        boundingRect.x -= offsetX;
-        boundingRect.y -= offsetY;
-        isInitialRender.current = false;
-      }
-
-      setStuff({
-        offsetX,
-        offsetY,
-        boundingRect,
-      });
-
-      const cacheConfig = {
+      emojiCacheRef.current.cache({
         offset: 100,
         pixelRatio: 2,
         imageSmoothingEnabled: true,
-        // drawBorder: true,
-      };
+      });
 
-      emojiCacheRef.current.cache(cacheConfig);
+      if (isInitialRender) {
+        boundingRect.x -= offsetX;
+        boundingRect.y -= offsetY;
+        setStuff({
+          offsetX,
+          offsetY,
+          boundingRect,
+        });
+        setIsInitialRender(false);
+      } else {
+        setStuff({
+          offsetX,
+          offsetY,
+          boundingRect,
+        });
+      }
     }
-  }, [emojiConfig, setStuff]);
+  }, [emojiConfig, setStuff, isInitialRender]);
 
   return (
     <>
-      {useOutline && stuff && (
+      {useOutline && stuff && !isInitialRender && (
         <Rect
-          width={stuff.boundingRect.width}
-          height={stuff.boundingRect.height}
+          width={Math.max(
+            Math.min(stuff.boundingRect.width, 0.75 * theme.canvas.width),
+            25
+          )}
+          height={Math.max(
+            Math.min(stuff.boundingRect.height, 0.75 * theme.canvas.height),
+            25
+          )}
           x={stuff.boundingRect.x}
           y={stuff.boundingRect.y}
           stroke="red"
