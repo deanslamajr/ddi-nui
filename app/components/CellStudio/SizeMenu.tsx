@@ -1,6 +1,5 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-import styled from "styled-components";
 import { useParams } from "@remix-run/react";
 import { GiResize } from "react-icons/gi";
 import cloneDeep from "fast-clone";
@@ -37,18 +36,6 @@ export const links: LinksFunction = () => {
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
-
-const SliderContainer = styled.div`
-  width: 100%;
-  padding: 0.5rem 0 1.5rem;
-`;
-
-const Label = styled.span`
-  margin: 0.1rem auto;
-  display: flex;
-  justify-content: center;
-  user-select: none;
-`;
 
 const SizeMenu: React.FC<{
   onBackButtonClick: () => void;
@@ -87,7 +74,7 @@ const SizeMenu: React.FC<{
 
       return {
         localSize: newSize,
-        localEmojiConfigs: state!.localEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
       };
     });
   };
@@ -115,10 +102,10 @@ const SizeMenu: React.FC<{
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
       {state !== null ? (
-        <SliderContainer>
-          <Label>
+        <div className="submenu-slider-container">
+          <span className="submenu-label">
             <GiResize color={theme.colors.pink} size="2rem" />
-          </Label>
+          </span>
           <Slider
             min={EMOJI_CONFIG.MIN_SIZE}
             max={EMOJI_CONFIG.MAX_SIZE}
@@ -140,7 +127,7 @@ const SizeMenu: React.FC<{
                 resizeLocalEmoji(state.localSize + multiplier),
             })}
           />
-        </SliderContainer>
+        </div>
       ) : (
         <MenuButton className="cell-studio-menu-button">ERROR!!!</MenuButton>
       )}
