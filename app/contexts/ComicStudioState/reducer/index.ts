@@ -8,6 +8,7 @@ import resizeEmoji from "./resizeEmoji";
 import rotateEmoji from "./rotateEmoji";
 import flipAndSkewEmoji from "./flipAndSkewEmoji";
 import updateEmoijsOrder from "./updateEmojisOrder";
+import setActiveEmoji from "./setActiveEmoji";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -74,6 +75,10 @@ export const reducer = (
       break;
     case "REORDER_EMOIJS":
       newState = updateEmoijsOrder(state, action);
+      break;
+    case "SET_ACTIVE_EMOIJ":
+      newState = setActiveEmoji(state, action);
+      break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");
   }

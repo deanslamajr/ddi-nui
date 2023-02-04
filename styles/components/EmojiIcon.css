@@ -7,7 +7,7 @@
 }
 
 .with-handles {
-  width: 50%;
+  width: fill-available;
 }
 
 .emoji-icon-image {

@@ -13,7 +13,7 @@ export const MenuButton: React.FC<
     accented?: boolean;
     className?: string;
     isSecondary?: boolean;
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
     noSpinner?: boolean;
   }>
 > = ({ children, className, accented, isSecondary, onClick, noSpinner }) => {
@@ -21,10 +21,10 @@ export const MenuButton: React.FC<
 
   return (
     <span
-      onClick={() => {
+      onClick={(event) => {
         setIsLoading(true);
         setTimeout(() => setIsLoading(false), 1000);
-        onClick && setTimeout(onClick);
+        onClick && setTimeout(() => onClick(event));
       }}
       className={classNames("button", {
         accented,

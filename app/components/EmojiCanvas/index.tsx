@@ -17,16 +17,18 @@ export const links: LinksFunction = () => {
 };
 
 const getSortedEmojisArray = (
-  emojisRecord: Record<string, EmojiConfigSerialized>
+  emojisRecord: Record<string, EmojiConfigSerialized> | EmojiConfigSerialized[]
 ): EmojiConfigSerialized[] => {
-  const emojisArray = Object.values(emojisRecord);
+  const emojisArray = Array.isArray(emojisRecord)
+    ? emojisRecord
+    : Object.values(emojisRecord);
   return sortEmojis(emojisArray);
 };
 
 type MainProps = {
   activeEmojiId?: number | null;
   backgroundColor?: string | null;
-  emojiConfigs: Record<string, EmojiConfigSerialized>;
+  emojiConfigs: Record<string, EmojiConfigSerialized> | EmojiConfigSerialized[];
 };
 
 type PropsWithDragging = MainProps & {
@@ -167,6 +169,14 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
             />
           ))}
 
+          {outlineConfig && (
+            <KonvaEmoji
+              key="active-emoji-outline"
+              emojiConfig={outlineConfig}
+              useOutline
+            />
+          )}
+
           {/* Draggable layer */}
           <Group
             draggable={isDraggable}
@@ -186,13 +196,6 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               <KonvaEmoji
                 key="active-emoji-ghost"
                 emojiConfig={modifiedActiveEmojiConfig}
-              />
-            )}
-            {outlineConfig && (
-              <KonvaEmoji
-                key="active-emoji-outline"
-                emojiConfig={outlineConfig}
-                useOutline
               />
             )}
           </Group>

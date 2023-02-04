@@ -7,6 +7,7 @@ import {
   RotateEmojiAction,
   FlipAndSkewEmojiAction,
   UpdateEmojisOrderAction,
+  SetActiveEmojiAction,
 } from "./types";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
@@ -156,5 +157,19 @@ export const updateEmojisOrder = ({
   data: {
     cellUrlId,
     reorderedEmojis,
+  },
+});
+
+export const setActiveEmoji = ({
+  cellUrlId,
+  newActiveEmojiId,
+}: {
+  cellUrlId: string;
+  newActiveEmojiId: number;
+}): SetActiveEmojiAction => ({
+  type: "SET_ACTIVE_EMOIJ",
+  data: {
+    cellUrlId,
+    newActiveEmojiId,
   },
 });

@@ -7,18 +7,15 @@ import { GiResize } from "react-icons/gi";
 import { TbRotate360 } from "react-icons/tb";
 import { GrTransaction } from "react-icons/gr";
 
-import { EmojiConfigSerialized } from "~/models/emojiConfig";
-
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
-import CellPreview from "~/components/ComicStudio/CellPreview";
-import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
+import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
 export const links: LinksFunction = () => {
   return [
     ...buttonStylesUrl(),
-    ...emojiIconStylesUrl(),
+    ...emojiMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -39,21 +36,13 @@ export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
 };
 
 const MainMenu: React.FC<{
-  activeEmojiConfig: EmojiConfigSerialized;
-  cellUrlId: string;
   onAddButtonClick: () => void;
-  onEmojiButtonClick: () => void;
-  onCellButtonClick: () => void;
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
   onRotateButtonClick: () => void;
   onFlipAndSkewButtonClick: () => void;
 }> = ({
-  activeEmojiConfig,
-  cellUrlId,
   onAddButtonClick,
-  onEmojiButtonClick,
-  onCellButtonClick,
   onPositionButtonClick,
   onSizeButtonClick,
   onRotateButtonClick,
@@ -61,34 +50,6 @@ const MainMenu: React.FC<{
 }) => {
   return (
     <>
-      <div className="button-row">
-        <MenuButton
-          isSecondary
-          className="cell-studio-menu-button half-width"
-          onClick={onCellButtonClick}
-        >
-          <CellPreview
-            cellUrlId={cellUrlId}
-            cellWidth="40px"
-            isButtonIcon
-            onCellClick={() => {}}
-          />
-        </MenuButton>
-        <MenuButton
-          isSecondary
-          className="cell-studio-menu-button half-width"
-          onClick={onEmojiButtonClick}
-        >
-          <EmojiIcon config={activeEmojiConfig} />
-        </MenuButton>
-      </div>
-      <MenuButton
-        accented
-        className="cell-studio-menu-button"
-        onClick={onAddButtonClick}
-      >
-        <IoMdPersonAdd />
-      </MenuButton>
       <div className="button-row">
         <MenuButton
           className="cell-studio-menu-button half-width"
@@ -123,6 +84,16 @@ const MainMenu: React.FC<{
       >
         <IoIosColorFilter />
       </MenuButton>
+
+      <MenuButton
+        accented
+        className="cell-studio-menu-button"
+        onClick={onAddButtonClick}
+      >
+        <IoMdPersonAdd />
+      </MenuButton>
+
+      <EmojiMenu />
     </>
   );
 };

@@ -113,7 +113,7 @@ const SizeMenu: React.FC<{
           </span>
           <Slider
             min={EMOJI_CONFIG.MIN_SIZE}
-            max={EMOJI_CONFIG.MAX_SIZE}
+            max={EMOJI_CONFIG.MAX_SIZE / 2}
             step={10}
             value={state.localSize}
             onChange={(value) => resizeLocalEmoji(value)}
