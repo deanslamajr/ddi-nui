@@ -155,15 +155,15 @@ const EmojiMenu: React.FC<{
     }
 
     const clonedEmojiConfigs = deepClone(state.localEmojiConfigs);
+    const clonedDraggableEmojiConfig = clonedEmojiConfigs.find(
+      (e) => e.id.toString() === draggableEmojiId
+    );
 
     // make dragged emoji lower
     if (draggableEmojiConfig.order > droppableEmojiConfig.order) {
       console.log("dragged lower");
-      const clonedDraggableEmojiConfig = clonedEmojiConfigs.find(
-        (e) => e.id.toString() === draggableEmojiId
-      );
 
-      // all emojis with (order >= dropped.order && order <= dragged.order) increase order by 1
+      // all emojis with (order >= dropped.order && order < dragged.order) increase order by 1
       clonedEmojiConfigs.forEach((e) => {
         if (
           e.order >= droppableEmojiConfig.order &&
@@ -172,10 +172,19 @@ const EmojiMenu: React.FC<{
           e.order = e.order + 1;
         }
       });
-      clonedDraggableEmojiConfig!.order = droppableEmojiConfig.order;
     } else {
       console.log("dragged higher");
+      // all emojis with (order <= dropped.order && order > dragged.order) decrease order by 1
+      clonedEmojiConfigs.forEach((e) => {
+        if (
+          e.order <= droppableEmojiConfig.order &&
+          e.order > draggableEmojiConfig.order
+        ) {
+          e.order = e.order - 1;
+        }
+      });
     }
+    clonedDraggableEmojiConfig!.order = droppableEmojiConfig.order;
 
     const sortedEmojiConfigs = sortEmojis(clonedEmojiConfigs, true);
 
