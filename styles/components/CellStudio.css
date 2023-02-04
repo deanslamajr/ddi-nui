@@ -30,6 +30,7 @@
 
   &.emoji-menu-button {
     opacity: 1;
+    justify-content: space-between;
 
     &:hover {
       background-color: var(--white);
@@ -72,7 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 0.5rem;
+  /* padding-left: 0.5rem; */
+  width: 15%;
   color: var(--darkGray);
 
   &.active {

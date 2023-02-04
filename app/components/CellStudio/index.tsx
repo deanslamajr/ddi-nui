@@ -25,7 +25,6 @@ import EmojiCanvas, {
 import Modal, { links as modalStylesUrl } from "~/components/Modal";
 
 import MainMenu, { links as mainMenuStylesUrl } from "./MainMenu";
-import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
 import CellMenu, { links as cellMenuStylesUrl } from "./CellMenu";
 import SizeMenu, { links as sizeMenuStylesUrl } from "./SizeMenu";
 import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
@@ -42,7 +41,6 @@ export const links: LinksFunction = () => {
     ...emojiPickerStylesUrl(),
     ...emojiCanvasStylesUrl(),
     ...mainMenuStylesUrl(),
-    ...emojiMenuStylesUrl(),
     ...cellMenuStylesUrl(),
     ...sizeMenuStylesUrl(),
     ...positionMenuStylesUrl(),
@@ -54,7 +52,6 @@ export const links: LinksFunction = () => {
 
 type Submenu =
   | "MAIN"
-  | "EMOJI"
   | "CELL"
   | "SIZE"
   | "POSITION"
@@ -90,6 +87,24 @@ const CellStudio: React.FC<{}> = ({}) => {
     });
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    dispatch(
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
+        cellUrlId,
+      })
+    );
+  };
+
   const isInSubMenu =
     currentSubmenu === "SIZE" ||
     currentSubmenu === "POSITION" ||
@@ -113,31 +128,20 @@ const CellStudio: React.FC<{}> = ({}) => {
                   activeEmojiId={cellState.studioState.activeEmojiId}
                   backgroundColor={cellState.studioState.backgroundColor}
                   emojiConfigs={cellState.studioState.emojis}
-                  isDraggable={false}
+                  isDraggable
+                  handleDragEnd={handleDragEnd}
                 />
               )}
               <div className="submenu-container">
                 {currentSubmenu === "MAIN" ? (
                   <MainMenu
-                    activeEmojiConfig={
-                      cellState.studioState.emojis[
-                        cellState.studioState.activeEmojiId
-                      ]
-                    }
-                    cellUrlId={cellUrlId}
                     onAddButtonClick={() => setShowEmojiPicker(true)}
-                    onEmojiButtonClick={() => setCurrentSubmenu("EMOJI")}
-                    onCellButtonClick={() => setCurrentSubmenu("CELL")}
                     onSizeButtonClick={() => setCurrentSubmenu("SIZE")}
                     onPositionButtonClick={() => setCurrentSubmenu("POSITION")}
                     onRotateButtonClick={() => setCurrentSubmenu("ROTATE")}
                     onFlipAndSkewButtonClick={() =>
                       setCurrentSubmenu("FLIP_AND_SKEW")
                     }
-                  />
-                ) : currentSubmenu === "EMOJI" ? (
-                  <EmojiMenu
-                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : currentSubmenu === "CELL" ? (
                   <CellMenu

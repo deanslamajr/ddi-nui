@@ -15,8 +15,9 @@ export const links: LinksFunction = () => {
 
 export const EmojiIcon: React.FC<{
   config: EmojiConfigSerialized;
+  onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
   withHandles?: boolean;
-}> = ({ config, withHandles }) => {
+}> = ({ config, onClick, withHandles }) => {
   const emojiIconRef = React.useRef<HTMLDivElement>(null);
   const [stageDimensions, setStageDimensions] = React.useState<{
     width: number;
@@ -60,6 +61,7 @@ export const EmojiIcon: React.FC<{
       className={classNames("emoji-icon-container", {
         "with-handles": withHandles,
       })}
+      onClick={(event) => onClick && onClick(event)}
       ref={emojiIconRef}
     >
       {stageDimensions && emojiConfig && imageUrl && (

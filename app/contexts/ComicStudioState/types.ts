@@ -93,6 +93,14 @@ export type UpdateEmojisOrderAction = {
   };
 };
 
+export type SetActiveEmojiAction = {
+  type: "SET_ACTIVE_EMOIJ";
+  data: {
+    cellUrlId: string;
+    newActiveEmojiId: number;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
@@ -101,7 +109,8 @@ export type ComicStudioStateAction =
   | ResizeEmojiAction
   | RotateEmojiAction
   | FlipAndSkewEmojiAction
-  | UpdateEmojisOrderAction;
+  | UpdateEmojisOrderAction
+  | SetActiveEmojiAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,
