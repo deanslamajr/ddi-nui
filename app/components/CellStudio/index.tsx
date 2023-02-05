@@ -32,6 +32,7 @@ import RotationMenu, { links as rotationMenuStylesUrl } from "./RotationMenu";
 import FlipAndSkewMenu, {
   links as flipAndSkewMenuStylesUrl,
 } from "./FlipAndSkewMenu";
+import FiltersMenu, { links as FiltersMenuStylesUrl } from "./FiltersMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 
@@ -46,6 +47,7 @@ export const links: LinksFunction = () => {
     ...positionMenuStylesUrl(),
     ...rotationMenuStylesUrl(),
     ...flipAndSkewMenuStylesUrl(),
+    ...FiltersMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -56,7 +58,8 @@ type Submenu =
   | "SIZE"
   | "POSITION"
   | "ROTATE"
-  | "FLIP_AND_SKEW";
+  | "FLIP_AND_SKEW"
+  | "FILTERS";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
@@ -109,7 +112,8 @@ const CellStudio: React.FC<{}> = ({}) => {
     currentSubmenu === "SIZE" ||
     currentSubmenu === "POSITION" ||
     currentSubmenu === "ROTATE" ||
-    currentSubmenu === "FLIP_AND_SKEW";
+    currentSubmenu === "FLIP_AND_SKEW" ||
+    currentSubmenu === "FILTERS";
 
   return (
     <>
@@ -141,6 +145,15 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onRotateButtonClick={() => setCurrentSubmenu("ROTATE")}
                     onFlipAndSkewButtonClick={() =>
                       setCurrentSubmenu("FLIP_AND_SKEW")
+                    }
+                    onFiltersButtonClick={() => setCurrentSubmenu("FILTERS")}
+                    filtersMenu={
+                      <FiltersMenu
+                        onOpacityButtonClick={() =>
+                          console.log("opacity clicked!")
+                        }
+                        onRGBAButtonClick={() => console.log("rgba clicked!")}
+                      />
                     }
                   />
                 ) : currentSubmenu === "CELL" ? (
