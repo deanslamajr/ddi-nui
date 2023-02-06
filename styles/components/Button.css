@@ -17,7 +17,6 @@
   max-width: 250px;
   height: 2.75rem;
   margin: 2px auto;
-  cursor: pointer;
   background-color: var(--white);
   color: var(--black);
   display: flex;
@@ -25,36 +24,40 @@
   justify-content: center;
   font-size: 1rem;
   user-select: none;
-  touch-action: manipulation;
 
-  &.accented {
-    background-color: var(--pink);
-    color: var(--white);
+  &.clickable {
+    cursor: pointer;
+    touch-action: manipulation;
 
     &:hover {
       background-color: var(--pinkWhite);
       color: var(--black);
+
+      &.disabled {
+        background-color: var(--white);
+        color: var(--black);
+      }
     }
-  }
 
-  &.secondary {
-    background-color: var(--pinkWhite);
-    color: var(--black);
+    &.accented:hover {
+      background-color: var(--pinkWhite);
+      color: var(--black);
+    }
 
-    &:hover {
+    &.secondary:hover {
       background-color: var(--pink);
       color: var(--black);
     }
   }
 
-  &:hover {
+  &.accented {
+    background-color: var(--pink);
+    color: var(--white);
+  }
+
+  &.secondary {
     background-color: var(--pinkWhite);
     color: var(--black);
-
-    &.disabled {
-      background-color: var(--white);
-      color: var(--black);
-    }
   }
 
   & .loading {
@@ -65,12 +68,12 @@
   &.disabled {
     opacity: 0.65;
     cursor: not-allowed;
-    /* background-color: var(--white); */
-    /* color: var(--black); */
   }
 }
 
 .button-row {
+  width: var(--canvasWidth);
+
   display: flex;
 
   &.with-margin {

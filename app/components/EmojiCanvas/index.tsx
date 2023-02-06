@@ -113,7 +113,7 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
         rotation,
         emoji: "    ",
         size,
-        filters: [Konva.Filters.RGBA],
+        filters: ["RGBA"],
         alpha: 1,
         red: 255,
         green: 76,
@@ -138,7 +138,7 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
   return (
     <div className="emoji-canvas">
       <Stage width={theme.canvas.width} height={theme.canvas.height}>
-        <Layer>
+        <Layer listening={false}>
           {/* Canvas */}
           <Rect
             x={0}
@@ -176,8 +176,9 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               useOutline
             />
           )}
-
-          {/* Draggable layer */}
+        </Layer>
+        {/* Draggable layer */}
+        <Layer listening={isDraggable}>
           <Group
             draggable={isDraggable}
             onDragStart={onDragStart}

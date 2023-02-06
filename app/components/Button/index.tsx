@@ -22,14 +22,17 @@ export const MenuButton: React.FC<
   return (
     <span
       onClick={(event) => {
-        setIsLoading(true);
-        setTimeout(() => setIsLoading(false), 1000);
-        onClick && setTimeout(() => onClick(event));
+        if (onClick) {
+          setIsLoading(true);
+          setTimeout(() => setIsLoading(false), 1000);
+          setTimeout(() => onClick(event));
+        }
       }}
       className={classNames("button", {
         accented,
         secondary: isSecondary,
         [`${className}`]: className,
+        clickable: onClick,
       })}
     >
       {isLoading && !noSpinner ? <span className="loading">🤙</span> : children}

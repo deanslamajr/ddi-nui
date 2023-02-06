@@ -14,6 +14,10 @@
 
 .submenu-container {
   margin-top: 0.5rem;
+
+  & .react-colorful {
+    width: auto;
+  }
 }
 
 .cell-studio-menu-button {
@@ -97,4 +101,35 @@
 .submenu-slider-container {
   width: 100%;
   padding: 0.5rem 0;
+}
+
+.unselected-submenu-button {
+  background-color: var(--darkGray);
+  opacity: 0.6;
+}
+
+.lower-section {
+  margin-top: 1rem;
+}
+
+.spacer {
+  opacity: 0;
+}
+
+.filter-toggle {
+  background-color: transparent;
+  color: var(--white);
+
+  &.enabled {
+    color: var(--pink);
+
+    &:hover {
+      color: var(--pinkWhite) !important;
+    }
+  }
+
+  &:hover {
+    color: var(--darkGray) !important;
+    background-color: transparent !important;
+  }
 }

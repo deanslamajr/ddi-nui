@@ -8,8 +8,12 @@ import {
   FlipAndSkewEmojiAction,
   UpdateEmojisOrderAction,
   SetActiveEmojiAction,
+  ToggleFilterAction,
+  UpdateRGBAFilterAction,
+  UpdateOpacityFilterAction,
 } from "./types";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
+import { KonvaFilters } from "~/utils/konva";
 
 export const undoCellUpdate = ({
   cellUrlId,
@@ -171,5 +175,52 @@ export const setActiveEmoji = ({
   data: {
     cellUrlId,
     newActiveEmojiId,
+  },
+});
+
+export const toggleActiveFilter = ({
+  cellUrlId,
+  filterType,
+}: {
+  cellUrlId: string;
+  filterType: keyof KonvaFilters;
+}): ToggleFilterAction => ({
+  type: "TOGGLE_FILTER",
+  data: {
+    cellUrlId,
+    filterType,
+  },
+});
+
+export const updateRGBAFilter = ({
+  cellUrlId,
+  newFilterValues,
+}: {
+  cellUrlId: string;
+  newFilterValues: {
+    red: number;
+    green: number;
+    blue: number;
+    alpha: number;
+  };
+}): UpdateRGBAFilterAction => ({
+  type: "UPDATE_RGBA_FILTER",
+  data: {
+    cellUrlId,
+    newFilterValues,
+  },
+});
+
+export const updateOpacityFilter = ({
+  cellUrlId,
+  newOpacity,
+}: {
+  cellUrlId: string;
+  newOpacity: number;
+}): UpdateOpacityFilterAction => ({
+  type: "UPDATE_OPACITY_FILTER",
+  data: {
+    cellUrlId,
+    newOpacity,
   },
 });

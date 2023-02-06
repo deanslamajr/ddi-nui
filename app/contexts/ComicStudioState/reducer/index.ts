@@ -9,6 +9,9 @@ import rotateEmoji from "./rotateEmoji";
 import flipAndSkewEmoji from "./flipAndSkewEmoji";
 import updateEmoijsOrder from "./updateEmojisOrder";
 import setActiveEmoji from "./setActiveEmoji";
+import toggleFilter from "./toggleFilter";
+import updateRGBAFilter from "./updateRGBAFilter";
+import updateOpacityFilter from "./updateOpacityFilter";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -78,6 +81,15 @@ export const reducer = (
       break;
     case "SET_ACTIVE_EMOIJ":
       newState = setActiveEmoji(state, action);
+      break;
+    case "TOGGLE_FILTER":
+      newState = toggleFilter(state, action);
+      break;
+    case "UPDATE_RGBA_FILTER":
+      newState = updateRGBAFilter(state, action);
+      break;
+    case "UPDATE_OPACITY_FILTER":
+      newState = updateOpacityFilter(state, action);
       break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");

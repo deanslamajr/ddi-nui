@@ -1,5 +1,6 @@
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { HydratedComic } from "~/utils/clientCache/comic";
+import { KonvaFilters } from "~/utils/konva";
 
 export type ComicStudioState = {
   comicState: HydratedComic;
@@ -101,6 +102,35 @@ export type SetActiveEmojiAction = {
   };
 };
 
+export type ToggleFilterAction = {
+  type: "TOGGLE_FILTER";
+  data: {
+    cellUrlId: string;
+    filterType: keyof KonvaFilters;
+  };
+};
+
+export type UpdateRGBAFilterAction = {
+  type: "UPDATE_RGBA_FILTER";
+  data: {
+    cellUrlId: string;
+    newFilterValues: {
+      red: number;
+      green: number;
+      blue: number;
+      alpha: number;
+    };
+  };
+};
+
+export type UpdateOpacityFilterAction = {
+  type: "UPDATE_OPACITY_FILTER";
+  data: {
+    cellUrlId: string;
+    newOpacity: number;
+  };
+};
+
 export type ComicStudioStateAction =
   | UndoCellAction
   | RedoCellAction
@@ -110,7 +140,10 @@ export type ComicStudioStateAction =
   | RotateEmojiAction
   | FlipAndSkewEmojiAction
   | UpdateEmojisOrderAction
-  | SetActiveEmojiAction;
+  | SetActiveEmojiAction
+  | ToggleFilterAction
+  | UpdateRGBAFilterAction
+  | UpdateOpacityFilterAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

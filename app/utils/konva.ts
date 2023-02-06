@@ -13,9 +13,16 @@ import { sortByOrder } from "~/utils/sortCells";
  **
  */
 
+export type KonvaFilters = {
+  RGBA: typeof Konva.Filters["RGBA"];
+  BLUR: typeof Konva.Filters["Blur"];
+};
+
 export const RGBA = "RGBA";
-const konvaFiltersEnabledInDdi = {
+export const BLUR = "BLUR";
+const konvaFiltersEnabledInDdi: KonvaFilters = {
   [RGBA]: Konva.Filters.RGBA,
+  [BLUR]: Konva.Filters.Blur,
 };
 
 export const EMOJI_MASK_REF_ID = "EMOJI_MASK_REF_ID";
@@ -40,7 +47,9 @@ export const getKonvaConfigFromEmojiConfig = (
   return {
     "data-id": emoji.id,
     filters: emoji.filters
-      ? emoji.filters.filter((filter) => Boolean(filter))
+      ? emoji.filters
+          .map((filter) => konvaFiltersEnabledInDdi[filter])
+          .filter((filter) => Boolean(filter))
       : [],
     x: emoji.x,
     y: emoji.y,
