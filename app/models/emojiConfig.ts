@@ -1,4 +1,5 @@
 import Konva from "konva";
+import { KonvaFilters } from "~/utils/konva";
 
 /*******************
  ***********
@@ -60,7 +61,7 @@ export type AllEmojiConfigs =
 // This version is for storing in DB/client cache
 export type EmojiConfigSerialized = LatestEmojiConfigBase & {
   emoji: string;
-  filters?: Array<typeof Konva.Filters["RGBA"]>;
+  filters?: Array<keyof KonvaFilters>;
   id: number;
   opacity?: number;
   order: number;

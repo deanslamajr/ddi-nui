@@ -18,6 +18,7 @@ import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
 import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
+import classNames from "classnames";
 
 export const links: LinksFunction = () => {
   return [
@@ -44,6 +45,10 @@ export const BackMenuButton: React.FC<{ onBackButtonClick: () => void }> = ({
 };
 
 const MainMenu: React.FC<{
+  currentLowerSectionMode: "EMOJI" | "FILTERS";
+  setCurrentLowerSectionMode: React.Dispatch<
+    React.SetStateAction<"EMOJI" | "FILTERS">
+  >;
   onAddButtonClick: () => void;
   onPositionButtonClick: () => void;
   onSizeButtonClick: () => void;
@@ -51,6 +56,8 @@ const MainMenu: React.FC<{
   onFlipAndSkewButtonClick: () => void;
   filtersMenu: React.ReactNode;
 }> = ({
+  currentLowerSectionMode,
+  setCurrentLowerSectionMode,
   onAddButtonClick,
   onPositionButtonClick,
   onSizeButtonClick,
@@ -64,10 +71,6 @@ const MainMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
-
-  const [currentSubSubmenu, setCurrentSubSubmenu] = React.useState<
-    "EMOJI" | "FILTERS"
-  >("EMOJI");
 
   return (
     <>
@@ -99,11 +102,13 @@ const MainMenu: React.FC<{
           <GrTransaction />
         </MenuButton>
       </div>
-      <div className="button-row">
+      <div className="button-row lower-section">
         <MenuButton
-          isSecondary={currentSubSubmenu === "EMOJI"}
-          className="cell-studio-menu-button half-width"
-          onClick={() => setCurrentSubSubmenu("EMOJI")}
+          isSecondary={currentLowerSectionMode === "EMOJI"}
+          className={classNames("cell-studio-menu-button", "half-width", {
+            ["unselected-submenu-button"]: currentLowerSectionMode !== "EMOJI",
+          })}
+          onClick={() => setCurrentLowerSectionMode("EMOJI")}
           noSpinner
         >
           {activeEmojiId && cellStudioState && (
@@ -111,16 +116,19 @@ const MainMenu: React.FC<{
           )}
         </MenuButton>
         <MenuButton
-          isSecondary={currentSubSubmenu === "FILTERS"}
-          className="cell-studio-menu-button half-width"
-          onClick={() => setCurrentSubSubmenu("FILTERS")}
+          isSecondary={currentLowerSectionMode === "FILTERS"}
+          className={classNames("cell-studio-menu-button", "half-width", {
+            ["unselected-submenu-button"]:
+              currentLowerSectionMode !== "FILTERS",
+          })}
+          onClick={() => setCurrentLowerSectionMode("FILTERS")}
           noSpinner
         >
           <IoIosColorFilter />
         </MenuButton>
       </div>
 
-      {currentSubSubmenu === "EMOJI" ? (
+      {currentLowerSectionMode === "EMOJI" ? (
         <>
           <MenuButton
             accented
@@ -131,7 +139,7 @@ const MainMenu: React.FC<{
           </MenuButton>
           <EmojiMenu />
         </>
-      ) : currentSubSubmenu === "FILTERS" ? (
+      ) : currentLowerSectionMode === "FILTERS" ? (
         filtersMenu
       ) : null}
     </>

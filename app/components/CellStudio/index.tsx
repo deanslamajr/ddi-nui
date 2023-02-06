@@ -29,6 +29,8 @@ import CellMenu, { links as cellMenuStylesUrl } from "./CellMenu";
 import SizeMenu, { links as sizeMenuStylesUrl } from "./SizeMenu";
 import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
 import RotationMenu, { links as rotationMenuStylesUrl } from "./RotationMenu";
+import OpacityMenu, { links as opacityMenuStylesUrl } from "./OpacityMenu";
+import RGBAMenu, { links as rGBAMenuStylesUrl } from "./RGBAMenu";
 import FlipAndSkewMenu, {
   links as flipAndSkewMenuStylesUrl,
 } from "./FlipAndSkewMenu";
@@ -48,6 +50,8 @@ export const links: LinksFunction = () => {
     ...rotationMenuStylesUrl(),
     ...flipAndSkewMenuStylesUrl(),
     ...FiltersMenuStylesUrl(),
+    ...opacityMenuStylesUrl(),
+    ...rGBAMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -59,13 +63,17 @@ type Submenu =
   | "POSITION"
   | "ROTATE"
   | "FLIP_AND_SKEW"
-  | "FILTERS";
+  | "OPACITY"
+  | "RGBA";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
 
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
   const [currentSubmenu, setCurrentSubmenu] = React.useState<Submenu>("MAIN");
+  const [currentLowerSectionMode, setCurrentLowerSectionMode] = React.useState<
+    "EMOJI" | "FILTERS"
+  >("EMOJI");
 
   const params = useParams();
   const comicUrlId = params.comicUrlId!;
@@ -113,7 +121,8 @@ const CellStudio: React.FC<{}> = ({}) => {
     currentSubmenu === "POSITION" ||
     currentSubmenu === "ROTATE" ||
     currentSubmenu === "FLIP_AND_SKEW" ||
-    currentSubmenu === "FILTERS";
+    currentSubmenu === "OPACITY" ||
+    currentSubmenu === "RGBA";
 
   return (
     <>
@@ -139,6 +148,8 @@ const CellStudio: React.FC<{}> = ({}) => {
               <div className="submenu-container">
                 {currentSubmenu === "MAIN" ? (
                   <MainMenu
+                    currentLowerSectionMode={currentLowerSectionMode}
+                    setCurrentLowerSectionMode={setCurrentLowerSectionMode}
                     onAddButtonClick={() => setShowEmojiPicker(true)}
                     onSizeButtonClick={() => setCurrentSubmenu("SIZE")}
                     onPositionButtonClick={() => setCurrentSubmenu("POSITION")}
@@ -146,13 +157,12 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onFlipAndSkewButtonClick={() =>
                       setCurrentSubmenu("FLIP_AND_SKEW")
                     }
-                    onFiltersButtonClick={() => setCurrentSubmenu("FILTERS")}
                     filtersMenu={
                       <FiltersMenu
                         onOpacityButtonClick={() =>
-                          console.log("opacity clicked!")
+                          setCurrentSubmenu("OPACITY")
                         }
-                        onRGBAButtonClick={() => console.log("rgba clicked!")}
+                        onRGBAButtonClick={() => setCurrentSubmenu("RGBA")}
                       />
                     }
                   />
@@ -174,6 +184,14 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "FLIP_AND_SKEW" ? (
                   <FlipAndSkewMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "OPACITY" ? (
+                  <OpacityMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "RGBA" ? (
+                  <RGBAMenu
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : null}
