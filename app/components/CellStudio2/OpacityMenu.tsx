@@ -71,15 +71,14 @@ const OpacityMenu: React.FC<{
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-      newEmojiConfigs[activeEmojiId!] = {
+      prevState!.localEmojiConfigs[activeEmojiId!] = {
         ...prevActiveEmoji,
         opacity: newOpacity,
       };
 
       return {
         localOpacity: newOpacity,
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
       };
     });
   };
@@ -115,7 +114,7 @@ const OpacityMenu: React.FC<{
           <Slider
             min={EMOJI_CONFIG.MIN_OPACITY}
             max={EMOJI_CONFIG.MAX_OPACITY}
-            step={0.1}
+            step={0.05}
             value={state.localOpacity}
             onChange={(value) => setLocalOpacity(value)}
             onRelease={(value) => setLocalOpacity(value)}

@@ -11,8 +11,8 @@ import { theme } from "~/utils/stylesTheme";
 const KonvaEmoji: React.FC<{
   emojiConfig: EmojiConfigSerialized;
   useOutline?: boolean;
-}> = ({ emojiConfig, useOutline = false }) => {
-  // const isInitialRender = React.useRef(true);
+  useCache?: boolean;
+}> = ({ emojiConfig, useCache = false, useOutline = false }) => {
   const [isInitialRender, setIsInitialRender] = React.useState(true);
   const emojiCacheRef = React.useRef<EmojiRef>(null);
   const nonRotatingEmojiCacheRef = React.useRef<EmojiRef>(null);
@@ -33,17 +33,21 @@ const KonvaEmoji: React.FC<{
   );
 
   React.useEffect(() => {
-    if (nonRotatingEmojiCacheRef.current && emojiCacheRef.current) {
-      const { offsetX, offsetY } = getOffsetsFromTextRef(
-        nonRotatingEmojiCacheRef.current
-      );
-      const boundingRect = nonRotatingEmojiCacheRef.current?.getClientRect();
-
+    if (useCache && emojiCacheRef.current) {
       emojiCacheRef.current.cache({
         offset: 100,
         pixelRatio: 2,
         imageSmoothingEnabled: true,
       });
+    }
+  }, [emojiConfig, useCache]);
+
+  React.useEffect(() => {
+    if (nonRotatingEmojiCacheRef.current) {
+      const { offsetX, offsetY } = getOffsetsFromTextRef(
+        nonRotatingEmojiCacheRef.current
+      );
+      const boundingRect = nonRotatingEmojiCacheRef.current?.getClientRect();
 
       if (isInitialRender) {
         boundingRect.x -= offsetX;
@@ -62,7 +66,7 @@ const KonvaEmoji: React.FC<{
         });
       }
     }
-  }, [emojiConfig, setStuff, isInitialRender]);
+  }, [emojiConfig, setStuff]);
 
   return (
     <>
@@ -79,6 +83,7 @@ const KonvaEmoji: React.FC<{
           x={stuff.boundingRect.x}
           y={stuff.boundingRect.y}
           stroke="red"
+          opacity={0.5}
         />
       )}
       <Text

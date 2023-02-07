@@ -62,24 +62,22 @@ const PositionMenu: React.FC<{
     yDiff: number;
   }): void => {
     setState((prevState) => {
-      const newX = prevState!.localPosition.x + xDiff;
-      const newY = prevState!.localPosition.y + yDiff;
-
       const prevActiveEmoji = prevState!.localEmojiConfigs[activeEmojiId!];
-
       if (!prevActiveEmoji) {
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-      newEmojiConfigs[activeEmojiId!] = {
+      const newX = prevState!.localPosition.x + xDiff;
+      const newY = prevState!.localPosition.y + yDiff;
+
+      prevState!.localEmojiConfigs[activeEmojiId!] = {
         ...prevActiveEmoji,
         x: newX,
         y: newY,
       };
 
       return {
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
         localPosition: { x: newX, y: newY },
       };
     });
