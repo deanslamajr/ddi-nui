@@ -10,7 +10,7 @@ export const links: LinksFunction = () => {
 const Slider: React.FC<{
   min: number;
   max: number;
-  step: number;
+  step?: number;
   value: number;
   onChange: (newValue: number) => void;
   onRelease: (newValue: number) => void;
@@ -47,7 +47,7 @@ const Slider: React.FC<{
         type="range"
         min={min}
         max={max}
-        step={step}
+        step={step || "any"}
         value={value}
         onChange={parseOnChangeValue}
         onMouseUp={parseOnFinishValue}

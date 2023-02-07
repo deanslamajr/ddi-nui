@@ -75,8 +75,7 @@ const RGBAMenu: React.FC<{
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-      newEmojiConfigs[activeEmojiId!] = {
+      prevState!.localEmojiConfigs[activeEmojiId!] = {
         ...prevActiveEmoji,
         alpha: newColor.a,
         red: newColor.r,
@@ -86,7 +85,7 @@ const RGBAMenu: React.FC<{
 
       return {
         localRGBA: newColor,
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
       };
     });
   };

@@ -71,15 +71,14 @@ const SizeMenu: React.FC<{
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-      newEmojiConfigs[activeEmojiId!] = {
+      prevState!.localEmojiConfigs[activeEmojiId!] = {
         ...prevActiveEmoji,
         size: newSize,
       };
 
       return {
         localSize: newSize,
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
       };
     });
   };
@@ -114,7 +113,7 @@ const SizeMenu: React.FC<{
           <Slider
             min={EMOJI_CONFIG.MIN_SIZE}
             max={EMOJI_CONFIG.MAX_SIZE / 2}
-            step={10}
+            step={1}
             value={state.localSize}
             onChange={(value) => resizeLocalEmoji(value)}
             onRelease={(value) => resizeLocalEmoji(value)}

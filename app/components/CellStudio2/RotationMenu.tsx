@@ -69,15 +69,14 @@ const RotationMenu: React.FC<{
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-      newEmojiConfigs[activeEmojiId!] = {
+      prevState!.localEmojiConfigs[activeEmojiId!] = {
         ...prevActiveEmoji,
         rotation: newRotation,
       };
 
       return {
         localRotation: newRotation,
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
       };
     });
   };

@@ -96,44 +96,43 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
     localEmojiConfigs.find((config) => config.id === activeEmojiId) || null;
 
   const outlineConfig = useMemo(() => {
-    if (!activeEmojiConfig) {
+    if (
+      !activeEmojiConfig?.x ||
+      !activeEmojiConfig?.y ||
+      !activeEmojiConfig?.scaleX ||
+      !activeEmojiConfig?.scaleY ||
+      !activeEmojiConfig?.rotation ||
+      !activeEmojiConfig?.size
+    ) {
       return null;
     }
 
-    const getOutlineConfig = (
-      config: EmojiConfigSerialized
-    ): EmojiConfigSerialized => {
-      const { x, y, scaleX, scaleY, rotation, size } = config;
-
-      return {
-        x,
-        y,
-        scaleX,
-        scaleY,
-        rotation,
-        emoji: "    ",
-        size,
-        filters: ["RGBA"],
-        alpha: 1,
-        red: 255,
-        green: 76,
-        blue: 127,
-      } as EmojiConfigSerialized;
-    };
-
-    const config = getOutlineConfig(activeEmojiConfig);
-    config.opacity = state.isDragging ? 0 : 0.5;
-    return config;
-  }, [activeEmojiConfig, state.isDragging]);
+    return {
+      x: activeEmojiConfig.x,
+      y: activeEmojiConfig.y,
+      scaleX: activeEmojiConfig.scaleX,
+      scaleY: activeEmojiConfig.scaleY,
+      rotation: activeEmojiConfig.rotation,
+      emoji: "    ",
+      size: activeEmojiConfig.size,
+    } as EmojiConfigSerialized;
+  }, [
+    activeEmojiConfig?.x,
+    activeEmojiConfig?.y,
+    activeEmojiConfig?.scaleX,
+    activeEmojiConfig?.scaleY,
+    activeEmojiConfig?.rotation,
+    activeEmojiConfig?.size,
+  ]);
 
   const modifiedActiveEmojiConfig = useMemo(() => {
     return activeEmojiConfig
       ? {
           ...activeEmojiConfig,
-          opacity: state.isDragging ? 0.25 : 0,
+          opacity: 0.25,
         }
       : null;
-  }, [activeEmojiConfig, state.isDragging]);
+  }, [activeEmojiConfig]);
 
   return (
     <div className="emoji-canvas">
@@ -164,7 +163,8 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
 
           {localEmojiConfigs.map((config) => (
             <KonvaEmoji
-              emojiConfig={{ ...config }}
+              useCache
+              emojiConfig={config}
               key={`${config.id}${config.emoji}`}
             />
           ))}
@@ -193,8 +193,9 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               x={state.prevX}
               y={state.prevX}
             />
-            {modifiedActiveEmojiConfig && (
+            {modifiedActiveEmojiConfig && state.isDragging && (
               <KonvaEmoji
+                useCache
                 key="active-emoji-ghost"
                 emojiConfig={modifiedActiveEmojiConfig}
               />
