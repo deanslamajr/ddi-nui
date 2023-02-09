@@ -13,8 +13,19 @@
 .cells-container {
   overflow-y: auto;
   overflow-x: hidden;
-  width: 100%;
+  /* width: 100%; */
   margin: 0;
+  display: grid;
+  max-width: 610px;
+  width: 610px;
+  grid-template-columns: 50% 50%;
+}
+
+@media (max-width: 599px) {
+  .cells-container {
+    width: 100%;
+    display: block;
+  }
 }
 
 .cell-container {
