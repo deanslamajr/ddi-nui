@@ -9,12 +9,17 @@ import { tabletMax } from "~/components/breakpoints";
 import DynamicTextContainer, {
   links as dynamicTextContainerStylesUrl,
 } from "~/components/DynamicTextContainer";
-
+import CellWithLoadSpinner, {
+  links as cellWithLoadSpinnerStylesUrl,
+} from "~/components/CellWithLoadSpinner";
+import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import stylesUrl from "~/styles/components/Cell.css";
+import { StudioState } from "~/interfaces/studioState";
 
 export const links: LinksFunction = () => {
   return [
     ...dynamicTextContainerStylesUrl(),
+    ...cellWithLoadSpinnerStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -61,32 +66,47 @@ const CellImage = styled.img<{
   max-width: calc(100vw - ${(props) => props.theme.padding}px);
 `;
 
-const Cell: FC<{
-  className?: string;
-  imageUrl: string;
-  isImageUrlAbsolute: boolean;
-  caption?: string;
-  clickable?: boolean;
-  onClick?: () => void;
-  removeBorders?: boolean;
-  schemaVersion: number;
-  cellWidth?: string;
-  containerWidth?: string;
-}> = ({
-  className,
-  imageUrl,
-  isImageUrlAbsolute,
-  caption,
-  clickable,
-  onClick,
-  removeBorders,
-  schemaVersion,
-  cellWidth,
-  containerWidth,
-}) => {
-  const cellUrl = isImageUrlAbsolute
-    ? imageUrl
-    : getCellImageUrl(imageUrl, schemaVersion);
+const Cell: FC<
+  {
+    className?: string;
+    caption?: string;
+    clickable?: boolean;
+    onClick?: () => void;
+    removeBorders?: boolean;
+    schemaVersion: number;
+    cellWidth?: string;
+    containerWidth?: string;
+  } & (
+    | {
+        imageUrl: string;
+        isImageUrlAbsolute: boolean;
+      }
+    | {
+        studioState: StudioState;
+      }
+  )
+> = (props) => {
+  const {
+    className,
+    caption,
+    clickable,
+    onClick,
+    removeBorders,
+    schemaVersion,
+    cellWidth,
+    containerWidth,
+  } = props;
+
+  const cellUrlFromDb =
+    "isImageUrlAbsolute" in props
+      ? props.isImageUrlAbsolute
+        ? props.imageUrl
+        : getCellImageUrl(props.imageUrl, schemaVersion)
+      : null;
+
+  const { imageUrl: cellUrlFromGenerator, isLoading } = useCellImageGenerator(
+    "studioState" in props ? props.studioState || null : null
+  );
 
   const resolvedWidth = cellWidth
     ? cellWidth
@@ -96,7 +116,7 @@ const Cell: FC<{
 
   const cellContainerStyles: React.CSSProperties = {
     marginBottom: schemaVersion === 1 ? "3px" : "1px",
-    marginRight: schemaVersion === 1 ? "3px" : "1px",
+    // marginRight: schemaVersion === 1 ? "3px" : "1px",
     padding: schemaVersion === 1 ? "0" : "1px",
     cursor: clickable ? "pointer" : "default",
     // background: schemaVersion === 1 ? "inherit" : "var(--lightGray)",
@@ -106,7 +126,11 @@ const Cell: FC<{
     cellContainerStyles.width = containerWidth;
   }
 
-  return (
+  if (isLoading) {
+    return <CellWithLoadSpinner />;
+  }
+
+  return cellUrlFromDb || cellUrlFromGenerator ? (
     <div
       className={classNames("cell-container", className)}
       style={cellContainerStyles}
@@ -116,12 +140,15 @@ const Cell: FC<{
         <CellBorder>
           <CellImage
             cellWidth={removeBorders ? theme.cell.fullWidth : undefined}
-            src={cellUrl}
+            src={cellUrlFromDb || cellUrlFromGenerator!}
           />
         </CellBorder>
       ) : (
         <OldCellBorder width={resolvedWidth}>
-          <CellImage cellWidth={resolvedWidth} src={cellUrl} />
+          <CellImage
+            cellWidth={resolvedWidth}
+            src={cellUrlFromDb || cellUrlFromGenerator!}
+          />
           {caption && caption.length && (
             <DynamicTextContainer
               caption={caption}
@@ -132,7 +159,7 @@ const Cell: FC<{
         </OldCellBorder>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default Cell;

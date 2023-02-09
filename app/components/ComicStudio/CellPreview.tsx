@@ -31,7 +31,7 @@ const CellPreview: React.FC<{
   cellUrlId: string;
   cellWidth?: string;
   isButtonIcon?: boolean;
-  onCellClick: (cell: CellFromClientCache) => void;
+  onCellClick?: (cell: CellFromClientCache) => void;
 }> = ({
   cellUrlId,
   cellWidth = defaultCellWidth,
@@ -55,7 +55,7 @@ const CellPreview: React.FC<{
         containerWidth={cellWidth}
       />
     ) : (
-      <div onClick={() => onCellClick(cell)}>
+      <div onClick={() => onCellClick && onCellClick(cell)}>
         {cell.isDirty && (
           <div className="unpublished-changes">Unpublished Changes</div>
         )}
