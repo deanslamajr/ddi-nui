@@ -10,12 +10,11 @@ import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
-
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache/cell";
 import { theme } from "~/utils/stylesTheme";
-
+import { CellImageProvider } from "~/contexts/CellImageGenerator";
 import useHydrateComic from "~/hooks/useHydrateComic";
 
 import { StudioState } from "~/interfaces/studioState";
@@ -84,38 +83,56 @@ export default function CopyFromComicRoute() {
       }
       onCancelClick={returnToParent}
     >
-      <div className="cells-container">
-        {isLoadingComic ? (
-          <CellWithLoadSpinner />
-        ) : (
-          cells.map(({ hasNewImage, imageUrl, schemaVersion, studioState }) =>
-            selectedCellUrlId === imageUrl ? (
-              <CellWithLoadSpinner />
-            ) : (
-              <div
-                className="cell-container"
-                key={imageUrl}
-                onClick={() => {
-                  if (selectedCellUrlId === null) {
-                    setSelectedCellUrlId(imageUrl || "");
-                    navigateToAddCellFromDuplicate(studioState);
-                  }
-                }}
-              >
-                <Cell
-                  imageUrl={imageUrl || ""}
-                  isImageUrlAbsolute={Boolean(hasNewImage)}
-                  schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-                  caption={studioState?.caption || ""}
-                  cellWidth={theme.cell.width}
-                  clickable
-                  removeBorders
-                />
-              </div>
+      <CellImageProvider>
+        <div className="cells-container">
+          {isLoadingComic ? (
+            <CellWithLoadSpinner />
+          ) : (
+            cells.map(
+              ({
+                hasNewImage,
+                imageUrl,
+                schemaVersion,
+                studioState,
+                urlId,
+              }) => {
+                const sharedCellProps = {
+                  schemaVersion: schemaVersion ?? SCHEMA_VERSION,
+                  caption: studioState?.caption || "",
+                  cellWidth: theme.cell.width,
+                  clickable: true,
+                  removeBorders: true,
+                };
+
+                return selectedCellUrlId !== null ? (
+                  <CellWithLoadSpinner key={urlId} />
+                ) : (
+                  <div
+                    className="cell-container"
+                    key={urlId}
+                    onClick={() => {
+                      setSelectedCellUrlId(imageUrl || "");
+                      navigateToAddCellFromDuplicate(studioState);
+                    }}
+                  >
+                    {Boolean(imageUrl && !hasNewImage) ? (
+                      <Cell
+                        {...sharedCellProps}
+                        imageUrl={imageUrl || ""}
+                        isImageUrlAbsolute={false}
+                      />
+                    ) : (
+                      studioState && (
+                        <Cell {...sharedCellProps} studioState={studioState} />
+                      )
+                    )}
+                  </div>
+                );
+              }
             )
-          )
-        )}
-      </div>
+          )}
+        </div>
+      </CellImageProvider>
     </Modal>
   );
 }

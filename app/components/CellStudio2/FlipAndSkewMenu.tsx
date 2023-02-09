@@ -111,15 +111,13 @@ const FlipAndSkewMenu: React.FC<{
         return prevState;
       }
 
-      const newEmojiConfigs = { ...prevState!.localEmojiConfigs };
-
       if (type === "HORIZONTAL") {
-        newEmojiConfigs[activeEmojiId!] = {
+        prevState!.localEmojiConfigs[activeEmojiId!] = {
           ...prevActiveEmoji,
           scaleX: prevActiveEmoji.scaleX * -1,
         };
       } else {
-        newEmojiConfigs[activeEmojiId!] = {
+        prevState!.localEmojiConfigs[activeEmojiId!] = {
           ...prevActiveEmoji,
           scaleY: prevActiveEmoji.scaleY * -1,
         };
@@ -127,10 +125,10 @@ const FlipAndSkewMenu: React.FC<{
 
       return {
         ...prevState!,
-        localEmojiConfigs: newEmojiConfigs,
+        localEmojiConfigs: prevState!.localEmojiConfigs,
         localScale: {
-          x: newEmojiConfigs[activeEmojiId!].scaleX,
-          y: newEmojiConfigs[activeEmojiId!].scaleY,
+          x: prevState!.localEmojiConfigs[activeEmojiId!].scaleX,
+          y: prevState!.localEmojiConfigs[activeEmojiId!].scaleY,
         },
       };
     });

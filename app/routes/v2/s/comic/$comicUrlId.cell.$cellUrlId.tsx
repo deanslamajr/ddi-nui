@@ -2,7 +2,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
 
 import CellStudio, {
-  links as CellStudioStylesUrl,
+  links as CellStudio2StylesUrl,
 } from "~/components/CellStudio";
 import {
   ComicStudioStateProvider,
@@ -10,7 +10,7 @@ import {
 } from "~/contexts/ComicStudioState";
 
 export const links: LinksFunction = () => {
-  return [...CellStudioStylesUrl(), ...comicStudioStateProviderStylesUrl()];
+  return [...CellStudio2StylesUrl(), ...comicStudioStateProviderStylesUrl()];
 };
 
 /**
