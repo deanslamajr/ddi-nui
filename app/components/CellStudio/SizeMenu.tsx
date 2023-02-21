@@ -10,10 +10,11 @@ import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { resizeEmoji } from "~/contexts/ComicStudioState/actions";
+import { moveEmoji, resizeEmoji } from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -46,11 +47,9 @@ const SizeMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localSize: number;
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
@@ -62,7 +61,18 @@ const SizeMenu: React.FC<{
       localSize: activeEmoji.size,
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localSize: number;
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const resizeLocalEmoji = (newSize: number): void => {
     setState((prevState) => {
@@ -95,6 +105,31 @@ const SizeMenu: React.FC<{
     onBackButtonClick();
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    dispatch(
+      resizeEmoji({
+        newSize: state!.localSize,
+        cellUrlId,
+        shouldSaveChange: true,
+      })
+    );
+    dispatch(
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
+        cellUrlId,
+      })
+    );
+  };
+
   return (
     <>
       {cellStudioState && state && (
@@ -102,7 +137,8 @@ const SizeMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
