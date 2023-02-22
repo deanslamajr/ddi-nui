@@ -76,6 +76,7 @@ const Cell: FC<
     schemaVersion: number;
     cellWidth?: string;
     containerWidth?: string;
+    onCaptionClick?: React.MouseEventHandler<HTMLDivElement>;
   } & (
     | {
         imageUrl: string;
@@ -95,6 +96,7 @@ const Cell: FC<
     schemaVersion,
     cellWidth,
     containerWidth,
+    onCaptionClick,
   } = props;
 
   const cellUrlFromDb =
@@ -151,6 +153,7 @@ const Cell: FC<
           />
           {caption && caption.length && (
             <DynamicTextContainer
+              onClick={onCaptionClick}
               caption={caption}
               captionCssWidth={resolvedWidth}
               fontRatio={16}

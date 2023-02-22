@@ -32,11 +32,13 @@ const CellPreview: React.FC<{
   cellWidth?: string;
   isButtonIcon?: boolean;
   onCellClick?: (cell: CellFromClientCache) => void;
+  onCaptionClick?: React.MouseEventHandler<HTMLDivElement>;
 }> = ({
   cellUrlId,
   cellWidth = defaultCellWidth,
   isButtonIcon,
   onCellClick,
+  onCaptionClick,
 }) => {
   const [comicStudioState] = useComicStudioState();
   const cell = getCellState(comicStudioState, cellUrlId);
@@ -53,6 +55,7 @@ const CellPreview: React.FC<{
         schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
         cellWidth={cellWidth}
         containerWidth={cellWidth}
+        onCaptionClick={onCaptionClick}
       />
     ) : (
       <div onClick={() => onCellClick && onCellClick(cell)}>
@@ -68,6 +71,7 @@ const CellPreview: React.FC<{
           caption={cell.studioState?.caption || ""}
           cellWidth={cellWidth}
           containerWidth={cellWidth}
+          onCaptionClick={onCaptionClick}
         />
       </div>
     )

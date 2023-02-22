@@ -36,7 +36,8 @@ const DynamicTextContainer: React.FC<{
   captionCssWidth?: string;
   fontRatio: number;
   isPreview?: boolean;
-}> = ({ captionCssWidth, caption, fontRatio, isPreview }) => {
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+}> = ({ captionCssWidth, caption, fontRatio, isPreview, onClick }) => {
   const [fontSize, setFontSize] = React.useState<null | number>(null);
   const container = React.useRef<HTMLDivElement>(null);
   const isMountedVal = React.useRef(1);
@@ -77,6 +78,7 @@ const DynamicTextContainer: React.FC<{
 
   return (
     <div
+      onClick={onClick}
       className={classnames("dynamic-text-container", { preview: isPreview })}
       style={fontSizeStyles}
       ref={container}
