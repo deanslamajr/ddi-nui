@@ -97,7 +97,9 @@ const DraggableEmoji: React.FC<{
             withHandles
             config={emoji}
             onClick={() => {
-              onActiveEmojiSelect(emoji.id);
+              if (!isActive) {
+                onActiveEmojiSelect(emoji.id);
+              }
             }}
           />
           <span className="quarter-button handle" {...listeners}>
