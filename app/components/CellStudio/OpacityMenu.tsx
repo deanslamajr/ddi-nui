@@ -10,10 +10,15 @@ import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { updateOpacityFilter } from "~/contexts/ComicStudioState/actions";
+import {
+  moveEmoji,
+  updateOpacityFilter,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiOpacity,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -46,23 +51,32 @@ const OpacityMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiOpacity = getEmojiOpacity(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localOpacity: number;
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
 
     const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
 
-    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      localOpacity: activeEmoji.opacity || EMOJI_CONFIG.MAX_OPACITY,
+      localOpacity: emojiOpacity || EMOJI_CONFIG.MAX_OPACITY,
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localOpacity: number;
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const setLocalOpacity = (newOpacity: number): void => {
     setState((prevState) => {
@@ -85,7 +99,7 @@ const OpacityMenu: React.FC<{
   };
 
   const saveAndGoBack = () => {
-    if (state) {
+    if (state && state.localOpacity !== emojiOpacity) {
       dispatch(
         updateOpacityFilter({
           newOpacity: state.localOpacity,
@@ -96,6 +110,32 @@ const OpacityMenu: React.FC<{
     onBackButtonClick();
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    if (state!.localOpacity !== emojiOpacity) {
+      dispatch(
+        updateOpacityFilter({
+          newOpacity: state!.localOpacity,
+          cellUrlId,
+        })
+      );
+    }
+    dispatch(
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
+        cellUrlId,
+      })
+    );
+  };
+
   return (
     <>
       {cellStudioState && state && (
@@ -103,7 +143,8 @@ const OpacityMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />

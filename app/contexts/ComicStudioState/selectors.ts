@@ -70,6 +70,15 @@ export const getEmojiScale = (state: ComicStudioState, cellUrlId: string) => {
   };
 };
 
+export const getEmojiOpacity = (state: ComicStudioState, cellUrlId: string) => {
+  const activeEmoji = getActiveEmoji(state, cellUrlId);
+  if (!activeEmoji) {
+    return null;
+  }
+
+  return activeEmoji.opacity;
+};
+
 export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null
