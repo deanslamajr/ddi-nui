@@ -179,12 +179,18 @@ export const ComicStudio: FC<{}> = ({}) => {
 
   const sortedCells = getCellsFromState();
 
+  const onCaptionClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    console.log("onCaptionClick is clicked!");
+  };
+
   const renderedComicPreview = useMemo(() => {
     return sortedCells.map((cell) => (
       <CellPreview
         key={cell.urlId}
         cellUrlId={cell.urlId}
         onCellClick={handleCellClick}
+        onCaptionClick={onCaptionClick}
       />
     ));
   }, []);
