@@ -10,13 +10,20 @@ import {
 import cloneDeep from "fast-clone";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
+import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { flipAndSkewEmoji } from "~/contexts/ComicStudioState/actions";
+import {
+  flipAndSkewEmoji,
+  moveEmoji,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiSkew,
+  getEmojiScale,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -51,25 +58,39 @@ const FlipAndSkewMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiSkew = getEmojiSkew(comicStudioState, cellUrlId);
+  const emojiScale = getEmojiScale(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localSkew: { x: number; y: number };
-    localScale: { x: number; y: number };
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
 
     const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
 
-    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      localSkew: { x: activeEmoji.skewX, y: activeEmoji.skewY },
-      localScale: { x: activeEmoji.scaleX, y: activeEmoji.scaleY },
+      localSkew: emojiSkew
+        ? { x: emojiSkew.skewX, y: emojiSkew.skewY }
+        : { x: DEFAULT_EMOJI_CONFIG.skewX, y: DEFAULT_EMOJI_CONFIG.skewY },
+      localScale: emojiScale
+        ? { x: emojiScale.scaleX, y: emojiScale.scaleY }
+        : { x: DEFAULT_EMOJI_CONFIG.scaleX, y: DEFAULT_EMOJI_CONFIG.scaleY },
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localSkew: { x: number; y: number };
+    localScale: { x: number; y: number };
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const skewLocalEmoji = (
     newSkew: number,
@@ -138,15 +159,53 @@ const FlipAndSkewMenu: React.FC<{
     });
   };
 
+  const isLocalDirty = () => {
+    return (
+      emojiSkew?.skewX !== state!.localSkew.x ||
+      emojiSkew?.skewY !== state!.localSkew.y ||
+      emojiScale?.scaleX !== state!.localScale.x ||
+      emojiScale?.scaleY !== state!.localScale.y
+    );
+  };
+
   const saveAndGoBack = () => {
+    if (isLocalDirty()) {
+      dispatch(
+        flipAndSkewEmoji({
+          newSkew: state!.localSkew,
+          newScale: state!.localScale,
+          cellUrlId,
+        })
+      );
+    }
+    onBackButtonClick();
+  };
+
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    if (isLocalDirty()) {
+      dispatch(
+        flipAndSkewEmoji({
+          newSkew: state!.localSkew,
+          newScale: state!.localScale,
+          cellUrlId,
+        })
+      );
+    }
     dispatch(
-      flipAndSkewEmoji({
-        newSkew: state!.localSkew,
-        newScale: state!.localScale,
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
         cellUrlId,
       })
     );
-    onBackButtonClick();
   };
 
   return (
@@ -156,7 +215,8 @@ const FlipAndSkewMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />

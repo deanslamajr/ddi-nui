@@ -58,6 +58,18 @@ export const getEmojiSkew = (state: ComicStudioState, cellUrlId: string) => {
   };
 };
 
+export const getEmojiScale = (state: ComicStudioState, cellUrlId: string) => {
+  const activeEmoji = getActiveEmoji(state, cellUrlId);
+  if (!activeEmoji) {
+    return null;
+  }
+
+  return {
+    scaleX: activeEmoji.scaleX,
+    scaleY: activeEmoji.scaleY,
+  };
+};
+
 export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null

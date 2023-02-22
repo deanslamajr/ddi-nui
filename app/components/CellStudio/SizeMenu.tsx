@@ -5,6 +5,7 @@ import { GiResize } from "react-icons/gi";
 import cloneDeep from "fast-clone";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
+import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
@@ -15,6 +16,7 @@ import {
   getActiveEmojiId,
   getCellStudioState,
   getEmojiPosition,
+  getEmojiSize,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -48,6 +50,7 @@ const SizeMenu: React.FC<{
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
   const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
+  const emojiSize = getEmojiSize(comicStudioState, cellUrlId);
 
   const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
@@ -56,9 +59,8 @@ const SizeMenu: React.FC<{
 
     const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
 
-    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      localSize: activeEmoji.size,
+      localSize: emojiSize || DEFAULT_EMOJI_CONFIG.size,
       localEmojiConfigs: clonedEmojiConfigs,
     };
   };
@@ -95,13 +97,15 @@ const SizeMenu: React.FC<{
   };
 
   const saveAndGoBack = () => {
-    dispatch(
-      resizeEmoji({
-        newSize: state!.localSize,
-        cellUrlId,
-        shouldSaveChange: true,
-      })
-    );
+    if (state!.localSize !== emojiSize) {
+      dispatch(
+        resizeEmoji({
+          newSize: state!.localSize,
+          cellUrlId,
+          shouldSaveChange: true,
+        })
+      );
+    }
     onBackButtonClick();
   };
 
@@ -112,13 +116,15 @@ const SizeMenu: React.FC<{
     xDiff: number;
     yDiff: number;
   }): void => {
-    dispatch(
-      resizeEmoji({
-        newSize: state!.localSize,
-        cellUrlId,
-        shouldSaveChange: true,
-      })
-    );
+    if (state!.localSize !== emojiSize) {
+      dispatch(
+        resizeEmoji({
+          newSize: state!.localSize,
+          cellUrlId,
+          shouldSaveChange: true,
+        })
+      );
+    }
     dispatch(
       moveEmoji({
         diff: {
@@ -150,7 +156,7 @@ const SizeMenu: React.FC<{
           <Slider
             min={EMOJI_CONFIG.MIN_SIZE}
             max={EMOJI_CONFIG.MAX_SIZE / 2}
-            step={10}
+            step={1}
             value={state.localSize}
             onChange={(value) => resizeLocalEmoji(value)}
             onRelease={(value) => resizeLocalEmoji(value)}
