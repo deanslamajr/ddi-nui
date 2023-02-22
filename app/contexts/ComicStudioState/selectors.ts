@@ -79,6 +79,20 @@ export const getEmojiOpacity = (state: ComicStudioState, cellUrlId: string) => {
   return activeEmoji.opacity;
 };
 
+export const getEmojiRGBA = (state: ComicStudioState, cellUrlId: string) => {
+  const activeEmoji = getActiveEmoji(state, cellUrlId);
+  if (!activeEmoji) {
+    return null;
+  }
+
+  return {
+    alpha: activeEmoji.alpha,
+    red: activeEmoji.red,
+    green: activeEmoji.green,
+    blue: activeEmoji.blue,
+  };
+};
+
 export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null

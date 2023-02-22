@@ -94,7 +94,7 @@ const FiltersMenu: React.FC<{
           className={classNames("cell-studio-menu-button", "half-width", {
             disabled: !isRGBAFilterEnabled,
           })}
-          onClick={onRGBAButtonClick}
+          onClick={isRGBAFilterEnabled ? onRGBAButtonClick : undefined}
         >
           <IoIosColorFilter />
         </MenuButton>

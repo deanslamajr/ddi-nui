@@ -6,12 +6,20 @@ import cloneDeep from "fast-clone";
 import { RgbaColorPicker } from "react-colorful";
 
 import { theme } from "~/utils/stylesTheme";
-import { EmojiConfigSerialized } from "~/models/emojiConfig";
+import {
+  EmojiConfigSerialized,
+  DEFAULT_EMOJI_CONFIG,
+} from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { updateRGBAFilter } from "~/contexts/ComicStudioState/actions";
+import {
+  moveEmoji,
+  updateRGBAFilter,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiRGBA,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -40,28 +48,44 @@ const RGBAMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiRGBA = getEmojiRGBA(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localRGBA: { r: number; g: number; b: number; a: number };
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
 
     const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
 
-    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      localRGBA: {
-        a: activeEmoji.alpha,
-        r: activeEmoji.red,
-        g: activeEmoji.green,
-        b: activeEmoji.blue,
-      },
+      localRGBA: emojiRGBA
+        ? {
+            a: emojiRGBA.alpha,
+            r: emojiRGBA.red,
+            g: emojiRGBA.green,
+            b: emojiRGBA.blue,
+          }
+        : {
+            a: DEFAULT_EMOJI_CONFIG.alpha,
+            r: DEFAULT_EMOJI_CONFIG.red,
+            g: DEFAULT_EMOJI_CONFIG.green,
+            b: DEFAULT_EMOJI_CONFIG.blue,
+          },
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localRGBA: { r: number; g: number; b: number; a: number };
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const setLocalRGBA = (newColor: {
     r: number;
@@ -91,8 +115,17 @@ const RGBAMenu: React.FC<{
     });
   };
 
+  const isLocalDirty = () => {
+    return (
+      emojiRGBA?.alpha !== state!.localRGBA.a ||
+      emojiRGBA?.red !== state!.localRGBA.r ||
+      emojiRGBA?.green !== state!.localRGBA.g ||
+      emojiRGBA?.blue !== state!.localRGBA.b
+    );
+  };
+
   const saveAndGoBack = () => {
-    if (state) {
+    if (state && isLocalDirty()) {
       dispatch(
         updateRGBAFilter({
           cellUrlId,
@@ -108,6 +141,37 @@ const RGBAMenu: React.FC<{
     onBackButtonClick();
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    if (state && isLocalDirty()) {
+      dispatch(
+        updateRGBAFilter({
+          cellUrlId,
+          newFilterValues: {
+            red: state.localRGBA.r,
+            green: state.localRGBA.g,
+            blue: state.localRGBA.b,
+            alpha: state.localRGBA.a,
+          },
+        })
+      );
+    }
+    dispatch(
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
+        cellUrlId,
+      })
+    );
+  };
+
   return (
     <>
       {cellStudioState && state && (
@@ -115,7 +179,8 @@ const RGBAMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />

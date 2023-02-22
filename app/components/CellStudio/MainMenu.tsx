@@ -1,7 +1,8 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
-import { IoMdPersonAdd, IoIosColorFilter } from "react-icons/io";
+import { IoMdPersonAdd } from "react-icons/io";
+import { MdMovieFilter } from "react-icons/md";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { SlCursorMove } from "react-icons/sl";
 import { GiResize } from "react-icons/gi";
@@ -124,7 +125,7 @@ const MainMenu: React.FC<{
           onClick={() => setCurrentLowerSectionMode("FILTERS")}
           noSpinner
         >
-          <IoIosColorFilter />
+          <MdMovieFilter />
         </MenuButton>
       </div>
 
