@@ -5,13 +5,16 @@ import { TbRotate360 } from "react-icons/tb";
 import cloneDeep from "fast-clone";
 
 import { EMOJI_CONFIG } from "~/utils/constants";
+import { DEFAULT_EMOJI_CONFIG } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { rotateEmoji } from "~/contexts/ComicStudioState/actions";
+import { moveEmoji, rotateEmoji } from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiRotation,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -44,23 +47,32 @@ const RotationMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiRotation = getEmojiRotation(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localRotation: number;
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
 
     const clonedEmojiConfigs = cloneDeep(cellStudioState.emojis);
 
-    const activeEmoji = clonedEmojiConfigs[activeEmojiId];
     return {
-      localRotation: activeEmoji.rotation,
+      localRotation: emojiRotation || DEFAULT_EMOJI_CONFIG.rotation,
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localRotation: number;
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const rotateLocalEmoji = (newRotation: number): void => {
     setState((prevState) => {
@@ -83,14 +95,43 @@ const RotationMenu: React.FC<{
   };
 
   const saveAndGoBack = () => {
+    if (state!.localRotation !== emojiRotation) {
+      dispatch(
+        rotateEmoji({
+          newRotation: state!.localRotation,
+          cellUrlId,
+          shouldSaveChange: true,
+        })
+      );
+    }
+    onBackButtonClick();
+  };
+
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    if (state!.localRotation !== emojiRotation) {
+      dispatch(
+        rotateEmoji({
+          newRotation: state!.localRotation,
+          cellUrlId,
+          shouldSaveChange: true,
+        })
+      );
+    }
     dispatch(
-      rotateEmoji({
-        newRotation: state!.localRotation,
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
         cellUrlId,
-        shouldSaveChange: true,
       })
     );
-    onBackButtonClick();
   };
 
   return (
@@ -100,7 +141,8 @@ const RotationMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
