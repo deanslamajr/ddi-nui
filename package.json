@@ -63,6 +63,7 @@
     "stacktracey": "^2.1.8",
     "store2": "^2.13.2",
     "styled-components": "^5.3.3",
+    "use-debounce": "^9.0.3",
     "use-deep-compare-effect": "^1.8.1"
   },
   "devDependencies": {

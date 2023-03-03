@@ -1,5 +1,6 @@
 import React from "react";
 import { Rect, Text } from "react-konva";
+import { useDebouncedCallback } from "use-debounce";
 
 import { EmojiConfigSerialized, EmojiRef } from "~/models/emojiConfig";
 import {
@@ -32,13 +33,41 @@ const KonvaEmoji: React.FC<{
     emojiCacheRef.current
   );
 
+  const debouncedUpdateCache = useDebouncedCallback(
+    // function
+    (emojiCacheRef: React.MutableRefObject<EmojiRef>) => {
+      console.log("about to cache");
+      if (emojiCacheRef.current) {
+        emojiCacheRef.current.cache({
+          offset: 100,
+          pixelRatio: 2,
+          imageSmoothingEnabled: true,
+        });
+      }
+    },
+    // delay in ms
+    10
+  );
+
+  const debouncedUpdateStuff = useDebouncedCallback(
+    // function
+    (emojiCacheRef: React.MutableRefObject<EmojiRef>) => {
+      console.log("about to cache");
+      if (emojiCacheRef.current) {
+        emojiCacheRef.current.cache({
+          offset: 100,
+          pixelRatio: 2,
+          imageSmoothingEnabled: true,
+        });
+      }
+    },
+    // delay in ms
+    100
+  );
+
   React.useEffect(() => {
-    if (useCache && emojiCacheRef.current) {
-      emojiCacheRef.current.cache({
-        offset: 100,
-        pixelRatio: 2,
-        imageSmoothingEnabled: true,
-      });
+    if (useCache) {
+      debouncedUpdateCache(emojiCacheRef);
     }
   }, [emojiConfig, useCache]);
 
@@ -47,7 +76,9 @@ const KonvaEmoji: React.FC<{
       const { offsetX, offsetY } = getOffsetsFromTextRef(
         nonRotatingEmojiCacheRef.current
       );
-      const boundingRect = nonRotatingEmojiCacheRef.current?.getClientRect();
+      const boundingRect = {
+        ...nonRotatingEmojiCacheRef.current.getClientRect(),
+      };
 
       if (isInitialRender) {
         boundingRect.x -= offsetX;
