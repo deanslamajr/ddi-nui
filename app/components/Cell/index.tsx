@@ -77,6 +77,7 @@ const Cell: FC<
     cellWidth?: string;
     containerWidth?: string;
     onCaptionClick?: React.MouseEventHandler<HTMLDivElement>;
+    isEditingCaption?: boolean;
   } & (
     | {
         imageUrl: string;
@@ -97,6 +98,7 @@ const Cell: FC<
     cellWidth,
     containerWidth,
     onCaptionClick,
+    isEditingCaption,
   } = props;
 
   const cellUrlFromDb =
@@ -132,6 +134,8 @@ const Cell: FC<
     return <CellWithLoadSpinner />;
   }
 
+  const doesCaptionExist = caption && caption.length;
+
   return cellUrlFromDb || cellUrlFromGenerator ? (
     <div
       className={classNames("cell-container", className)}
@@ -151,7 +155,9 @@ const Cell: FC<
             cellWidth={resolvedWidth}
             src={cellUrlFromDb || cellUrlFromGenerator!}
           />
-          {caption && caption.length && (
+          {doesCaptionExist && isEditingCaption ? (
+            <input onClick={(e) => e.stopPropagation()} />
+          ) : (
             <DynamicTextContainer
               onClick={onCaptionClick}
               caption={caption}
