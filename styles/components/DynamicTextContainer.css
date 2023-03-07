@@ -1,6 +1,7 @@
 .dynamic-text-container {
   line-height: 1;
   overflow-wrap: break-word;
+
   background: var(--white);
 
   @media (max-width: 899px) {

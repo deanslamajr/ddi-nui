@@ -64,6 +64,7 @@ export const ComicStudio: FC<{}> = ({}) => {
   const [showCellAddLimitReachedModal, setShowCellAddLimitReachedModal] =
     useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [isEditingCaption, setIsEditingCaption] = useState(false);
 
   const [comicStudioState] = useComicStudioState();
 
@@ -181,7 +182,7 @@ export const ComicStudio: FC<{}> = ({}) => {
 
   const onCaptionClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    console.log("onCaptionClick is clicked!");
+    setIsEditingCaption((prev) => !prev);
   };
 
   const renderedComicPreview = useMemo(() => {
@@ -191,9 +192,10 @@ export const ComicStudio: FC<{}> = ({}) => {
         cellUrlId={cell.urlId}
         onCellClick={handleCellClick}
         onCaptionClick={onCaptionClick}
+        isEditingCaption={isEditingCaption}
       />
     ));
-  }, []);
+  }, [isEditingCaption]);
 
   return (
     <>
