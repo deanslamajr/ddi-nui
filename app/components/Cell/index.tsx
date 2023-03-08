@@ -78,6 +78,7 @@ const Cell: FC<
     containerWidth?: string;
     onCaptionClick?: React.MouseEventHandler<HTMLDivElement>;
     isEditingCaption?: boolean;
+    setIsEditingCaption?: React.Dispatch<React.SetStateAction<boolean>>;
   } & (
     | {
         imageUrl: string;
@@ -99,6 +100,7 @@ const Cell: FC<
     containerWidth,
     onCaptionClick,
     isEditingCaption,
+    setIsEditingCaption,
   } = props;
 
   const cellUrlFromDb =
@@ -156,7 +158,19 @@ const Cell: FC<
             src={cellUrlFromDb || cellUrlFromGenerator!}
           />
           {doesCaptionExist && isEditingCaption ? (
-            <input onClick={(e) => e.stopPropagation()} />
+            <div>
+              <textarea onClick={(e) => e.stopPropagation()}>
+                {caption}
+              </textarea>
+              <input
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditingCaption && setIsEditingCaption((prev) => !prev);
+                }}
+                value="close"
+              />
+            </div>
           ) : (
             <DynamicTextContainer
               onClick={onCaptionClick}
