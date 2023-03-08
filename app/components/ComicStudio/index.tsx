@@ -192,6 +192,7 @@ export const ComicStudio: FC<{}> = ({}) => {
         cellUrlId={cell.urlId}
         onCellClick={handleCellClick}
         onCaptionClick={onCaptionClick}
+        setIsEditingCaption={setIsEditingCaption}
         isEditingCaption={isEditingCaption}
       />
     ));

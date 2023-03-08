@@ -32,7 +32,7 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
 const DynamicTextContainer: React.FC<{
-  caption: string;
+  caption: string | undefined;
   captionCssWidth?: string;
   fontRatio: number;
   isPreview?: boolean;
