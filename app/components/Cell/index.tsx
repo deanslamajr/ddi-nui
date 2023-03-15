@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef, useState } from "react";
 import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
@@ -103,6 +103,9 @@ const Cell: FC<
     setIsEditingCaption,
   } = props;
 
+  const textInput = useRef<HTMLTextAreaElement>(null);
+  const [localCaption, setLocalCaption] = useState(caption || "");
+
   const cellUrlFromDb =
     "isImageUrlAbsolute" in props
       ? props.isImageUrlAbsolute
@@ -138,6 +141,18 @@ const Cell: FC<
 
   const doesCaptionExist = caption && caption.length;
 
+  const textAreaCssHeight: React.CSSProperties = {
+    height: `${textInput.current?.scrollHeight}px`,
+  };
+
+  console.log("textInput", textInput);
+
+  console.log("textAreaCssHeight", textAreaCssHeight);
+
+  // textarea.addEventListener("keyup", () => {
+  //   textarea.style.height = calcHeight(textarea.value) + "px";
+  // });
+
   return cellUrlFromDb || cellUrlFromGenerator ? (
     <div
       className={classNames("cell-container", className)}
@@ -159,9 +174,17 @@ const Cell: FC<
           />
           {doesCaptionExist && isEditingCaption ? (
             <div>
-              <textarea onClick={(e) => e.stopPropagation()}>
-                {caption}
-              </textarea>
+              <textarea
+                style={textAreaCssHeight}
+                ref={textInput}
+                className="editing-caption"
+                onClick={(e) => e.stopPropagation()}
+                value={localCaption}
+                onChange={(e) => {
+                  console.log("onChange", e.target.value);
+                  setLocalCaption(e.target.value);
+                }}
+              />
               <input
                 type="button"
                 onClick={(e) => {
