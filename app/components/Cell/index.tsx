@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
@@ -23,6 +23,13 @@ export const links: LinksFunction = () => {
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
+
+// function calcHeight(value: string) {
+//   let numberOfLineBreaks = (value.match(/\n/g) || []).length;
+//   // min-height + lines x line-height + padding + border
+//   let newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
+//   return newHeight;
+// }
 
 const CellBorder = styled.div`
   padding: 0;
@@ -103,6 +110,11 @@ const Cell: FC<
     setIsEditingCaption,
   } = props;
 
+  const [thing, setThing] = useState(false);
+  useEffect(() => {
+    setThing((thing) => !thing);
+  }, [isEditingCaption]);
+
   const textInput = useRef<HTMLTextAreaElement>(null);
   const [localCaption, setLocalCaption] = useState(caption || "");
 
@@ -141,9 +153,12 @@ const Cell: FC<
 
   const doesCaptionExist = caption && caption.length;
 
-  const textAreaCssHeight: React.CSSProperties = {
-    height: `${textInput.current?.scrollHeight}px`,
-  };
+  const textAreaCssHeight: React.CSSProperties | undefined = textInput.current
+    ?.scrollHeight
+    ? {
+        height: `${textInput.current?.scrollHeight - 10}px`,
+      }
+    : undefined;
 
   console.log("textInput", textInput);
 
@@ -152,6 +167,7 @@ const Cell: FC<
   // textarea.addEventListener("keyup", () => {
   //   textarea.style.height = calcHeight(textarea.value) + "px";
   // });
+  console.log("document", document);
 
   return cellUrlFromDb || cellUrlFromGenerator ? (
     <div
@@ -178,7 +194,7 @@ const Cell: FC<
                 style={textAreaCssHeight}
                 ref={textInput}
                 className="editing-caption"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
                 value={localCaption}
                 onChange={(e) => {
                   console.log("onChange", e.target.value);
