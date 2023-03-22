@@ -110,9 +110,16 @@ const Cell: FC<
     setIsEditingCaption,
   } = props;
 
-  const [thing, setThing] = useState(false);
+  const [textAreaCssHeight, setTextAreaCssHeight] = useState<
+    React.CSSProperties | undefined
+  >(undefined);
   useEffect(() => {
-    setThing((thing) => !thing);
+    const cssHeight = textInput.current?.scrollHeight
+      ? {
+          height: `${textInput.current?.scrollHeight - 10}px`,
+        }
+      : undefined;
+    setTextAreaCssHeight(cssHeight);
   }, [isEditingCaption]);
 
   const textInput = useRef<HTMLTextAreaElement>(null);
@@ -153,22 +160,6 @@ const Cell: FC<
 
   const doesCaptionExist = caption && caption.length;
 
-  const textAreaCssHeight: React.CSSProperties | undefined = textInput.current
-    ?.scrollHeight
-    ? {
-        height: `${textInput.current?.scrollHeight - 10}px`,
-      }
-    : undefined;
-
-  console.log("textInput", textInput);
-
-  console.log("textAreaCssHeight", textAreaCssHeight);
-
-  // textarea.addEventListener("keyup", () => {
-  //   textarea.style.height = calcHeight(textarea.value) + "px";
-  // });
-  console.log("document", document);
-
   return cellUrlFromDb || cellUrlFromGenerator ? (
     <div
       className={classNames("cell-container", className)}
@@ -198,6 +189,12 @@ const Cell: FC<
                 value={localCaption}
                 onChange={(e) => {
                   console.log("onChange", e.target.value);
+                  const cssHeight = textInput.current?.scrollHeight
+                    ? {
+                        height: `${textInput.current?.scrollHeight - 10}px`,
+                      }
+                    : undefined;
+                  setTextAreaCssHeight(cssHeight);
                   setLocalCaption(e.target.value);
                 }}
               />
