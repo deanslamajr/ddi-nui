@@ -11,6 +11,7 @@ import {
   ToggleFilterAction,
   UpdateRGBAFilterAction,
   UpdateOpacityFilterAction,
+  UpdateCellCaptionAction,
 } from "./types";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { KonvaFilters } from "~/utils/konva";
@@ -222,5 +223,20 @@ export const updateOpacityFilter = ({
   data: {
     cellUrlId,
     newOpacity,
+  },
+});
+
+export const updateCellCaption = ({
+  cellUrlId,
+  caption,
+}: {
+  caption: string;
+  cellUrlId: string;
+}): UpdateCellCaptionAction => ({
+  type: "UPDATE_CELL_CAPTION",
+  data: {
+    caption,
+    // cellUrlId,
+    // newOpacity,
   },
 });

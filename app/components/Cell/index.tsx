@@ -204,7 +204,16 @@ const Cell: FC<
                   e.stopPropagation();
                   setIsEditingCaption && setIsEditingCaption((prev) => !prev);
                 }}
-                value="close"
+                value="Cancel"
+              />
+              <input
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("save");
+                  dispatch(updateCellCaption());
+                }}
+                value="Save"
               />
             </div>
           ) : (

@@ -12,6 +12,7 @@ import setActiveEmoji from "./setActiveEmoji";
 import toggleFilter from "./toggleFilter";
 import updateRGBAFilter from "./updateRGBAFilter";
 import updateOpacityFilter from "./updateOpacityFilter";
+import updateCellCaption from "./updateCellCaption";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -90,6 +91,9 @@ export const reducer = (
       break;
     case "UPDATE_OPACITY_FILTER":
       newState = updateOpacityFilter(state, action);
+      break;
+    case "UPDATE_CELL_CAPTION":
+      newState = updateCellCaption(state, action);
       break;
     default:
       console.warn("StudioState: unknown action has been dispatched!");
