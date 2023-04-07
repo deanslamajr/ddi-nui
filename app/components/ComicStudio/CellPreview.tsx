@@ -68,6 +68,7 @@ const CellPreview: React.FC<{
         )}
         <Cell
           clickable
+          cellUrlId={cell.urlId}
           className="cell-preview-as-studio-cell"
           imageUrl={imageUrl}
           isImageUrlAbsolute={true}
