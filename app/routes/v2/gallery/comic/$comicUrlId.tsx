@@ -19,6 +19,10 @@ import Modal, {
   links as modalStylesUrl,
 } from "~/components/Modal";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
+import {
+  ComicStudioStateProvider,
+  links as comicStudioStateProviderStylesUrl,
+} from "~/contexts/ComicStudioState";
 
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS, isUrlAbsolute } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
@@ -34,6 +38,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...modalStylesUrl(),
+    ...comicStudioStateProviderStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -120,51 +125,55 @@ export default function ComicViewRoute() {
   const navigate = useNavigate();
 
   return (
-    <ThisPagesModal>
-      <div className="cells-container">
-        {cells
-          .filter(({ urlId: cellUrlId }) => {
-            if (selectedCellUrlId === undefined) {
-              return true;
-            }
+    <ComicStudioStateProvider comicUrlId={comicUrlId}>
+      <ThisPagesModal>
+        <div className="cells-container">
+          {cells
+            .filter(({ urlId: cellUrlId }) => {
+              if (selectedCellUrlId === undefined) {
+                return true;
+              }
 
-            return cellUrlId === selectedCellUrlId;
-          })
-          .map(({ caption, imageUrl, schemaVersion, urlId: cellUrlId }) => (
-            <div
-              id={cellUrlId}
-              className="cell-container"
-              key={imageUrl}
-              onClick={() => {
-                navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
-                  state: { scroll: false },
-                });
-                const cellElement = document.getElementById(cellUrlId);
-                cellElement?.scrollIntoView();
-              }}
-            >
-              <Cell
-                imageUrl={imageUrl || ""}
-                isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
-                schemaVersion={schemaVersion ?? SCHEMA_VERSION}
-                caption={caption || ""}
-                cellWidth={theme.cell.width}
-                clickable
-                removeBorders
-              />
-            </div>
-          ))}
-      </div>
-      <Outlet />
-      {comic.userCanEdit && (
-        <div className="nav-button bottom-right">
-          <button
-            onClick={() => navigate(DDI_APP_PAGES.comicStudio({ comicUrlId }))}
-          >
-            ✍️
-          </button>
+              return cellUrlId === selectedCellUrlId;
+            })
+            .map(({ caption, imageUrl, schemaVersion, urlId: cellUrlId }) => (
+              <div
+                id={cellUrlId}
+                className="cell-container"
+                key={imageUrl}
+                onClick={() => {
+                  navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
+                    state: { scroll: false },
+                  });
+                  const cellElement = document.getElementById(cellUrlId);
+                  cellElement?.scrollIntoView();
+                }}
+              >
+                <Cell
+                  imageUrl={imageUrl || ""}
+                  isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
+                  schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                  caption={caption || ""}
+                  cellWidth={theme.cell.width}
+                  clickable
+                  removeBorders
+                />
+              </div>
+            ))}
         </div>
-      )}
-    </ThisPagesModal>
+        <Outlet />
+        {comic.userCanEdit && (
+          <div className="nav-button bottom-right">
+            <button
+              onClick={() =>
+                navigate(DDI_APP_PAGES.comicStudio({ comicUrlId }))
+              }
+            >
+              ✍️
+            </button>
+          </div>
+        )}
+      </ThisPagesModal>
+    </ComicStudioStateProvider>
   );
 }

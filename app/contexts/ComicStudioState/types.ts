@@ -133,7 +133,7 @@ export type UpdateOpacityFilterAction = {
 
 export type UpdateCellCaptionAction = {
   type: "UPDATE_CELL_CAPTION";
-  data: { caption: string };
+  data: { caption: string; cellUrlId: string };
 };
 
 export type ComicStudioStateAction =

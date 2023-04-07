@@ -13,6 +13,8 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
+import { useComicStudioState } from "~/contexts/ComicStudioState";
+import { updateCellCaption } from "~/contexts/ComicStudioState/actions";
 import stylesUrl from "~/styles/components/Cell.css";
 import { StudioState } from "~/interfaces/studioState";
 
@@ -75,6 +77,7 @@ const CellImage = styled.img<{
 
 const Cell: FC<
   {
+    cellUrlId?: string;
     className?: string;
     caption?: string;
     clickable?: boolean;
@@ -97,6 +100,7 @@ const Cell: FC<
   )
 > = (props) => {
   const {
+    cellUrlId,
     className,
     caption,
     clickable,
@@ -109,6 +113,8 @@ const Cell: FC<
     isEditingCaption,
     setIsEditingCaption,
   } = props;
+
+  const [_comicStudioState, dispatch] = useComicStudioState();
 
   const [textAreaCssHeight, setTextAreaCssHeight] = useState<
     React.CSSProperties | undefined
@@ -188,7 +194,6 @@ const Cell: FC<
                 onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
                 value={localCaption}
                 onChange={(e) => {
-                  console.log("onChange", e.target.value);
                   const cssHeight = textInput.current?.scrollHeight
                     ? {
                         height: `${textInput.current?.scrollHeight - 10}px`,
@@ -210,8 +215,12 @@ const Cell: FC<
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("save");
-                  dispatch(updateCellCaption());
+                  if (!cellUrlId) {
+                    console.error("cellUrlId does not exist");
+                    return;
+                  }
+
+                  dispatch(updateCellCaption(cellUrlId, localCaption));
                 }}
                 value="Save"
               />

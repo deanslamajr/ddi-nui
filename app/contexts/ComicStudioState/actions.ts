@@ -226,17 +226,13 @@ export const updateOpacityFilter = ({
   },
 });
 
-export const updateCellCaption = ({
-  cellUrlId,
-  caption,
-}: {
-  caption: string;
-  cellUrlId: string;
-}): UpdateCellCaptionAction => ({
+export const updateCellCaption = (
+  cellUrlId: string,
+  caption: string
+): UpdateCellCaptionAction => ({
   type: "UPDATE_CELL_CAPTION",
   data: {
     caption,
-    // cellUrlId,
-    // newOpacity,
+    cellUrlId,
   },
 });
