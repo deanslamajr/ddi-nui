@@ -86,9 +86,6 @@ const Cell: FC<
     schemaVersion: number;
     cellWidth?: string;
     containerWidth?: string;
-    onCaptionClick?: React.MouseEventHandler<HTMLDivElement>;
-    isEditingCaption?: boolean;
-    setIsEditingCaption?: React.Dispatch<React.SetStateAction<boolean>>;
   } & (
     | {
         imageUrl: string;
@@ -109,13 +106,11 @@ const Cell: FC<
     schemaVersion,
     cellWidth,
     containerWidth,
-    onCaptionClick,
-    isEditingCaption,
-    setIsEditingCaption,
   } = props;
 
   const [_comicStudioState, dispatch] = useComicStudioState();
 
+  const [isEditingCaption, setIsEditingCaption] = useState(false);
   const [textAreaCssHeight, setTextAreaCssHeight] = useState<
     React.CSSProperties | undefined
   >(undefined);
@@ -130,6 +125,13 @@ const Cell: FC<
 
   const textInput = useRef<HTMLTextAreaElement>(null);
   const [localCaption, setLocalCaption] = useState(caption || "");
+
+  const endCaptionEdit = (shouldResetLocalCaption?: boolean) => {
+    if (shouldResetLocalCaption) {
+      setLocalCaption(caption || "");
+    }
+    setIsEditingCaption && setIsEditingCaption((prev) => !prev);
+  };
 
   const cellUrlFromDb =
     "isImageUrlAbsolute" in props
@@ -150,10 +152,8 @@ const Cell: FC<
 
   const cellContainerStyles: React.CSSProperties = {
     marginBottom: schemaVersion === 1 ? "3px" : "1px",
-    // marginRight: schemaVersion === 1 ? "3px" : "1px",
     padding: schemaVersion === 1 ? "0" : "1px",
     cursor: clickable ? "pointer" : "default",
-    // background: schemaVersion === 1 ? "inherit" : "var(--lightGray)",
   };
 
   if (containerWidth) {
@@ -207,7 +207,7 @@ const Cell: FC<
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsEditingCaption && setIsEditingCaption((prev) => !prev);
+                  endCaptionEdit(true);
                 }}
                 value="Cancel"
               />
@@ -217,17 +217,22 @@ const Cell: FC<
                   e.stopPropagation();
                   if (!cellUrlId) {
                     console.error("cellUrlId does not exist");
+                    endCaptionEdit(true);
                     return;
                   }
 
                   dispatch(updateCellCaption(cellUrlId, localCaption));
+                  endCaptionEdit();
                 }}
                 value="Save"
               />
             </div>
           ) : (
             <DynamicTextContainer
-              onClick={onCaptionClick}
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                e.stopPropagation();
+                setIsEditingCaption((prev) => !prev);
+              }}
               caption={caption}
               captionCssWidth={resolvedWidth}
               fontRatio={16}
