@@ -55,7 +55,10 @@ const CellPreview: React.FC<{
         containerWidth={cellWidth}
       />
     ) : (
-      <div onClick={() => onCellClick && onCellClick(cell)}>
+      <div
+        className="cell-preview-container"
+        onClick={() => onCellClick && onCellClick(cell)}
+      >
         {cell.isDirty && (
           <div className="unpublished-changes">Unpublished Changes</div>
         )}
