@@ -111,20 +111,20 @@ const Cell: FC<
   const [_comicStudioState, dispatch] = useComicStudioState();
 
   const [isEditingCaption, setIsEditingCaption] = useState(false);
-  const [textAreaCssHeight, setTextAreaCssHeight] = useState<
-    React.CSSProperties | undefined
-  >(undefined);
-  useEffect(() => {
-    const cssHeight = textInput.current?.scrollHeight
-      ? {
-          height: `${textInput.current?.scrollHeight - 10}px`,
-        }
-      : undefined;
-    setTextAreaCssHeight(cssHeight);
-  }, [isEditingCaption]);
-
   const textInput = useRef<HTMLTextAreaElement>(null);
+  const growWrapDivRef = useRef<HTMLDivElement>(null);
   const [localCaption, setLocalCaption] = useState(caption || "");
+
+  useEffect(() => {
+    if (growWrapDivRef?.current?.dataset) {
+      growWrapDivRef.current.dataset.caption = localCaption;
+    }
+    if (isEditingCaption) {
+      textInput.current?.focus();
+    }
+  }, [isEditingCaption, localCaption]);
+
+  const [captionFontSize, setCaptionFontSize] = useState<number | null>(null);
 
   const endCaptionEdit = (shouldResetLocalCaption?: boolean) => {
     if (shouldResetLocalCaption) {
@@ -160,6 +160,10 @@ const Cell: FC<
     cellContainerStyles.width = containerWidth;
   }
 
+  const captionFontSizeStyles: React.CSSProperties = {
+    fontSize: captionFontSize ? `${captionFontSize}px` : "inherit",
+  };
+
   if (isLoading) {
     return <CellWithLoadSpinner />;
   }
@@ -185,59 +189,64 @@ const Cell: FC<
             cellWidth={resolvedWidth}
             src={cellUrlFromDb || cellUrlFromGenerator!}
           />
-          {doesCaptionExist && isEditingCaption ? (
-            <div>
-              <textarea
-                style={textAreaCssHeight}
-                ref={textInput}
-                className="editing-caption"
-                onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
-                value={localCaption}
-                onChange={(e) => {
-                  const cssHeight = textInput.current?.scrollHeight
-                    ? {
-                        height: `${textInput.current?.scrollHeight - 10}px`,
-                      }
-                    : undefined;
-                  setTextAreaCssHeight(cssHeight);
-                  setLocalCaption(e.target.value);
-                }}
-              />
-              <input
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  endCaptionEdit(true);
-                }}
-                value="Cancel"
-              />
-              <input
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!cellUrlId) {
-                    console.error("cellUrlId does not exist");
+          <div className="caption-padding">
+            {doesCaptionExist && isEditingCaption ? (
+              <>
+                <div
+                  ref={growWrapDivRef}
+                  className="grow-wrap"
+                  data-caption
+                  style={captionFontSizeStyles}
+                >
+                  <textarea
+                    rows={undefined}
+                    style={captionFontSizeStyles}
+                    ref={textInput}
+                    className="editing-caption"
+                    onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
+                    value={localCaption}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setLocalCaption(newValue);
+                    }}
+                  />
+                </div>
+                <input
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     endCaptionEdit(true);
-                    return;
-                  }
+                  }}
+                  value="Cancel"
+                />
+                <input
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!cellUrlId) {
+                      console.error("cellUrlId does not exist");
+                      endCaptionEdit(true);
+                      return;
+                    }
 
-                  dispatch(updateCellCaption(cellUrlId, localCaption));
-                  endCaptionEdit();
+                    dispatch(updateCellCaption(cellUrlId, localCaption));
+                    endCaptionEdit();
+                  }}
+                  value="Save"
+                />
+              </>
+            ) : (
+              <DynamicTextContainer
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                  e.stopPropagation();
+                  setIsEditingCaption((prev) => !prev);
                 }}
-                value="Save"
+                caption={caption}
+                fontRatio={16}
+                setConsumersFontSize={setCaptionFontSize}
               />
-            </div>
-          ) : (
-            <DynamicTextContainer
-              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                e.stopPropagation();
-                setIsEditingCaption((prev) => !prev);
-              }}
-              caption={caption}
-              captionCssWidth={resolvedWidth}
-              fontRatio={16}
-            />
-          )}
+            )}
+          </div>
         </OldCellBorder>
       )}
     </div>

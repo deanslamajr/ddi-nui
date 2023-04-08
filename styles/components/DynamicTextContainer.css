@@ -4,6 +4,8 @@
 
   background: var(--white);
 
+  white-space: pre-wrap;
+
   @media (max-width: 899px) {
     padding: 1vw;
   }
@@ -24,6 +26,13 @@
   cursor: pointer;
   overflow: hidden;
 
-  white-space: nowrap;
+  white-space: pre;
   text-overflow: ellipsis;
+}
+
+.clear-pre {
+  display: inherit;
+  font-family: inherit;
+  white-space: inherit;
+  margin: inherit;
 }
