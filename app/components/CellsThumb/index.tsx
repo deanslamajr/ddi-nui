@@ -80,9 +80,7 @@ const CellsThumb: FC<{
             caption={cell.caption}
             fontRatio={16}
             isPreview
-            // This width is for gallery views, might break in other views
-            // 2px accounts for the grid-gap of 2px in gallery views
-            captionCssWidth="100% - 2px"
+            captionCssPadding="0.2vw"
           />
         )}
         <ErrorBoundary>

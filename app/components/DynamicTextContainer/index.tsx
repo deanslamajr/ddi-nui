@@ -33,11 +33,19 @@ function calculateFontSize(elemWidth: number, fontRatio: number) {
 // Adapted from https://github.com/bond-agency/react-flowtype/blob/master/src/index.js
 const DynamicTextContainer: React.FC<{
   caption: string | undefined;
-  captionCssWidth?: string;
+  captionCssPadding?: string;
   fontRatio: number;
   isPreview?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
-}> = ({ captionCssWidth, caption, fontRatio, isPreview, onClick }) => {
+  setConsumersFontSize?: React.Dispatch<React.SetStateAction<number | null>>;
+}> = ({
+  captionCssPadding,
+  caption,
+  fontRatio,
+  isPreview,
+  onClick,
+  setConsumersFontSize,
+}) => {
   const [fontSize, setFontSize] = React.useState<null | number>(null);
   const container = React.useRef<HTMLDivElement>(null);
   const isMountedVal = React.useRef(1);
@@ -49,6 +57,9 @@ const DynamicTextContainer: React.FC<{
       const newFontSize = calculateFontSize(elemWidth, fontRatio);
       if (isMountedVal.current) {
         setFontSize(newFontSize);
+        if (setConsumersFontSize) {
+          setConsumersFontSize(newFontSize);
+        }
       }
     }
     return () => {
@@ -56,14 +67,14 @@ const DynamicTextContainer: React.FC<{
     };
   }, [container.current?.offsetWidth, isMountedVal.current]);
 
-  const captionPadding = "0.25vw";
-
   const fontSizeStyles: React.CSSProperties = {
     display: fontSize ? undefined : "none",
     fontSize: fontSize ? `${fontSize}px` : "inherit",
-    padding: captionPadding,
-    width: `calc(${captionCssWidth || "100%"} - (2 * ${captionPadding}))`,
   };
+
+  if (captionCssPadding) {
+    fontSizeStyles.padding = captionCssPadding;
+  }
 
   const captionWithBreaks = caption
     ? caption.split("\n").map((item) => {
