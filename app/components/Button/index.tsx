@@ -22,6 +22,7 @@ export const MenuButton: React.FC<
   return (
     <span
       onClick={(event) => {
+        event.stopPropagation();
         if (onClick) {
           setIsLoading(true);
           setTimeout(() => setIsLoading(false), 1000);

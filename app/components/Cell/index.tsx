@@ -12,6 +12,7 @@ import DynamicTextContainer, {
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { updateCellCaption } from "~/contexts/ComicStudioState/actions";
@@ -22,6 +23,7 @@ export const links: LinksFunction = () => {
   return [
     ...dynamicTextContainerStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
+    ...buttonStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -171,47 +173,49 @@ const Cell: FC<
   const doesCaptionExist = caption && caption.length;
 
   return cellUrlFromDb || cellUrlFromGenerator ? (
-    <div
-      className={classNames("cell-container", className)}
-      style={cellContainerStyles}
-      onClick={clickable && onClick ? onClick : () => {}}
-    >
-      {schemaVersion === 1 ? (
-        <CellBorder>
-          <CellImage
-            cellWidth={removeBorders ? theme.cell.fullWidth : undefined}
-            src={cellUrlFromDb || cellUrlFromGenerator!}
-          />
-        </CellBorder>
-      ) : (
-        <OldCellBorder width={resolvedWidth}>
-          <CellImage
-            cellWidth={resolvedWidth}
-            src={cellUrlFromDb || cellUrlFromGenerator!}
-          />
-          <div className="caption-padding">
-            {doesCaptionExist && isEditingCaption ? (
-              <>
-                <div
-                  ref={growWrapDivRef}
-                  className="grow-wrap"
-                  data-caption
-                  style={captionFontSizeStyles}
-                >
-                  <textarea
-                    rows={undefined}
+    <>
+      <div
+        className={classNames("cell-container", className)}
+        style={cellContainerStyles}
+        onClick={clickable && onClick ? onClick : () => {}}
+      >
+        {schemaVersion === 1 ? (
+          <CellBorder>
+            <CellImage
+              cellWidth={removeBorders ? theme.cell.fullWidth : undefined}
+              src={cellUrlFromDb || cellUrlFromGenerator!}
+            />
+          </CellBorder>
+        ) : (
+          <OldCellBorder width={resolvedWidth}>
+            <CellImage
+              cellWidth={resolvedWidth}
+              src={cellUrlFromDb || cellUrlFromGenerator!}
+            />
+            <div className="caption-padding">
+              {!doesCaptionExist || isEditingCaption ? (
+                <>
+                  <div
+                    ref={growWrapDivRef}
+                    className="grow-wrap"
+                    data-caption
                     style={captionFontSizeStyles}
-                    ref={textInput}
-                    className="editing-caption"
-                    onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
-                    value={localCaption}
-                    onChange={(e) => {
-                      const newValue = e.target.value;
-                      setLocalCaption(newValue);
-                    }}
-                  />
-                </div>
-                <input
+                  >
+                    <textarea
+                      rows={undefined}
+                      style={captionFontSizeStyles}
+                      ref={textInput}
+                      className="editing-caption"
+                      onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
+                      value={localCaption}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        setLocalCaption(newValue);
+                      }}
+                    />
+                  </div>
+
+                  {/* <input
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -233,23 +237,53 @@ const Cell: FC<
                     endCaptionEdit();
                   }}
                   value="Save"
+                /> */}
+                </>
+              ) : (
+                <DynamicTextContainer
+                  onClick={(
+                    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+                  ) => {
+                    e.stopPropagation();
+                    setIsEditingCaption((prev) => !prev);
+                  }}
+                  caption={caption}
+                  fontRatio={16}
+                  setConsumersFontSize={setCaptionFontSize}
                 />
-              </>
-            ) : (
-              <DynamicTextContainer
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                  e.stopPropagation();
-                  setIsEditingCaption((prev) => !prev);
-                }}
-                caption={caption}
-                fontRatio={16}
-                setConsumersFontSize={setCaptionFontSize}
-              />
-            )}
-          </div>
-        </OldCellBorder>
+              )}
+            </div>
+          </OldCellBorder>
+        )}
+      </div>
+      {isEditingCaption && (
+        <div className="caption-edit-buttons">
+          <MenuButton
+            accented
+            className="cell-action-button"
+            onClick={() => {
+              // e.stopPropagation();
+              if (!cellUrlId) {
+                console.error("cellUrlId does not exist");
+                endCaptionEdit(true);
+                return;
+              }
+
+              dispatch(updateCellCaption(cellUrlId, localCaption));
+              endCaptionEdit();
+            }}
+          >
+            SAVE
+          </MenuButton>
+          <MenuButton
+            className="cell-action-button"
+            onClick={() => endCaptionEdit(true)}
+          >
+            CANCEL
+          </MenuButton>
+        </div>
       )}
-    </div>
+    </>
   ) : null;
 };
 

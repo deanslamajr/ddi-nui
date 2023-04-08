@@ -6,3 +6,8 @@
 .cell-preview-as-studio-cell {
   margin: 0 auto;
 }
+
+.cell-preview-container {
+  /* needed to help position caption edit buttons relative to the preview cell */
+  position: relative;
+}

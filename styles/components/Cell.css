@@ -61,3 +61,10 @@
 .caption-padding {
   padding: 0.25vw;
 }
+
+.caption-edit-buttons {
+  position: absolute;
+  width: 100%;
+  z-index: var(--toptop);
+  background-color: var(--lightGray);
+}
