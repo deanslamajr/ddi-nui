@@ -12,6 +12,10 @@ import CellWithLoadSpinner, {
 } from "~/components/CellWithLoadSpinner";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import {
+  ComicStudioStateProvider,
+  links as comicStudioStateProviderStylesUrl,
+} from "~/contexts/ComicStudioState";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
 import useHydrateComic from "~/hooks/useHydrateComic";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
@@ -29,6 +33,7 @@ export const links: LinksFunction = () => {
     ...modalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...cellStylesUrl(),
+    ...comicStudioStateProviderStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -90,30 +95,32 @@ const DraftComicPreview: React.FC<{
   const cellsCount = cells.length;
 
   return (
-    <div
-      className="cell-container"
-      key={comic.urlId}
-      onClick={() => {
-        if (selectedComicUrlId === null) {
-          onClick(comic.urlId);
-          navigate(
-            DDI_APP_PAGES.comicStudio({ comicUrlId: hydratedComic.urlId }),
-            {
-              state: { scroll: false },
-            }
-          );
-        }
-      }}
-    >
-      {selectedComicUrlId === hydratedComic.urlId ? (
-        <CellWithLoadSpinner />
-      ) : (
-        <>
-          {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
-          <DraftComicPreviewCell cell={initialCell} />
-        </>
-      )}
-    </div>
+    <ComicStudioStateProvider comicUrlId={comic.urlId}>
+      <div
+        className="cell-container"
+        key={comic.urlId}
+        onClick={() => {
+          if (selectedComicUrlId === null) {
+            onClick(comic.urlId);
+            navigate(
+              DDI_APP_PAGES.comicStudio({ comicUrlId: hydratedComic.urlId }),
+              {
+                state: { scroll: false },
+              }
+            );
+          }
+        }}
+      >
+        {selectedComicUrlId === hydratedComic.urlId ? (
+          <CellWithLoadSpinner />
+        ) : (
+          <>
+            {cellsCount > 1 && <div className="cells-count">{cellsCount}</div>}
+            <DraftComicPreviewCell cell={initialCell} />
+          </>
+        )}
+      </div>
+    </ComicStudioStateProvider>
   );
 };
 

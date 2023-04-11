@@ -83,11 +83,12 @@ const Cell: FC<
     className?: string;
     caption?: string;
     clickable?: boolean;
+    cellWidth?: string;
+    containerWidth?: string;
+    isCaptionEditable?: boolean;
     onClick?: () => void;
     removeBorders?: boolean;
     schemaVersion: number;
-    cellWidth?: string;
-    containerWidth?: string;
   } & (
     | {
         imageUrl: string;
@@ -103,11 +104,12 @@ const Cell: FC<
     className,
     caption,
     clickable,
+    cellWidth,
+    containerWidth,
+    isCaptionEditable,
     onClick,
     removeBorders,
     schemaVersion,
-    cellWidth,
-    containerWidth,
   } = props;
 
   const [_comicStudioState, dispatch] = useComicStudioState();
@@ -170,8 +172,6 @@ const Cell: FC<
     return <CellWithLoadSpinner />;
   }
 
-  const doesCaptionExist = caption && caption.length;
-
   return cellUrlFromDb || cellUrlFromGenerator ? (
     <>
       <div
@@ -193,60 +193,36 @@ const Cell: FC<
               src={cellUrlFromDb || cellUrlFromGenerator!}
             />
             <div className="caption-padding">
-              {!doesCaptionExist || isEditingCaption ? (
-                <>
-                  <div
-                    ref={growWrapDivRef}
-                    className="grow-wrap"
-                    data-caption
+              {isEditingCaption ? (
+                <div
+                  ref={growWrapDivRef}
+                  className="grow-wrap"
+                  data-caption
+                  style={captionFontSizeStyles}
+                >
+                  <textarea
+                    rows={undefined}
                     style={captionFontSizeStyles}
-                  >
-                    <textarea
-                      rows={undefined}
-                      style={captionFontSizeStyles}
-                      ref={textInput}
-                      className="editing-caption"
-                      onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
-                      value={localCaption}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setLocalCaption(newValue);
-                      }}
-                    />
-                  </div>
-
-                  {/* <input
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    endCaptionEdit(true);
-                  }}
-                  value="Cancel"
-                />
-                <input
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!cellUrlId) {
-                      console.error("cellUrlId does not exist");
-                      endCaptionEdit(true);
-                      return;
-                    }
-
-                    dispatch(updateCellCaption(cellUrlId, localCaption));
-                    endCaptionEdit();
-                  }}
-                  value="Save"
-                /> */}
-                </>
+                    ref={textInput}
+                    className="editing-caption"
+                    onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
+                    value={localCaption}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setLocalCaption(newValue);
+                    }}
+                  />
+                </div>
               ) : (
                 <DynamicTextContainer
-                  onClick={(
-                    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-                  ) => {
-                    e.stopPropagation();
-                    setIsEditingCaption((prev) => !prev);
-                  }}
+                  onClick={
+                    isCaptionEditable
+                      ? (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                          e.stopPropagation();
+                          setIsEditingCaption((prev) => !prev);
+                        }
+                      : undefined
+                  }
                   caption={caption}
                   fontRatio={16}
                   setConsumersFontSize={setCaptionFontSize}

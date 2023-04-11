@@ -258,7 +258,7 @@ export const ComicStudio: FC<{}> = ({}) => {
         />
       )}
 
-      <UnstyledLink href={getExitNavLink()}>
+      <UnstyledLink href={getExitNavLink()} isRemixLink>
         <div className="nav-button bottom-left large-icon">🖼️</div>
       </UnstyledLink>
 

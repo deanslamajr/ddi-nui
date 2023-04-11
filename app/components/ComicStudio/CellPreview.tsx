@@ -49,7 +49,7 @@ const CellPreview: React.FC<{
         clickable
         className="cell-preview-as-icon"
         imageUrl={imageUrl}
-        isImageUrlAbsolute={true}
+        isImageUrlAbsolute
         schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
         cellWidth={cellWidth}
         containerWidth={cellWidth}
@@ -67,7 +67,8 @@ const CellPreview: React.FC<{
           cellUrlId={cell.urlId}
           className="cell-preview-as-studio-cell"
           imageUrl={imageUrl}
-          isImageUrlAbsolute={true}
+          isCaptionEditable
+          isImageUrlAbsolute
           schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
           caption={cell.studioState?.caption || ""}
           cellWidth={cellWidth}
