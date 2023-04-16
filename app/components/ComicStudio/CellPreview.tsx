@@ -1,7 +1,6 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 
-import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
@@ -10,9 +9,11 @@ import { getCellState } from "~/contexts/ComicStudioState/selectors";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 
+import Cell, { links as cellStylesUrl } from "~/components/Cell";
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
+import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 
 import stylesUrl from "~/styles/components/CellPreview.css";
 
@@ -20,6 +21,7 @@ export const links: LinksFunction = () => {
   return [
     ...cellStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
+    ...buttonStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -55,26 +57,28 @@ const CellPreview: React.FC<{
         containerWidth={cellWidth}
       />
     ) : (
-      <div
-        className="cell-preview-container"
-        onClick={() => onCellClick && onCellClick(cell)}
-      >
-        {cell.isDirty && (
-          <div className="unpublished-changes">Unpublished Changes</div>
-        )}
-        <Cell
-          clickable
-          cellUrlId={cell.urlId}
-          className="cell-preview-as-studio-cell"
-          imageUrl={imageUrl}
-          isCaptionEditable
-          isImageUrlAbsolute
-          schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-          caption={cell.studioState?.caption || ""}
-          cellWidth={cellWidth}
-          containerWidth={cellWidth}
-        />
-      </div>
+      <>
+        <div
+          className="cell-preview-container"
+          onClick={() => onCellClick && onCellClick(cell)}
+        >
+          {cell.isDirty && (
+            <div className="unpublished-changes">Unpublished Changes</div>
+          )}
+          <Cell
+            clickable
+            cellUrlId={cell.urlId}
+            className="cell-preview-as-studio-cell"
+            imageUrl={imageUrl}
+            isCaptionEditable
+            isImageUrlAbsolute
+            schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+            caption={cell.studioState?.caption || ""}
+            cellWidth={cellWidth}
+            containerWidth={cellWidth}
+          />
+        </div>
+      </>
     )
   ) : isButtonIcon ? null : (
     <CellWithLoadSpinner />
