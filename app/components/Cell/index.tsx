@@ -2,6 +2,11 @@ import { FC, useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
+import { MdOutlineAddComment } from "react-icons/md";
+import { TfiSave } from "react-icons/tfi";
+import { BsTrash3Fill } from "react-icons/bs";
+import { MdCancel } from "react-icons/md";
+import { ImUndo2 } from "react-icons/im";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
@@ -137,6 +142,10 @@ const Cell: FC<
     setIsEditingCaption && setIsEditingCaption((prev) => !prev);
   };
 
+  const clearCaption = () => {
+    setLocalCaption("");
+  };
+
   const cellUrlFromDb =
     "isImageUrlAbsolute" in props
       ? props.isImageUrlAbsolute
@@ -192,71 +201,90 @@ const Cell: FC<
               cellWidth={resolvedWidth}
               src={cellUrlFromDb || cellUrlFromGenerator!}
             />
-            <div className="caption-padding">
-              {isEditingCaption ? (
-                <div
-                  ref={growWrapDivRef}
-                  className="grow-wrap"
-                  data-caption
-                  style={captionFontSizeStyles}
-                >
-                  <textarea
-                    rows={undefined}
+            {(caption || isEditingCaption) && (
+              <div className="caption-padding">
+                {isEditingCaption ? (
+                  <div
+                    ref={growWrapDivRef}
+                    className="grow-wrap"
+                    data-caption
                     style={captionFontSizeStyles}
-                    ref={textInput}
-                    className="editing-caption"
-                    onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
-                    value={localCaption}
-                    onChange={(e) => {
-                      const newValue = e.target.value;
-                      setLocalCaption(newValue);
-                    }}
+                  >
+                    <textarea
+                      rows={1}
+                      style={captionFontSizeStyles}
+                      ref={textInput}
+                      className="editing-caption"
+                      onClick={(e) => e.stopPropagation()} // stopPropagation prevents the navigation to cell studio
+                      value={localCaption}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        setLocalCaption(newValue);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <DynamicTextContainer
+                    onClick={
+                      isCaptionEditable
+                        ? (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                            e.stopPropagation();
+                            setIsEditingCaption((prev) => !prev);
+                          }
+                        : undefined
+                    }
+                    caption={caption}
+                    fontRatio={16}
+                    setConsumersFontSize={setCaptionFontSize}
                   />
-                </div>
-              ) : (
-                <DynamicTextContainer
-                  onClick={
-                    isCaptionEditable
-                      ? (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                          e.stopPropagation();
-                          setIsEditingCaption((prev) => !prev);
-                        }
-                      : undefined
-                  }
-                  caption={caption}
-                  fontRatio={16}
-                  setConsumersFontSize={setCaptionFontSize}
-                />
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </OldCellBorder>
         )}
       </div>
+      {isCaptionEditable && !caption && !isEditingCaption && (
+        <MenuButton
+          className="cell-action-button"
+          onClick={() => setIsEditingCaption(true)}
+        >
+          <MdOutlineAddComment size="2rem" />
+        </MenuButton>
+      )}
       {isEditingCaption && (
         <div className="caption-edit-buttons">
-          <MenuButton
-            accented
-            className="cell-action-button"
-            onClick={() => {
-              // e.stopPropagation();
-              if (!cellUrlId) {
-                console.error("cellUrlId does not exist");
-                endCaptionEdit(true);
-                return;
-              }
+          <div className="button-row">
+            <MenuButton
+              className="cell-action-button"
+              onClick={() => endCaptionEdit(true)}
+            >
+              <ImUndo2 size="1.5rem" />
+            </MenuButton>
+            <MenuButton
+              className="cell-action-button secondary"
+              onClick={() => clearCaption()}
+              noSpinner
+            >
+              <BsTrash3Fill size="1.5rem" />
+            </MenuButton>
+            <MenuButton
+              accented
+              className="cell-action-button"
+              onClick={() => {
+                // e.stopPropagation();
+                if (!cellUrlId) {
+                  console.error("cellUrlId does not exist");
+                  endCaptionEdit(true);
+                  return;
+                }
 
-              dispatch(updateCellCaption(cellUrlId, localCaption));
-              endCaptionEdit();
-            }}
-          >
-            SAVE
-          </MenuButton>
-          <MenuButton
-            className="cell-action-button"
-            onClick={() => endCaptionEdit(true)}
-          >
-            CANCEL
-          </MenuButton>
+                dispatch(updateCellCaption(cellUrlId, localCaption));
+                endCaptionEdit();
+              }}
+            >
+              <TfiSave size="1.5rem" />
+            </MenuButton>
+          </div>
         </div>
       )}
     </>

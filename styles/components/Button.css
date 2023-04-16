@@ -12,52 +12,96 @@
   }
 }
 
+@keyframes buttonPulse {
+  0%,
+  40% {
+    background-color: var(--white);
+    color: var(--black);
+  }
+  100% {
+    background-color: var(--black);
+    color: var(--white);
+  }
+}
+
+@keyframes secondaryButtonPulse {
+  0%,
+  40% {
+    background-color: var(--pinkWhite);
+    color: var(--white);
+  }
+  100% {
+    background-color: var(--black);
+    color: var(--white);
+  }
+}
+
+@keyframes accentedButtonPulse {
+  0%,
+  40% {
+    background-color: var(--pink);
+    color: var(--white);
+  }
+  100% {
+    background-color: var(--black);
+    color: var(--pink);
+  }
+}
+
 .button {
   flex-grow: 1;
-  max-width: 250px;
+  max-width: var(--comicWidth);
   height: 2.75rem;
   margin: 2px auto;
-  background-color: var(--white);
-  color: var(--black);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   user-select: none;
 
+  background-color: var(--white);
+  color: var(--black);
+  animation: buttonPulse ease-in 5s infinite;
+
   &.clickable {
     cursor: pointer;
     touch-action: manipulation;
 
     &:hover {
-      background-color: var(--pinkWhite);
+      background-color: var(--pink);
       color: var(--black);
+      animation: none;
 
       &.disabled {
         background-color: var(--white);
         color: var(--black);
+        animation: none;
       }
     }
 
     &.accented:hover {
-      background-color: var(--pinkWhite);
+      background-color: var(--pink);
       color: var(--black);
+      animation: none;
     }
 
     &.secondary:hover {
       background-color: var(--pink);
       color: var(--black);
+      animation: none;
     }
   }
 
   &.accented {
     background-color: var(--pink);
     color: var(--white);
+    animation: accentedButtonPulse ease-in 3s infinite;
   }
 
   &.secondary {
     background-color: var(--pinkWhite);
-    color: var(--black);
+    color: var(--white);
+    animation: secondaryButtonPulse ease-in 4s infinite;
   }
 
   & .loading {
@@ -68,11 +112,12 @@
   &.disabled {
     opacity: 0.65;
     cursor: not-allowed;
+    animation: none;
   }
 }
 
 .button-row {
-  width: var(--canvasWidth);
+  width: var(--comicWidth);
 
   display: flex;
 
