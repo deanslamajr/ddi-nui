@@ -1,4 +1,6 @@
 import { FC, useMemo, useState } from "react";
+import { BsGearWide } from "react-icons/bs";
+import { TfiGallery } from "react-icons/tfi";
 import type { LinksFunction } from "@remix-run/node";
 import { Outlet, useParams, useNavigate } from "@remix-run/react";
 
@@ -259,12 +261,17 @@ export const ComicStudio: FC<{}> = ({}) => {
       )}
 
       <UnstyledLink href={getExitNavLink()} isRemixLink>
-        <div className="nav-button bottom-left large-icon">🖼️</div>
+        <div className="nav-button bottom-left large-icon">
+          <TfiGallery />
+        </div>
       </UnstyledLink>
 
       {sortedCells.length > 0 && (
-        <div className="nav-button bottom-right accented large-icon">
-          <button onClick={() => setShowComicActionsModal(true)}>⚙️</button>
+        <div
+          className="nav-button bottom-right accented large-icon"
+          onClick={() => setShowComicActionsModal(true)}
+        >
+          <BsGearWide size="2.5rem" />
         </div>
       )}
 

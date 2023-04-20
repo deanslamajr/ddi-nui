@@ -1,27 +1,27 @@
 @keyframes navPulse {
   0%,
-  25% {
+  85% {
     border: 1px solid var(--lightGray);
     background-color: var(--white);
     color: var(--black);
   }
   100% {
-    border: 2px solid var(--black);
-    background-color: var(--black);
-    color: var(--white);
+    border: 1px solid var(--darkGray);
+    background-color: var(--pinkWhite);
+    color: var(--lightGray);
   }
 }
 
 @keyframes accentedNavPulse {
   0%,
-  25% {
+  85% {
     border: 1px solid var(--pink);
     background-color: var(--pink);
     color: var(--white);
   }
   100% {
-    border: 2px solid var(--black);
-    background-color: var(--black);
+    border: 1px solid var(--pinkWhite);
+    background-color: var(--pinkWhite);
     color: var(--pink);
   }
 }
