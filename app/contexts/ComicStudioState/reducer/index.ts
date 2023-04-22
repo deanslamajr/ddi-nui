@@ -13,6 +13,7 @@ import toggleFilter from "./toggleFilter";
 import updateRGBAFilter from "./updateRGBAFilter";
 import updateOpacityFilter from "./updateOpacityFilter";
 import updateCellCaption from "./updateCellCaption";
+import updateBackgroundColor from "./updateBackgroundColor";
 
 import { getCache, setCache, ClientCache } from "~/utils/clientCache";
 
@@ -95,6 +96,8 @@ export const reducer = (
     case "UPDATE_CELL_CAPTION":
       newState = updateCellCaption(state, action);
       break;
+    case "UPDATE_BACKGROUND_COLOR":
+      newState = updateBackgroundColor(state, action);
     default:
       console.warn("StudioState: unknown action has been dispatched!");
   }

@@ -137,3 +137,7 @@
     margin: 0.5rem;
   }
 }
+
+.caption-edit-buttons .button-row {
+  width: var(--comicWidth);
+}

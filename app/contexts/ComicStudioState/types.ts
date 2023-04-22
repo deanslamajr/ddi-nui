@@ -123,6 +123,14 @@ export type UpdateRGBAFilterAction = {
   };
 };
 
+export type UpdateBackgroundColorAction = {
+  type: "UPDATE_BACKGROUND_COLOR";
+  data: {
+    cellUrlId: string;
+    newBackgroundColor: string;
+  };
+};
+
 export type UpdateOpacityFilterAction = {
   type: "UPDATE_OPACITY_FILTER";
   data: {
@@ -149,7 +157,8 @@ export type ComicStudioStateAction =
   | ToggleFilterAction
   | UpdateRGBAFilterAction
   | UpdateOpacityFilterAction
-  | UpdateCellCaptionAction;
+  | UpdateCellCaptionAction
+  | UpdateBackgroundColorAction;
 
 export type ComicStudioStateReducer<T extends ComicStudioStateAction> = (
   comicStudioState: ComicStudioState,

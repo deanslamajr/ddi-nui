@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { MdOutlineAddComment } from "react-icons/md";
 import { TfiSave } from "react-icons/tfi";
 import { BsTrash3Fill } from "react-icons/bs";
-import { MdCancel } from "react-icons/md";
 import { ImUndo2 } from "react-icons/im";
 
 import { getCellImageUrl } from "~/utils/urls";

@@ -1,5 +1,5 @@
 import shortid from "shortid";
-
+import { colord } from "colord";
 import { EMOJI_CONFIG } from "./constants";
 
 import { AllStudioStateVersions, StudioState } from "~/interfaces/studioState";
@@ -29,7 +29,11 @@ const {
   FILTERS_LIST,
 } = EMOJI_CONFIG;
 
-type RequiredProperty<T> = { [P in keyof T]: Required<NonNullable<T[P]>> };
+type RequiredNotNull<T> = {
+  [P in keyof T]: NonNullable<T[P]>;
+};
+
+type RequiredProperty<T> = T & Required<RequiredNotNull<T>>;
 
 export const DEFAULT_STUDIO_STATE: RequiredProperty<StudioState> = {
   activeEmojiId: 1,
@@ -51,7 +55,7 @@ const ERR_MUST_BE_A_HEX_COLOR = "must be a valid hex color string";
 
 export function validateCaption(caption: any) {
   if (typeof caption !== "string") {
-    return DEFAULT_STUDIO_STATE.caption;
+    return DEFAULT_STUDIO_STATE.backgroundColor;
   }
 
   if (caption.length > MAX_CAPTION_LENGTH) {
@@ -100,8 +104,9 @@ export function validateBackgroundColor(hex: any, field: string) {
     return DEFAULT_STUDIO_STATE.backgroundColor;
   }
 
-  const hexRegExp = /^#[0-9A-F]{6}$/i;
-  if (!hexRegExp.test(hex)) {
+  // const hexRegExp = /^#[0-9A-F]{6}$/i;
+  // if (!hexRegExp.test(hex)) {
+  if (!colord(hex).isValid()) {
     console.warn(
       `${STUDIO_STATE_VALIDATION_ERROR}${field} ${ERR_MUST_BE_A_HEX_COLOR}`
     );
