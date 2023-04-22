@@ -104,8 +104,6 @@ export function validateBackgroundColor(hex: any, field: string) {
     return DEFAULT_STUDIO_STATE.backgroundColor;
   }
 
-  // const hexRegExp = /^#[0-9A-F]{6}$/i;
-  // if (!hexRegExp.test(hex)) {
   if (!colord(hex).isValid()) {
     console.warn(
       `${STUDIO_STATE_VALIDATION_ERROR}${field} ${ERR_MUST_BE_A_HEX_COLOR}`
