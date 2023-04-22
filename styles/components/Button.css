@@ -50,7 +50,7 @@
 
 .button {
   flex-grow: 1;
-  max-width: var(--comicWidth);
+  max-width: var(--canvasWidth);
   height: 2.75rem;
   margin: 2px auto;
   display: flex;
@@ -117,7 +117,7 @@
 }
 
 .button-row {
-  width: var(--comicWidth);
+  width: var(--canvasWidth);
 
   display: flex;
 
