@@ -7,6 +7,10 @@ import { SlCursorMove } from "react-icons/sl";
 import { GiPaintBucket, GiResize } from "react-icons/gi";
 import { TbRotate360 } from "react-icons/tb";
 import { MdOutlineAddComment, MdCompareArrows } from "react-icons/md";
+import { ImUndo2 } from "react-icons/im";
+import { BsTrash3Fill } from "react-icons/bs";
+import { RiUserSettingsFill } from "react-icons/ri";
+import { ImCopy } from "react-icons/im";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
@@ -70,13 +74,15 @@ const MainMenu: React.FC<{
   const params = useParams();
   const cellUrlId = params.cellUrlId!;
 
+  const [isEmojiCRUDVisible, setIsEmojiCRUDVisible] = React.useState(false);
+
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
 
   return (
     <>
-      <div className="button-row">
+      <div className="button-row lower-section">
         {/* <MenuButton
           className="cell-studio-menu-button half-width"
           onClick={() => console.log("TODO implement")}
@@ -90,7 +96,7 @@ const MainMenu: React.FC<{
           <GiPaintBucket />
         </MenuButton>
       </div>
-      <div className="button-row">
+      <div className="button-row lower-section">
         <MenuButton
           className="cell-studio-menu-button half-width"
           onClick={onSizeButtonClick}
@@ -124,13 +130,55 @@ const MainMenu: React.FC<{
           className={classNames("cell-studio-menu-button", "half-width", {
             ["unselected-submenu-button"]: currentLowerSectionMode !== "EMOJI",
           })}
-          onClick={() => setCurrentLowerSectionMode("EMOJI")}
+          onClick={() => {
+            if (currentLowerSectionMode === "EMOJI") {
+              setIsEmojiCRUDVisible(true);
+            } else {
+              setCurrentLowerSectionMode("EMOJI");
+            }
+          }}
           noSpinner
         >
           {activeEmojiId && cellStudioState && (
             <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
           )}
         </MenuButton>
+        {isEmojiCRUDVisible && (
+          <div className="emoji-crud-buttons">
+            <MenuButton
+              accented
+              className="cell-action-button"
+              onClick={() => setIsEmojiCRUDVisible(false)}
+            >
+              {activeEmojiId && cellStudioState && (
+                <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
+              )}
+            </MenuButton>
+            <MenuButton
+              className="cell-action-button secondary"
+              onClick={() => console.log("delete emoji!")}
+              noSpinner
+            >
+              <BsTrash3Fill size="1.5rem" />
+            </MenuButton>
+            <MenuButton
+              className="cell-action-button secondary"
+              onClick={() => {
+                console.log("copy emoji!");
+              }}
+            >
+              <ImCopy size="1.5rem" />
+            </MenuButton>
+            <MenuButton
+              className="cell-action-button secondary"
+              onClick={() => {
+                console.log("change emoji!");
+              }}
+            >
+              <RiUserSettingsFill size="1.5rem" />
+            </MenuButton>
+          </div>
+        )}
         <MenuButton
           isSecondary={currentLowerSectionMode === "FILTERS"}
           className={classNames("cell-studio-menu-button", "half-width", {
@@ -144,7 +192,7 @@ const MainMenu: React.FC<{
         </MenuButton>
       </div>
 
-      {currentLowerSectionMode === "EMOJI" ? (
+      {isEmojiCRUDVisible ? null : currentLowerSectionMode === "EMOJI" ? (
         <>
           <MenuButton
             accented

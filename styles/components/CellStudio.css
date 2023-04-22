@@ -110,6 +110,8 @@
 
 .lower-section {
   margin-top: 1rem;
+  /* to allow proper positioning of the emoji crud buttons */
+  position: relative;
 }
 
 .spacer {
@@ -132,4 +134,10 @@
     color: var(--darkGray) !important;
     background-color: transparent !important;
   }
+}
+
+.emoji-crud-buttons {
+  position: absolute;
+  width: 100%;
+  z-index: var(--toptop);
 }
