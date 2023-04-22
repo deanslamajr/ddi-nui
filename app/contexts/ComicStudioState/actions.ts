@@ -10,6 +10,7 @@ import {
   SetActiveEmojiAction,
   ToggleFilterAction,
   UpdateRGBAFilterAction,
+  UpdateBackgroundColorAction,
   UpdateOpacityFilterAction,
   UpdateCellCaptionAction,
 } from "./types";
@@ -209,6 +210,20 @@ export const updateRGBAFilter = ({
   data: {
     cellUrlId,
     newFilterValues,
+  },
+});
+
+export const updateBackgroundColor = ({
+  cellUrlId,
+  newBackgroundColor,
+}: {
+  cellUrlId: string;
+  newBackgroundColor: string;
+}): UpdateBackgroundColorAction => ({
+  type: "UPDATE_BACKGROUND_COLOR",
+  data: {
+    cellUrlId,
+    newBackgroundColor,
   },
 });
 

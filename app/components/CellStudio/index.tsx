@@ -31,6 +31,7 @@ import PositionMenu, { links as positionMenuStylesUrl } from "./PositionMenu";
 import RotationMenu, { links as rotationMenuStylesUrl } from "./RotationMenu";
 import OpacityMenu, { links as opacityMenuStylesUrl } from "./OpacityMenu";
 import RGBAMenu, { links as rGBAMenuStylesUrl } from "./RGBAMenu";
+import CanvasMenu, { links as canvasMenuStylesUrl } from "./CanvasMenu";
 import FlipAndSkewMenu, {
   links as flipAndSkewMenuStylesUrl,
 } from "./FlipAndSkewMenu";
@@ -52,6 +53,7 @@ export const links: LinksFunction = () => {
     ...FiltersMenuStylesUrl(),
     ...opacityMenuStylesUrl(),
     ...rGBAMenuStylesUrl(),
+    ...canvasMenuStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -64,7 +66,8 @@ type Submenu =
   | "ROTATE"
   | "FLIP_AND_SKEW"
   | "OPACITY"
-  | "RGBA";
+  | "RGBA"
+  | "CANVAS";
 
 const CellStudio: React.FC<{}> = ({}) => {
   const navigate = useNavigate();
@@ -122,7 +125,8 @@ const CellStudio: React.FC<{}> = ({}) => {
     currentSubmenu === "ROTATE" ||
     currentSubmenu === "FLIP_AND_SKEW" ||
     currentSubmenu === "OPACITY" ||
-    currentSubmenu === "RGBA";
+    currentSubmenu === "RGBA" ||
+    currentSubmenu === "CANVAS";
 
   return (
     <>
@@ -157,6 +161,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                     onFlipAndSkewButtonClick={() =>
                       setCurrentSubmenu("FLIP_AND_SKEW")
                     }
+                    onCanvasColorButtonClick={() => setCurrentSubmenu("CANVAS")}
                     filtersMenu={
                       <FiltersMenu
                         onOpacityButtonClick={() =>
@@ -192,6 +197,10 @@ const CellStudio: React.FC<{}> = ({}) => {
                   />
                 ) : currentSubmenu === "RGBA" ? (
                   <RGBAMenu
+                    onBackButtonClick={() => setCurrentSubmenu("MAIN")}
+                  />
+                ) : currentSubmenu === "CANVAS" ? (
+                  <CanvasMenu
                     onBackButtonClick={() => setCurrentSubmenu("MAIN")}
                   />
                 ) : null}

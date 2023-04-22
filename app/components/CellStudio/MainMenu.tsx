@@ -4,9 +4,9 @@ import { useParams } from "@remix-run/react";
 import { IoMdPersonAdd, IoIosColorFilter } from "react-icons/io";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { SlCursorMove } from "react-icons/sl";
-import { GiResize } from "react-icons/gi";
+import { GiPaintBucket, GiResize } from "react-icons/gi";
 import { TbRotate360 } from "react-icons/tb";
-import { GrTransaction } from "react-icons/gr";
+import { MdOutlineAddComment, MdCompareArrows } from "react-icons/md";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
@@ -54,6 +54,7 @@ const MainMenu: React.FC<{
   onSizeButtonClick: () => void;
   onRotateButtonClick: () => void;
   onFlipAndSkewButtonClick: () => void;
+  onCanvasColorButtonClick: () => void;
   filtersMenu: React.ReactNode;
 }> = ({
   currentLowerSectionMode,
@@ -63,6 +64,7 @@ const MainMenu: React.FC<{
   onSizeButtonClick,
   onRotateButtonClick,
   onFlipAndSkewButtonClick,
+  onCanvasColorButtonClick,
   filtersMenu,
 }) => {
   const params = useParams();
@@ -74,6 +76,20 @@ const MainMenu: React.FC<{
 
   return (
     <>
+      <div className="button-row">
+        {/* <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={() => console.log("TODO implement")}
+        >
+          <MdOutlineAddComment size="2rem" />
+        </MenuButton> */}
+        <MenuButton
+          className="cell-studio-menu-button half-width"
+          onClick={onCanvasColorButtonClick}
+        >
+          <GiPaintBucket />
+        </MenuButton>
+      </div>
       <div className="button-row">
         <MenuButton
           className="cell-studio-menu-button half-width"
@@ -99,7 +115,7 @@ const MainMenu: React.FC<{
           className="cell-studio-menu-button half-width"
           onClick={onFlipAndSkewButtonClick}
         >
-          <GrTransaction />
+          <MdCompareArrows />
         </MenuButton>
       </div>
       <div className="button-row lower-section">

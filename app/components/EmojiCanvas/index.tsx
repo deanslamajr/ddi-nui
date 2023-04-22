@@ -139,13 +139,25 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
       <Stage width={theme.canvas.width} height={theme.canvas.height}>
         <Layer listening={false}>
           {/* Canvas */}
+          {/* 1st layer is the default color */}
           <Rect
             x={0}
             y={0}
             width={theme.canvas.width}
             height={theme.canvas.height}
-            fill={backgroundColor || DEFAULT_STUDIO_STATE.backgroundColor}
+            fill={DEFAULT_STUDIO_STATE.backgroundColor}
           />
+          {/* 2nd layer is the color user can set */}
+          {/* this color can include transparency */}
+          {backgroundColor && (
+            <Rect
+              x={0}
+              y={0}
+              width={theme.canvas.width}
+              height={theme.canvas.height}
+              fill={backgroundColor}
+            />
+          )}
 
           {/* /**
            * @todo step 3 generating emoji items as images
