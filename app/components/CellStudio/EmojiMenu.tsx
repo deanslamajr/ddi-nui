@@ -70,13 +70,16 @@ const DraggableEmoji: React.FC<{
   const isActive = emoji.id === activeEmojiId;
 
   return (
-    <div ref={setNodeRef}>
+    <div id={emoji.id.toString()} ref={setNodeRef}>
       <div ref={setDraggableNodeRef} {...attributes}>
         <MenuButton
           noSpinner
-          className={classNames("cell-studio-menu-button emoji-menu-button", {
-            ["draggable-is-over-droppable"]: isOver,
-          })}
+          className={classNames(
+            "cell-studio-menu-button emoji-menu-button without-pulse",
+            {
+              ["draggable-is-over-droppable"]: isOver,
+            }
+          )}
         >
           <span
             onClick={(event) => {
@@ -244,7 +247,7 @@ const EmojiMenu: React.FC<{}> = ({}) => {
             <MenuButton
               key={`${emojiBeingDragged.emoji}-${emojiBeingDragged.id}`}
               isSecondary={emojiBeingDragged.id === activeEmojiId}
-              className="cell-studio-menu-button emoji-menu-button drag-overlay"
+              className="cell-studio-menu-button emoji-menu-button drag-overlay without-pulse"
             >
               <span className="quarter-button" />
               <EmojiIcon config={emojiBeingDragged} withHandles />

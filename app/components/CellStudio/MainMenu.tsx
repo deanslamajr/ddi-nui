@@ -131,8 +131,14 @@ const MainMenu: React.FC<{
             ["unselected-submenu-button"]: currentLowerSectionMode !== "EMOJI",
           })}
           onClick={() => {
-            if (currentLowerSectionMode === "EMOJI") {
+            if (isEmojiCRUDVisible) {
+              setIsEmojiCRUDVisible(false);
+            } else if (currentLowerSectionMode === "EMOJI") {
               setIsEmojiCRUDVisible(true);
+              activeEmojiId &&
+                document
+                  .getElementById(activeEmojiId?.toString())
+                  ?.scrollIntoView(false);
             } else {
               setCurrentLowerSectionMode("EMOJI");
             }
@@ -143,46 +149,11 @@ const MainMenu: React.FC<{
             <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
           )}
         </MenuButton>
-        {isEmojiCRUDVisible && (
-          <div className="emoji-crud-buttons">
-            <MenuButton
-              accented
-              className="cell-action-button"
-              onClick={() => setIsEmojiCRUDVisible(false)}
-            >
-              {activeEmojiId && cellStudioState && (
-                <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
-              )}
-            </MenuButton>
-            <MenuButton
-              className="cell-action-button secondary"
-              onClick={() => console.log("delete emoji!")}
-              noSpinner
-            >
-              <BsTrash3Fill size="1.5rem" />
-            </MenuButton>
-            <MenuButton
-              className="cell-action-button secondary"
-              onClick={() => {
-                console.log("copy emoji!");
-              }}
-            >
-              <ImCopy size="1.5rem" />
-            </MenuButton>
-            <MenuButton
-              className="cell-action-button secondary"
-              onClick={() => {
-                console.log("change emoji!");
-              }}
-            >
-              <RiUserSettingsFill size="1.5rem" />
-            </MenuButton>
-          </div>
-        )}
+
         <MenuButton
           isSecondary={currentLowerSectionMode === "FILTERS"}
           className={classNames("cell-studio-menu-button", "half-width", {
-            ["unselected-submenu-button"]:
+            ["unselected-submenu-button without-pulse"]:
               currentLowerSectionMode !== "FILTERS",
           })}
           onClick={() => setCurrentLowerSectionMode("FILTERS")}
@@ -192,8 +163,35 @@ const MainMenu: React.FC<{
         </MenuButton>
       </div>
 
-      {isEmojiCRUDVisible ? null : currentLowerSectionMode === "EMOJI" ? (
+      {currentLowerSectionMode === "EMOJI" ? (
         <>
+          {isEmojiCRUDVisible && (
+            <>
+              <MenuButton
+                className="cell-action-button secondary"
+                onClick={() => console.log("delete emoji!")}
+                noSpinner
+              >
+                <BsTrash3Fill size="1.5rem" />
+              </MenuButton>
+              <MenuButton
+                className="cell-action-button secondary"
+                onClick={() => {
+                  console.log("copy emoji!");
+                }}
+              >
+                <ImCopy size="1.5rem" />
+              </MenuButton>
+              <MenuButton
+                className="cell-action-button secondary"
+                onClick={() => {
+                  console.log("change emoji!");
+                }}
+              >
+                <RiUserSettingsFill size="1.5rem" />
+              </MenuButton>
+            </>
+          )}
           <MenuButton
             accented
             className="cell-studio-menu-button"
@@ -206,6 +204,7 @@ const MainMenu: React.FC<{
       ) : currentLowerSectionMode === "FILTERS" ? (
         filtersMenu
       ) : null}
+      <div className="bottom-spacer" />
     </>
   );
 };

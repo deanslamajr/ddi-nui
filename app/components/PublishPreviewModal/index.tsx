@@ -1,12 +1,11 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
-
+import { FaCheck } from "react-icons/fa";
 import Modal, {
-  CenteredContainer,
   MessageContainer,
   links as modalStylesUrl,
 } from "~/components/Modal";
-import { MenuButton, links as menuButtonStylesUrl } from "~/components/Button";
+import { links as menuButtonStylesUrl } from "~/components/Button";
 import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
@@ -162,35 +161,37 @@ const PublishPreviewModal: React.FC<{
       }}
     />
   ) : (
-    <Modal
-      header={
-        isLoading ? undefined : (
-          <MessageContainer>Publish this comic?</MessageContainer>
-        )
-      }
-      footer={
-        isLoading ? undefined : (
-          <CenteredContainer>
-            <MenuButton accented onClick={() => publish()}>
-              PUBLISH
-            </MenuButton>
-          </CenteredContainer>
-        )
-      }
-      onCancelClick={onCancelClick}
-    >
-      <div className="cells-container">
-        {isLoading ? (
-          <CellWithLoadSpinner
-            percentCompleted={calculatePercentageCompleted()}
-          />
-        ) : (
-          cells.map((cell) => (
-            <PublishPreviewCell key={cell.urlId} cell={cell} />
-          ))
+    <>
+      <Modal
+        fullHeight
+        header={
+          isLoading ? undefined : (
+            <MessageContainer>Publish this comic?</MessageContainer>
+          )
+        }
+        footer={null}
+        onCancelClick={onCancelClick}
+      >
+        <div className="cells-container">
+          {isLoading ? (
+            <CellWithLoadSpinner
+              percentCompleted={calculatePercentageCompleted()}
+            />
+          ) : (
+            cells.map((cell) => (
+              <PublishPreviewCell key={cell.urlId} cell={cell} />
+            ))
+          )}
+        </div>
+        {!isLoading && (
+          <div className="nav-button top-right accented">
+            <button onClick={() => publish()}>
+              <FaCheck size="2rem" />
+            </button>
+          </div>
         )}
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

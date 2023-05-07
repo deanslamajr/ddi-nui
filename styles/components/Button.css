@@ -116,6 +116,10 @@
   }
 }
 
+.without-pulse {
+  animation: none !important;
+}
+
 .button-row {
   width: var(--canvasWidth);
 

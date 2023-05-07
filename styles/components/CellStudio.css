@@ -141,3 +141,7 @@
   width: 100%;
   z-index: var(--toptop);
 }
+
+.bottom-spacer {
+  height: calc(100vh - var(--buttonDiameter) - var(--canvasWidth));
+}
