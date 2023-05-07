@@ -91,6 +91,7 @@ const ThisPagesModal: React.FC<
       className={classNames({ "comic-view-modal": !isError })}
       onCancelClick={returnToParent}
       header={isError && children}
+      fullHeight
     >
       {!isError && children}
     </Modal>

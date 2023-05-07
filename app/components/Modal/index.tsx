@@ -2,6 +2,7 @@ import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
 import { useHotkeys } from "react-hotkeys-hook";
+import { IoMdClose } from "react-icons/io";
 
 import useSafeScroll from "~/hooks/useSafeScroll";
 
@@ -51,7 +52,12 @@ const Modal: React.FC<Props> = ({
   }, []);
 
   return (
-    <div className="background-mask">
+    <div
+      className="background-mask"
+      onClick={(event) =>
+        event.currentTarget === event.target && onCancelClick && onCancelClick()
+      }
+    >
       <div
         className={classNames(className, "modal-container", {
           ["full-height"]: fullHeight,
@@ -76,7 +82,7 @@ const Modal: React.FC<Props> = ({
               onCancelClick && onCancelClick();
             }}
           >
-            ❌
+            <IoMdClose size="2rem" />
           </button>
         </div>
       )}
