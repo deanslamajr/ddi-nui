@@ -3,7 +3,11 @@ import { ComicStudioState } from "./types";
 export const getActiveEmoji = (state: ComicStudioState, cellUrlId: string) => {
   // get cell state
   const cellState = getCellState(state, cellUrlId);
-  if (!cellState || !cellState.studioState) {
+  if (
+    !cellState ||
+    !cellState.studioState ||
+    cellState.studioState.activeEmojiId === null
+  ) {
     return null;
   }
 

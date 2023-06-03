@@ -53,6 +53,14 @@ export type AddEmojiAction = {
   };
 };
 
+export type DeleteEmojiAction = {
+  type: "DELETE_EMOIJ";
+  data: {
+    cellUrlId: string;
+    emojiId?: number;
+  };
+};
+
 export type ResizeEmojiAction = {
   type: "RESIZE_EMOIJ";
   data: {
@@ -149,6 +157,7 @@ export type ComicStudioStateAction =
   | RedoCellAction
   | MoveEmojiAction
   | AddEmojiAction
+  | DeleteEmojiAction
   | ResizeEmojiAction
   | RotateEmojiAction
   | FlipAndSkewEmojiAction

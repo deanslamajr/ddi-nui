@@ -5,6 +5,7 @@ import { getCellState } from "../selectors";
 import { StudioState } from "~/interfaces/studioState";
 import { addNewCellChangeToHistory } from "~/models/cellChange";
 import { createNewEmojiComponentState } from "~/models/emojiConfig";
+import { DEFAULT_STUDIO_STATE } from "~/utils/validators";
 
 const createNewEmojiConfigAndUpdateStudioState = (
   clonedStudioState: StudioState,
@@ -15,12 +16,17 @@ const createNewEmojiConfigAndUpdateStudioState = (
 
   const newEmoji = createNewEmojiComponentState(
     action.data.newEmoji,
-    currentEmojiId
+    typeof currentEmojiId === "number"
+      ? currentEmojiId
+      : DEFAULT_STUDIO_STATE.currentEmojiId
   );
   clonedEmojis[newEmoji.id] = newEmoji;
 
   clonedStudioState.activeEmojiId = newEmoji.id;
-  clonedStudioState.currentEmojiId = currentEmojiId + 1;
+  clonedStudioState.currentEmojiId =
+    typeof currentEmojiId === "number"
+      ? currentEmojiId + 1
+      : DEFAULT_STUDIO_STATE.currentEmojiId + 1;
 };
 
 const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {

@@ -35,8 +35,10 @@ type RequiredNotNull<T> = {
 
 type RequiredProperty<T> = T & Required<RequiredNotNull<T>>;
 
-export const DEFAULT_STUDIO_STATE: RequiredProperty<StudioState> = {
-  activeEmojiId: 1,
+export const DEFAULT_STUDIO_STATE: RequiredProperty<
+  Omit<StudioState, "activeEmojiId">
+> & { activeEmojiId: StudioState["activeEmojiId"] } = {
+  activeEmojiId: null,
   backgroundColor: theme.colors.white,
   caption: "",
   currentEmojiId: 1,
@@ -388,7 +390,7 @@ export function validateStudioState(
   return {
     activeEmojiId: validateId(
       (studioState as StudioState | null)?.activeEmojiId,
-      DEFAULT_STUDIO_STATE.activeEmojiId,
+      DEFAULT_STUDIO_STATE.activeEmojiId!,
       "activeEmojiId"
     ),
     backgroundColor: validateBackgroundColor(

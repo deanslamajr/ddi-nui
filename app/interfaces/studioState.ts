@@ -10,7 +10,7 @@ export type AllStudioStateVersions =
   | OlderStudioStateFromGetComic;
 
 type StudioStateEditorState = {
-  activeEmojiId: number;
+  activeEmojiId: number | null;
   currentEmojiId: number;
 };
 

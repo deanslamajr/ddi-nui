@@ -4,6 +4,7 @@ import undoCellUpdate from "./undoCellUpdate";
 import redoCellUpdate from "./redoCellUpdate";
 import moveEmoji from "./moveEmoji";
 import addEmoji from "./addEmoji";
+import deleteEmoji from "./deleteEmoji";
 import resizeEmoji from "./resizeEmoji";
 import rotateEmoji from "./rotateEmoji";
 import flipAndSkewEmoji from "./flipAndSkewEmoji";
@@ -68,6 +69,9 @@ export const reducer = (
       break;
     case "ADD_EMOIJ":
       newState = addEmoji(state, action);
+      break;
+    case "DELETE_EMOIJ":
+      newState = deleteEmoji(state, action);
       break;
     case "RESIZE_EMOIJ":
       newState = resizeEmoji(state, action);
