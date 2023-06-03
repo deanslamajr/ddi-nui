@@ -1,5 +1,6 @@
 import {
   AddEmojiAction,
+  DeleteEmojiAction,
   MoveEmojiAction,
   RedoCellAction,
   UndoCellAction,
@@ -91,6 +92,20 @@ export const addEmoji = ({
   type: "ADD_EMOIJ",
   data: {
     newEmoji,
+    cellUrlId,
+  },
+});
+
+export const deleteEmoji = ({
+  emojiId,
+  cellUrlId,
+}: {
+  emojiId?: number;
+  cellUrlId: string;
+}): DeleteEmojiAction => ({
+  type: "DELETE_EMOIJ",
+  data: {
+    emojiId,
     cellUrlId,
   },
 });

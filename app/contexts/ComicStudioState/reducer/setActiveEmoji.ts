@@ -2,9 +2,8 @@ import cloneDeep from "fast-clone";
 
 import { ComicStudioStateReducer, SetActiveEmojiAction } from "../types";
 import { getCellState } from "../selectors";
-import { addNewCellChangeToHistory } from "~/models/cellChange";
 
-const addEmoji: ComicStudioStateReducer<SetActiveEmojiAction> = (
+const setActiveEmoji: ComicStudioStateReducer<SetActiveEmojiAction> = (
   state,
   action
 ) => {
@@ -19,7 +18,6 @@ const addEmoji: ComicStudioStateReducer<SetActiveEmojiAction> = (
     }
 
     cellState.studioState.activeEmojiId = action.data.newActiveEmojiId;
-    addNewCellChangeToHistory(cellState);
 
     return clonedState;
   } catch (e) {
@@ -28,4 +26,4 @@ const addEmoji: ComicStudioStateReducer<SetActiveEmojiAction> = (
   }
 };
 
-export default addEmoji;
+export default setActiveEmoji;
