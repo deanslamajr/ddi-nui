@@ -10,7 +10,6 @@ const deleteEmojiConfigAndUpdateStudioState = (
   clonedStudioState: StudioState,
   emojiIdToDelete: number
 ): void => {
-  const currentEmojiId = clonedStudioState.currentEmojiId;
   const clonedEmojis = clonedStudioState.emojis;
 
   delete clonedEmojis[emojiIdToDelete];

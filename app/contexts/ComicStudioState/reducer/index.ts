@@ -5,6 +5,7 @@ import redoCellUpdate from "./redoCellUpdate";
 import moveEmoji from "./moveEmoji";
 import addEmoji from "./addEmoji";
 import deleteEmoji from "./deleteEmoji";
+import copyEmoji from "./copyEmoji";
 import resizeEmoji from "./resizeEmoji";
 import rotateEmoji from "./rotateEmoji";
 import flipAndSkewEmoji from "./flipAndSkewEmoji";
@@ -72,6 +73,9 @@ export const reducer = (
       break;
     case "DELETE_EMOIJ":
       newState = deleteEmoji(state, action);
+      break;
+    case "COPY_EMOIJ":
+      newState = copyEmoji(state, action);
       break;
     case "RESIZE_EMOIJ":
       newState = resizeEmoji(state, action);

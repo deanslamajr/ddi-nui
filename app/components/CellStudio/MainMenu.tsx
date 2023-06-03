@@ -12,7 +12,7 @@ import { RiUserSettingsFill } from "react-icons/ri";
 import { ImCopy } from "react-icons/im";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { deleteEmoji } from "~/contexts/ComicStudioState/actions";
+import { copyEmoji, deleteEmoji } from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
@@ -181,7 +181,7 @@ const MainMenu: React.FC<{
                 className="cell-action-button secondary"
                 onClick={() => {
                   console.log("copy emoji!");
-                  // dispatch(deleteEmoji({ cellUrlId }));
+                  dispatch(copyEmoji({ cellUrlId }));
                   setIsEmojiCRUDVisible(false);
                 }}
                 noSpinner
