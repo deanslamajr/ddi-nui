@@ -1,22 +1,23 @@
 import cloneDeep from "fast-clone";
 
-import { ComicStudioStateReducer, AddEmojiAction } from "../types";
+import { ComicStudioStateReducer, CopyEmojiAction } from "../types";
 import { getCellState } from "../selectors";
 import { StudioState } from "~/interfaces/studioState";
-import { addNewCellChangeToHistory } from "~/models/cellChange";
 import { createNewEmojiComponentState } from "~/models/emojiConfig";
-import { DEFAULT_STUDIO_STATE } from "~/utils/validators";
+import { addNewCellChangeToHistory } from "~/models/cellChange";
 
-const createNewEmojiConfigAndUpdateStudioState = (
+const copyEmojiConfigAndUpdateStudioState = (
   clonedStudioState: StudioState,
-  action: Parameters<ComicStudioStateReducer<AddEmojiAction>>[1]
+  emojiIdToCopy: number
 ): void => {
   const currentEmojiId = clonedStudioState.currentEmojiId;
   const clonedEmojis = clonedStudioState.emojis;
+  const clonedEmojiToCopy = cloneDeep(clonedEmojis[emojiIdToCopy]);
 
   const newEmoji = createNewEmojiComponentState(
-    action.data.newEmoji,
-    currentEmojiId
+    clonedEmojiToCopy.emoji,
+    currentEmojiId,
+    clonedEmojiToCopy
   );
   clonedEmojis[newEmoji.id] = newEmoji;
 
@@ -24,7 +25,7 @@ const createNewEmojiConfigAndUpdateStudioState = (
   clonedStudioState.currentEmojiId = currentEmojiId + 1;
 };
 
-const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
+const copyEmoji: ComicStudioStateReducer<CopyEmojiAction> = (state, action) => {
   try {
     const clonedState = cloneDeep(state);
 
@@ -35,10 +36,17 @@ const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
       );
     }
 
-    cellState.isDirty = true;
-    cellState.hasNewImage = true;
+    const emojiIdToCopy =
+      typeof action.data.emojiId === "number"
+        ? action.data.emojiId
+        : cellState.studioState.activeEmojiId;
+    if (emojiIdToCopy === null) {
+      return state;
+    }
 
-    createNewEmojiConfigAndUpdateStudioState(cellState.studioState, action);
+    cellState.isDirty = true;
+
+    copyEmojiConfigAndUpdateStudioState(cellState.studioState, emojiIdToCopy);
     addNewCellChangeToHistory(cellState);
 
     return clonedState;
@@ -48,4 +56,4 @@ const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
   }
 };
 
-export default addEmoji;
+export default copyEmoji;

@@ -1,5 +1,4 @@
 import cloneDeep from "fast-clone";
-import Konva from "konva";
 
 import { ComicStudioStateReducer, ToggleFilterAction } from "../types";
 import { getActiveEmoji, getCellState } from "../selectors";
