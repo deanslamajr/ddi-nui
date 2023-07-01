@@ -6,6 +6,8 @@ import { CgUndo, CgRedo } from "react-icons/cg";
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
+  addEmoji,
+  moveEmoji,
   redoCellUpdate,
   undoCellUpdate,
 } from "~/contexts/ComicStudioState/actions";
@@ -14,7 +16,6 @@ import {
   getNextCellChangeId,
   getPreviousCellChangeId,
 } from "~/contexts/ComicStudioState/selectors";
-import { addEmoji, moveEmoji } from "~/contexts/ComicStudioState/actions";
 
 import EmojiPicker, {
   links as emojiPickerStylesUrl,

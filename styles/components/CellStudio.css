@@ -103,9 +103,25 @@
   padding: 0.5rem 0;
 }
 
+.top-left-curve {
+  border-top-left-radius: 50px;
+}
+
+.top-right-curve {
+  border-top-right-radius: 50px;
+}
+
 .unselected-submenu-button {
   background-color: var(--darkGray);
   opacity: 0.6;
+
+  &.top-left-curve {
+    border-top-left-radius: 0;
+  }
+
+  &.top-right-curve {
+    border-top-right-radius: 0;
+  }
 }
 
 .lower-section {

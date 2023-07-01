@@ -6,13 +6,16 @@ import { TiArrowBackOutline } from "react-icons/ti";
 import { SlCursorMove } from "react-icons/sl";
 import { GiPaintBucket, GiResize } from "react-icons/gi";
 import { TbRotate360 } from "react-icons/tb";
-import { MdCompareArrows } from "react-icons/md";
+import { MdCompareArrows, MdOutlineFindReplace } from "react-icons/md";
 import { BsTrash3Fill } from "react-icons/bs";
-import { RiUserSettingsFill } from "react-icons/ri";
 import { ImCopy } from "react-icons/im";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { copyEmoji, deleteEmoji } from "~/contexts/ComicStudioState/actions";
+import {
+  addEmoji,
+  copyEmoji,
+  deleteEmoji,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
@@ -127,9 +130,15 @@ const MainMenu: React.FC<{
       <div className="button-row lower-section">
         <MenuButton
           isSecondary={currentLowerSectionMode === "EMOJI"}
-          className={classNames("cell-studio-menu-button", "half-width", {
-            ["unselected-submenu-button"]: currentLowerSectionMode !== "EMOJI",
-          })}
+          className={classNames(
+            "cell-studio-menu-button",
+            "half-width",
+            "top-left-curve",
+            {
+              ["unselected-submenu-button"]:
+                currentLowerSectionMode !== "EMOJI",
+            }
+          )}
           onClick={() => {
             if (isEmojiCRUDVisible) {
               setIsEmojiCRUDVisible(false);
@@ -152,10 +161,18 @@ const MainMenu: React.FC<{
 
         <MenuButton
           isSecondary={currentLowerSectionMode === "FILTERS"}
-          className={classNames("cell-studio-menu-button", "half-width", {
-            ["unselected-submenu-button without-pulse"]:
-              currentLowerSectionMode !== "FILTERS",
-          })}
+          className={classNames(
+            "cell-studio-menu-button",
+            "half-width",
+            "top-right-curve",
+            {
+              ["unselected-submenu-button"]:
+                currentLowerSectionMode !== "FILTERS",
+            },
+            {
+              ["without-pulse"]: currentLowerSectionMode === "FILTERS",
+            }
+          )}
           onClick={() => setCurrentLowerSectionMode("FILTERS")}
           noSpinner
         >
@@ -176,17 +193,22 @@ const MainMenu: React.FC<{
                 noSpinner
               >
                 <BsTrash3Fill size="1.5rem" />
+                {activeEmojiId && cellStudioState && (
+                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
+                )}
               </MenuButton>
               <MenuButton
                 className="cell-action-button secondary"
                 onClick={() => {
-                  console.log("copy emoji!");
                   dispatch(copyEmoji({ cellUrlId }));
                   setIsEmojiCRUDVisible(false);
                 }}
                 noSpinner
               >
                 <ImCopy size="1.5rem" />
+                {activeEmojiId && cellStudioState && (
+                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
+                )}
               </MenuButton>
               <MenuButton
                 className="cell-action-button secondary"
@@ -197,7 +219,10 @@ const MainMenu: React.FC<{
                 }}
                 noSpinner
               >
-                <RiUserSettingsFill size="1.5rem" />
+                <MdOutlineFindReplace size="1.5rem" />
+                {activeEmojiId && cellStudioState && (
+                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
+                )}
               </MenuButton>
             </>
           )}
