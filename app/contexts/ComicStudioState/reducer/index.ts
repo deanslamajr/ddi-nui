@@ -6,6 +6,7 @@ import moveEmoji from "./moveEmoji";
 import addEmoji from "./addEmoji";
 import deleteEmoji from "./deleteEmoji";
 import copyEmoji from "./copyEmoji";
+import changeEmoji from "./changeEmoji";
 import resizeEmoji from "./resizeEmoji";
 import rotateEmoji from "./rotateEmoji";
 import flipAndSkewEmoji from "./flipAndSkewEmoji";
@@ -76,6 +77,9 @@ export const reducer = (
       break;
     case "COPY_EMOIJ":
       newState = copyEmoji(state, action);
+      break;
+    case "CHANGE_EMOIJ":
+      newState = changeEmoji(state, action);
       break;
     case "RESIZE_EMOIJ":
       newState = resizeEmoji(state, action);

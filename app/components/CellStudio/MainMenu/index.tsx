@@ -156,7 +156,8 @@ const MainMenu: React.FC<{
         </MenuButton>
 
         <MenuButton
-          isSecondary={currentLowerSectionMode === "FILTERS"}
+          accented={currentLowerSectionMode === "FILTERS"}
+          isSecondary={currentLowerSectionMode !== "FILTERS"}
           className={classNames(
             "cell-studio-menu-button",
             "half-width",
@@ -166,7 +167,7 @@ const MainMenu: React.FC<{
                 currentLowerSectionMode !== "FILTERS",
             },
             {
-              ["without-pulse"]: currentLowerSectionMode === "FILTERS",
+              ["disabled"]: currentLowerSectionMode === "FILTERS",
             }
           )}
           onClick={() => setCurrentLowerSectionMode("FILTERS")}

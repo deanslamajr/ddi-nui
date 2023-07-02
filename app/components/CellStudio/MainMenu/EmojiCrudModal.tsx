@@ -1,14 +1,13 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
-import Modal, { links as modalStylesUrl } from "~/components/Modal";
 import { MdOutlineFindReplace } from "react-icons/md";
 import { BsTrash3Fill } from "react-icons/bs";
 import { ImCopy } from "react-icons/im";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
-  addEmoji,
+  changeEmoji,
   copyEmoji,
   deleteEmoji,
 } from "~/contexts/ComicStudioState/actions";
@@ -18,6 +17,10 @@ import {
 } from "~/contexts/ComicStudioState/selectors";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
+import EmojiPicker, {
+  links as emojiPickerStylesUrl,
+} from "~/components/EmojiPicker";
+import Modal, { links as modalStylesUrl } from "~/components/Modal";
 
 import { BackMenuButton } from "./index";
 
@@ -27,6 +30,7 @@ export const links: LinksFunction = () => {
   return [
     ...buttonStylesUrl(),
     ...emojiIconStylesUrl(),
+    ...emojiPickerStylesUrl(),
     ...modalStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
@@ -35,6 +39,7 @@ export const links: LinksFunction = () => {
 const EmojiCrudModal: React.FC<{
   closeModal: () => void;
 }> = ({ closeModal: closeModal }) => {
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
   const params = useParams();
   const cellUrlId = params.cellUrlId!;
 
@@ -74,9 +79,7 @@ const EmojiCrudModal: React.FC<{
       <MenuButton
         className="cell-studio-menu-button cell-action-button secondary"
         onClick={() => {
-          console.log("change emoji!");
-          // dispatch(deleteEmoji({ cellUrlId }));
-          closeModal();
+          setShowEmojiPicker(true);
         }}
         noSpinner
       >
@@ -85,6 +88,23 @@ const EmojiCrudModal: React.FC<{
           <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
         )}
       </MenuButton>
+      {showEmojiPicker && (
+        <Modal
+          header={null}
+          footer={null}
+          onCancelClick={() => closeModal()}
+          className="emoji-picker-modal"
+          fullHeight
+        >
+          <EmojiPicker
+            initialValue={""}
+            onSelect={(emoji) => {
+              dispatch(changeEmoji({ cellUrlId, emoji }));
+              closeModal();
+            }}
+          />
+        </Modal>
+      )}
     </>
   );
 };

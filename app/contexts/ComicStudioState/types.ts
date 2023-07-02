@@ -78,6 +78,14 @@ export type ResizeEmojiAction = {
   };
 };
 
+export type ChangeEmojiAction = {
+  type: "CHANGE_EMOIJ";
+  data: {
+    cellUrlId: string;
+    newEmoji: string;
+  };
+};
+
 export type RotateEmojiAction = {
   type: "ROTATE_EMOIJ";
   data: {
@@ -168,6 +176,7 @@ export type ComicStudioStateAction =
   | DeleteEmojiAction
   | CopyEmojiAction
   | ResizeEmojiAction
+  | ChangeEmojiAction
   | RotateEmojiAction
   | FlipAndSkewEmojiAction
   | UpdateEmojisOrderAction

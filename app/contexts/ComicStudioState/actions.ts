@@ -3,6 +3,7 @@ import {
   DeleteEmojiAction,
   CopyEmojiAction,
   MoveEmojiAction,
+  ChangeEmojiAction,
   RedoCellAction,
   UndoCellAction,
   ResizeEmojiAction,
@@ -81,6 +82,22 @@ export const moveEmoji = (
       },
     };
   }
+};
+
+export const changeEmoji = ({
+  cellUrlId,
+  emoji,
+}: {
+  cellUrlId: string;
+  emoji: string;
+}): ChangeEmojiAction => {
+  return {
+    type: "CHANGE_EMOIJ",
+    data: {
+      cellUrlId,
+      newEmoji: emoji,
+    },
+  };
 };
 
 export const addEmoji = ({
