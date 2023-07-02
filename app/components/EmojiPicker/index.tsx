@@ -40,8 +40,6 @@ const filterEmojisBySearch = async (value: string) => {
   return filterNativeEmojis(searchResult);
 };
 
-const emojis = filterNativeEmojis(Object.values(baseEmojiData.emojis));
-
 // from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array#answer-2450976
 function shuffle(array: string[]) {
   let currentIndex = array.length;
@@ -63,7 +61,10 @@ function shuffle(array: string[]) {
   return array;
 }
 
+const unfilteredEmojis = Object.values(baseEmojiData.emojis);
+
 function _shuffleEmojis() {
+  const emojis = filterNativeEmojis(unfilteredEmojis);
   return shuffle(emojis);
 }
 
@@ -73,8 +74,9 @@ const EmojiPicker: FC<{
   initialValue: string;
   onSelect: (emoji: string) => void;
 }> = ({ initialValue, onSelect }) => {
-  const shuffledEmojiSet = useRef(initialEmojiSet);
+  // const shuffledEmojiSet = useRef(initialEmojiSet);
 
+  const [baseEmojiSet, setBaseEmojiSet] = useState(initialEmojiSet);
   const [emojis, setEmojis] = useState(initialEmojiSet);
   const [searchValue, setSearchValue] = useState(initialValue);
 
@@ -82,8 +84,8 @@ const EmojiPicker: FC<{
     const filterEmojis = async () => {
       const emojis: string[] = searchValue
         ? await filterEmojisBySearch(searchValue)
-        : Array.isArray(shuffledEmojiSet.current)
-        ? Array.from(shuffledEmojiSet.current)
+        : Array.isArray(baseEmojiSet)
+        ? Array.from(baseEmojiSet)
         : [];
 
       if (!emojis.find((emoji) => searchValue === emoji)) {
@@ -95,11 +97,11 @@ const EmojiPicker: FC<{
     filterEmojis().then((emojis) => {
       setEmojis(emojis);
     });
-  }, [searchValue]);
+  }, [baseEmojiSet, searchValue]);
 
   const shuffleEmojis = () => {
-    shuffledEmojiSet.current = _shuffleEmojis();
-    setEmojis(shuffledEmojiSet.current);
+    // shuffledEmojiSet.current = ;
+    setEmojis(_shuffleEmojis());
   };
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +112,16 @@ const EmojiPicker: FC<{
     <>
       <div className="emoji-picker-outer-container">
         <div className="emoji-picker-inner-container">
+          <div className="emoji-picker-search-container">
+            <input
+              className="emoji-picker-search-input"
+              type="text"
+              name="search"
+              onChange={handleChange}
+              placeholder="emoji search"
+              value={searchValue}
+            />
+          </div>
           <div className="emoji-picker-emojis-container">
             {emojis.map((emoji) => (
               <span
@@ -120,16 +132,6 @@ const EmojiPicker: FC<{
                 {emoji}
               </span>
             ))}
-          </div>
-          <div className="emoji-picker-search-container">
-            <input
-              className="emoji-picker-search-input"
-              type="text"
-              name="search"
-              onChange={handleChange}
-              placeholder="emoji search"
-              value={searchValue}
-            />
           </div>
         </div>
       </div>

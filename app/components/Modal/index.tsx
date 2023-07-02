@@ -61,6 +61,18 @@ const Modal: React.FC<Props> = ({
           onCancelClick();
       }}
     >
+      {onCancelClick && (
+        <div className="nav-button top-center close-button">
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              onCancelClick && onCancelClick();
+            }}
+          >
+            <IoMdClose size="2rem" />
+          </button>
+        </div>
+      )}
       <div
         className={classNames(className, "modal-container", {
           ["full-height"]: fullHeight,
@@ -78,18 +90,6 @@ const Modal: React.FC<Props> = ({
           <div className="modal-footer empty" />
         ) : null}
       </div>
-      {onCancelClick && (
-        <div className="nav-button top-center close-button">
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              onCancelClick && onCancelClick();
-            }}
-          >
-            <IoMdClose size="2rem" />
-          </button>
-        </div>
-      )}
     </div>
   );
 };

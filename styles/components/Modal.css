@@ -21,6 +21,7 @@
   min-width: 315px;
   overflow: auto;
   border-radius: 2px;
+  z-index: var(--top);
 
   &:last-of-type {
     margin-bottom: 0;
