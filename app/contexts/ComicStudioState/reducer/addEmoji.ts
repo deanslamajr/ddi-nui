@@ -14,10 +14,10 @@ const createNewEmojiConfigAndUpdateStudioState = (
   const currentEmojiId = clonedStudioState.currentEmojiId;
   const clonedEmojis = clonedStudioState.emojis;
 
-  const newEmoji = createNewEmojiComponentState(
-    action.data.newEmoji,
-    currentEmojiId
-  );
+  const newEmoji = createNewEmojiComponentState({
+    emoji: action.data.newEmoji,
+    currentEmojiId,
+  });
   clonedEmojis[newEmoji.id] = newEmoji;
 
   clonedStudioState.activeEmojiId = newEmoji.id;

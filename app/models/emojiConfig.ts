@@ -93,15 +93,21 @@ export const DEFAULT_EMOJI_CONFIG: EmojiConfigSerialized = {
  * CRUD
  */
 
-export function createNewEmojiComponentState(
-  emoji: string,
-  currentEmojiId: number,
-  emojiConfigTemplate?: EmojiConfigSerialized
-): EmojiConfigSerialized {
+export function createNewEmojiComponentState({
+  emoji,
+  currentEmojiId,
+  order,
+  emojiConfigTemplate,
+}: {
+  emoji: string;
+  currentEmojiId: number;
+  order?: number;
+  emojiConfigTemplate?: EmojiConfigSerialized;
+}): EmojiConfigSerialized {
   return {
     ...(emojiConfigTemplate || DEFAULT_EMOJI_CONFIG),
     emoji,
     id: currentEmojiId,
-    order: currentEmojiId,
+    order: typeof order === "number" ? order : currentEmojiId,
   };
 }

@@ -21,7 +21,11 @@ const deleteEmojiConfigAndUpdateStudioState = (
     clonedStudioState.activeEmojiId = null;
     clonedStudioState.currentEmojiId = DEFAULT_STUDIO_STATE.currentEmojiId;
   } else {
-    newActiveEmojiId = clonedEmojisValues[0].id;
+    newActiveEmojiId = clonedEmojisValues[emojiIdToDelete + 1]
+      ? clonedEmojisValues[emojiIdToDelete + 1].id
+      : clonedEmojisValues[emojiIdToDelete - 1]
+      ? clonedEmojisValues[emojiIdToDelete - 1].id
+      : clonedEmojisValues[0].id;
     clonedStudioState.currentEmojiId = newActiveEmojiId;
     clonedStudioState.activeEmojiId = newActiveEmojiId;
   }

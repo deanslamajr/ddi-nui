@@ -6,23 +6,17 @@ import { TiArrowBackOutline } from "react-icons/ti";
 import { SlCursorMove } from "react-icons/sl";
 import { GiPaintBucket, GiResize } from "react-icons/gi";
 import { TbRotate360 } from "react-icons/tb";
-import { MdCompareArrows, MdOutlineFindReplace } from "react-icons/md";
-import { BsTrash3Fill } from "react-icons/bs";
-import { ImCopy } from "react-icons/im";
+import { MdCompareArrows } from "react-icons/md";
 
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import {
-  addEmoji,
-  copyEmoji,
-  deleteEmoji,
-} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
 } from "~/contexts/ComicStudioState/selectors";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { EmojiIcon, links as emojiIconStylesUrl } from "~/components/EmojiIcon";
-import EmojiMenu, { links as emojiMenuStylesUrl } from "./EmojiMenu";
+import EmojiCrudModal from "./EmojiCrudModal";
+import EmojiMenu, { links as emojiMenuStylesUrl } from "../EmojiMenu";
 
 import stylesUrl from "~/styles/components/CellStudio.css";
 import classNames from "classnames";
@@ -83,7 +77,9 @@ const MainMenu: React.FC<{
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
 
-  return (
+  return isEmojiCRUDVisible ? (
+    <EmojiCrudModal closeModal={() => setIsEmojiCRUDVisible(false)} />
+  ) : (
     <>
       <div className="button-row lower-section">
         {/* <MenuButton
@@ -182,50 +178,6 @@ const MainMenu: React.FC<{
 
       {currentLowerSectionMode === "EMOJI" ? (
         <>
-          {isEmojiCRUDVisible && (
-            <>
-              <MenuButton
-                className="cell-action-button secondary"
-                onClick={() => {
-                  dispatch(deleteEmoji({ cellUrlId }));
-                  setIsEmojiCRUDVisible(false);
-                }}
-                noSpinner
-              >
-                <BsTrash3Fill size="1.5rem" />
-                {activeEmojiId && cellStudioState && (
-                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
-                )}
-              </MenuButton>
-              <MenuButton
-                className="cell-action-button secondary"
-                onClick={() => {
-                  dispatch(copyEmoji({ cellUrlId }));
-                  setIsEmojiCRUDVisible(false);
-                }}
-                noSpinner
-              >
-                <ImCopy size="1.5rem" />
-                {activeEmojiId && cellStudioState && (
-                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
-                )}
-              </MenuButton>
-              <MenuButton
-                className="cell-action-button secondary"
-                onClick={() => {
-                  console.log("change emoji!");
-                  // dispatch(deleteEmoji({ cellUrlId }));
-                  setIsEmojiCRUDVisible(false);
-                }}
-                noSpinner
-              >
-                <MdOutlineFindReplace size="1.5rem" />
-                {activeEmojiId && cellStudioState && (
-                  <EmojiIcon config={cellStudioState.emojis[activeEmojiId]} />
-                )}
-              </MenuButton>
-            </>
-          )}
           <MenuButton
             accented
             className="cell-studio-menu-button"
@@ -233,7 +185,7 @@ const MainMenu: React.FC<{
           >
             <IoMdPersonAdd />
           </MenuButton>
-          <EmojiMenu />
+          <EmojiMenu onActiveEmojiClick={() => setIsEmojiCRUDVisible(true)} />
         </>
       ) : currentLowerSectionMode === "FILTERS" ? (
         filtersMenu
