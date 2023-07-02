@@ -5,6 +5,7 @@ import { EmojiConfigSerialized, EmojiRef } from "~/models/emojiConfig";
 import {
   getKonvaConfigFromEmojiConfig,
   getOffsetsFromTextRef,
+  PIXEL_RATIO,
 } from "~/utils/konva";
 import { theme } from "~/utils/stylesTheme";
 
@@ -36,8 +37,8 @@ const KonvaEmoji: React.FC<{
     if (useCache && emojiCacheRef.current) {
       emojiCacheRef.current.cache({
         offset: 100,
-        pixelRatio: 2,
-        imageSmoothingEnabled: true,
+        pixelRatio: PIXEL_RATIO,
+        // imageSmoothingEnabled: true,
       });
     }
   }, [emojiConfig, useCache]);

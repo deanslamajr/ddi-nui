@@ -13,6 +13,8 @@ import { sortByOrder } from "~/utils/sortCells";
  **
  */
 
+export const PIXEL_RATIO = 1;
+
 export type KonvaFilters = {
   RGBA: typeof Konva.Filters["RGBA"];
   BLUR: typeof Konva.Filters["Blur"];
@@ -124,7 +126,7 @@ export const generateCellImage = (
 
     emoji.cache({
       offset: 100, // to account for larger sized emojis
-      pixelRatio: 2,
+      pixelRatio: PIXEL_RATIO,
       // drawBorder: true, // set 'true' for debugging coverage of cache
     });
     layer.add(emoji);
@@ -133,7 +135,7 @@ export const generateCellImage = (
   return new Promise((resolve, reject) => {
     try {
       stage.toBlob({
-        pixelRatio: 2,
+        pixelRatio: PIXEL_RATIO,
         quality: 1,
         callback: (blob) => {
           if (!blob) {
