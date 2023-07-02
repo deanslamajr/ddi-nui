@@ -54,9 +54,12 @@ const Modal: React.FC<Props> = ({
   return (
     <div
       className="background-mask"
-      onClick={(event) =>
-        event.currentTarget === event.target && onCancelClick && onCancelClick()
-      }
+      onClick={(event) => {
+        event.stopPropagation();
+        event.currentTarget === event.target &&
+          onCancelClick &&
+          onCancelClick();
+      }}
     >
       <div
         className={classNames(className, "modal-container", {
@@ -78,7 +81,8 @@ const Modal: React.FC<Props> = ({
       {onCancelClick && (
         <div className="nav-button top-center close-button">
           <button
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               onCancelClick && onCancelClick();
             }}
           >

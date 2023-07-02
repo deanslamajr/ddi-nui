@@ -112,7 +112,9 @@ const DraggableEmoji: React.FC<{
   );
 };
 
-const EmojiMenu: React.FC<{}> = ({}) => {
+const EmojiMenu: React.FC<{
+  onActiveEmojiClick?: () => void;
+}> = ({ onActiveEmojiClick }) => {
   const params = useParams();
   const cellUrlId = params.cellUrlId!;
 
@@ -238,7 +240,13 @@ const EmojiMenu: React.FC<{}> = ({}) => {
               emoji={emoji}
               key={`${emoji.emoji}-${emoji.id}-droppable`}
               dragDropId={emoji.id.toString()}
-              onActiveEmojiSelect={updateActiveEmoji}
+              onActiveEmojiSelect={(newActiveEmojiId) => {
+                if (activeEmojiId === emoji.id && onActiveEmojiClick) {
+                  onActiveEmojiClick();
+                } else {
+                  updateActiveEmoji(newActiveEmojiId);
+                }
+              }}
             />
           ))}
         </div>
