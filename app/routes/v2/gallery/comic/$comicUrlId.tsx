@@ -13,6 +13,7 @@ import {
   useNavigate,
 } from "@remix-run/react";
 import classNames from "classnames";
+import { TfiPencilAlt } from "react-icons/tfi";
 
 import Modal, {
   MessageContainer,
@@ -164,13 +165,13 @@ export default function ComicViewRoute() {
         </div>
         <Outlet />
         {comic.userCanEdit && (
-          <div className="nav-button bottom-right">
+          <div className="nav-button top-right">
             <button
               onClick={() =>
                 navigate(DDI_APP_PAGES.comicStudio({ comicUrlId }))
               }
             >
-              ✍️
+              <TfiPencilAlt />
             </button>
           </div>
         )}

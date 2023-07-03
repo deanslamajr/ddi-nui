@@ -1,5 +1,6 @@
 import React from "react";
-
+import { TfiPencilAlt } from "react-icons/tfi";
+import { MdLibraryAdd } from "react-icons/md";
 import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 
@@ -41,7 +42,10 @@ export default function CreateNavButton({}: Props) {
         className="nav-button bottom-right accented large-icon"
         onClick={onClick}
       >
-        🎨
+        <div className="add-comic-nav-button">
+          <TfiPencilAlt className="create-icon" />
+          <MdLibraryAdd className="add-icon" size="1.5rem" />
+        </div>
       </div>
       {showDraftsModal && (
         <DraftsModal

@@ -5,6 +5,10 @@
   background: var(--white);
 
   white-space: pre-wrap;
+  /* max-width should never exceed comic width
+     including a .3rem padding on each side
+  */
+  max-width: calc(var(--comicWidth) - 2 * 0.3rem);
 }
 
 .dynamic-text-container.preview {

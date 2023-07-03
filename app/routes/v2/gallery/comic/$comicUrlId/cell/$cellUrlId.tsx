@@ -62,7 +62,7 @@ export default function ComicViewRoute() {
   }, []);
 
   return (
-    <>
+    <div>
       <MenuButton
         className="cell-action-button"
         onClick={() =>
@@ -80,6 +80,6 @@ export default function ComicViewRoute() {
       >
         COPY CELL
       </MenuButton>
-    </>
+    </div>
   );
 }

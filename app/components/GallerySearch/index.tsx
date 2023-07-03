@@ -1,4 +1,5 @@
 import React, { createContext, FC, PropsWithChildren, useState } from "react";
+import { BsSearch } from "react-icons/bs";
 import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 import classNames from "classnames";
@@ -81,11 +82,13 @@ export const GallerySearchNavButton: FC<{}> = ({}) => {
           setShowGallerySearchModal && setShowGallerySearchModal(true)
         }
       >
-        {emojiFilters.length > 0
-          ? emojiFilters[0]
-          : captionFilters.length > 0
-          ? captionFilters[0]
-          : "🔎"}
+        {emojiFilters.length > 0 ? (
+          emojiFilters[0]
+        ) : captionFilters.length > 0 ? (
+          captionFilters[0]
+        ) : (
+          <BsSearch />
+        )}
       </button>
     </div>
   ) : null;
