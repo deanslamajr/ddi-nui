@@ -75,12 +75,13 @@ export default function CopyFromComicRoute() {
   return (
     <Modal
       fullHeight
-      className="copy-from-comic-modal"
+      // className="copy-from-comic-modal"
       header={
         isLoadingComic ? undefined : (
           <MessageContainer>Pick a Cell to Copy</MessageContainer>
         )
       }
+      footer={null}
       onCancelClick={returnToParent}
     >
       <CellImageProvider>

@@ -70,8 +70,9 @@ export default function IndexRoute() {
             </MessageContainer>
           </>
         }
+        footer={null}
         onCancelClick={returnToParent}
-        className="within-modal"
+        className="copy-from-comic-modal"
       >
         <Gallery
           data={data}

@@ -6,19 +6,12 @@
   padding-bottom: 1.5rem;
 }
 
-.cells-container {
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 100%;
-  margin: 0;
-}
-
-.cell-container {
+/* .cell-container {
   display: flex;
   justify-content: center;
   margin: auto;
   cursor: pointer;
-}
+} */
 
 @media (max-width: 599px) {
   .copy-from-comic-modal {

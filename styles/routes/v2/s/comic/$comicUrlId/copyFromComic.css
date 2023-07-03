@@ -1,3 +1,5 @@
-.within-modal {
-  width: 100%;
+.copy-from-comic-modal {
+  & .modal-header {
+    position: fixed;
+  }
 }

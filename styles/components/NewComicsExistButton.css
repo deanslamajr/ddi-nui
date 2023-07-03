@@ -12,11 +12,6 @@
   }
 }
 
-/* This is to hide strange NEW emoji whitespace text */
-.nav-button.accented:hover {
-  color: var(--black);
-}
-
 .nav-button button {
   font-size: 2.5rem;
 }

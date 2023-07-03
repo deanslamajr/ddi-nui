@@ -24,6 +24,12 @@ export const MessageContainer: React.FC<
   <div className={classNames("message-container", className)}>{children}</div>
 );
 
+export const CellsContainer: React.FC<
+  React.PropsWithChildren<{ className?: string }>
+> = ({ children, className }) => (
+  <div className={classNames("cells-container", className)}>{children}</div>
+);
+
 export type Props = React.PropsWithChildren<{
   className?: string;
   footer?: React.ReactNode;
@@ -62,7 +68,7 @@ const Modal: React.FC<Props> = ({
       }}
     >
       {onCancelClick && (
-        <div className="nav-button top-center close-button">
+        <div className="nav-button top-left close-button">
           <button
             onClick={(event) => {
               event.stopPropagation();
