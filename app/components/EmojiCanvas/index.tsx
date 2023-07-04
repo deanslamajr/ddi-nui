@@ -97,12 +97,12 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
 
   const outlineConfig = useMemo(() => {
     if (
-      !activeEmojiConfig?.x ||
-      !activeEmojiConfig?.y ||
-      !activeEmojiConfig?.scaleX ||
-      !activeEmojiConfig?.scaleY ||
-      !activeEmojiConfig?.rotation ||
-      !activeEmojiConfig?.size
+      typeof activeEmojiConfig?.x !== "number" ||
+      typeof activeEmojiConfig?.y !== "number" ||
+      typeof activeEmojiConfig?.scaleX !== "number" ||
+      typeof activeEmojiConfig?.scaleY !== "number" ||
+      typeof activeEmojiConfig?.rotation !== "number" ||
+      typeof activeEmojiConfig?.size !== "number"
     ) {
       return null;
     }
