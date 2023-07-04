@@ -2,7 +2,6 @@ import { FC, useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 import classNames from "classnames";
-import { MdOutlineAddComment } from "react-icons/md";
 import { TfiSave } from "react-icons/tfi";
 import { BsTrash3Fill } from "react-icons/bs";
 import { ImUndo2 } from "react-icons/im";
@@ -17,17 +16,19 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import CellActions, { links as cellActionsStylesUrl } from "./CellActions";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
 import { updateCellCaption } from "~/contexts/ComicStudioState/actions";
-import stylesUrl from "~/styles/components/Cell.css";
 import { StudioState } from "~/interfaces/studioState";
+import stylesUrl from "~/styles/components/Cell.css";
 
 export const links: LinksFunction = () => {
   return [
     ...dynamicTextContainerStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...buttonStylesUrl(),
+    ...cellActionsStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -90,9 +91,11 @@ const Cell: FC<
     cellWidth?: string;
     containerWidth?: string;
     isCaptionEditable?: boolean;
+    onAddCellClick?: () => void;
     onClick?: () => void;
     removeBorders?: boolean;
     schemaVersion: number;
+    showAddCellButton?: boolean;
   } & (
     | {
         imageUrl: string;
@@ -111,9 +114,11 @@ const Cell: FC<
     cellWidth,
     containerWidth,
     isCaptionEditable,
+    onAddCellClick,
     onClick,
     removeBorders,
     schemaVersion,
+    showAddCellButton,
   } = props;
 
   const [_comicStudioState, dispatch] = useComicStudioState();
@@ -242,13 +247,13 @@ const Cell: FC<
           </OldCellBorder>
         )}
       </div>
-      {isCaptionEditable && !caption && !isEditingCaption && (
-        <MenuButton
-          className="cell-action-button"
-          onClick={() => setIsEditingCaption(true)}
-        >
-          <MdOutlineAddComment size="2rem" />
-        </MenuButton>
+      {!isEditingCaption && (
+        <CellActions
+          showAddCaptionButton={Boolean(isCaptionEditable && !caption)}
+          showAddCellButton={Boolean(showAddCellButton)}
+          onAddCellClick={onAddCellClick}
+          onEditCaptionClick={() => setIsEditingCaption(true)}
+        />
       )}
       {isEditingCaption && (
         <div className="caption-edit-buttons">

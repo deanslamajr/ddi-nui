@@ -3,7 +3,6 @@ import { useNavigate } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
 import Modal, {
-  CenteredContainer,
   links as modalStylesUrl,
   MessageContainer,
 } from "~/components/Modal";
@@ -11,7 +10,7 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import Cell, { links as cellStylesUrl } from "~/components/Cell";
-import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
+import AddComicNavButton from "../CreateNavButton/AddComicNavButton";
 import {
   ComicStudioStateProvider,
   links as comicStudioStateProviderStylesUrl,
@@ -29,7 +28,6 @@ import stylesUrl from "~/styles/components/DraftsModal.css";
 
 export const links: LinksFunction = () => {
   return [
-    ...buttonStylesUrl(),
     ...modalStylesUrl(),
     ...cellWithLoadSpinnerStylesUrl(),
     ...cellStylesUrl(),
@@ -128,40 +126,42 @@ const DraftsModal: React.FC<{
   draftComics: HydratedComic[];
   onCancelClick: () => void;
 }> = ({ draftComics, onCancelClick }) => {
+  const navigate = useNavigate();
   const [selectedComicUrlId, setSelectedComicUrlId] = React.useState<
     string | null
   >(null);
   return (
-    <Modal
-      header={<MessageContainer>Drafts</MessageContainer>}
-      footer={
-        <CenteredContainer>
-          <MenuButton
-            accented={true}
-            className="add-cell-button"
-            onClick={() => (location.href = DDI_APP_PAGES.comicStudio())}
-          >
-            CREATE NEW COMIC
-          </MenuButton>
-        </CenteredContainer>
-      }
-      onCancelClick={onCancelClick}
-    >
-      <div className="cells-container">
-        {draftComics.map((draftComic) =>
-          selectedComicUrlId === draftComic.urlId ? (
-            <CellWithLoadSpinner key={`${draftComic.urlId}-loader`} />
-          ) : (
-            <DraftComicPreview
-              key={draftComic.urlId}
-              comic={draftComic}
-              selectedComicUrlId={selectedComicUrlId}
-              onClick={setSelectedComicUrlId}
-            />
-          )
-        )}
-      </div>
-    </Modal>
+    <>
+      <Modal
+        header={<MessageContainer>Drafts</MessageContainer>}
+        footer={null}
+        onCancelClick={onCancelClick}
+        fullHeight
+      >
+        <div className="cells-container">
+          {draftComics.map((draftComic) =>
+            selectedComicUrlId === draftComic.urlId ? (
+              <CellWithLoadSpinner key={`${draftComic.urlId}-loader`} />
+            ) : (
+              <DraftComicPreview
+                key={draftComic.urlId}
+                comic={draftComic}
+                selectedComicUrlId={selectedComicUrlId}
+                onClick={setSelectedComicUrlId}
+              />
+            )
+          )}
+        </div>
+        <AddComicNavButton
+          location="top-right"
+          onClick={() => {
+            navigate(DDI_APP_PAGES.comicStudio(), {
+              state: { scroll: false },
+            });
+          }}
+        />
+      </Modal>
+    </>
   );
 };
 

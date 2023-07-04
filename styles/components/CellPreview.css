@@ -10,4 +10,8 @@
 .cell-preview-container {
   /* needed to help position caption edit buttons relative to the preview cell */
   position: relative;
+
+  .button-row {
+    margin: auto;
+  }
 }
