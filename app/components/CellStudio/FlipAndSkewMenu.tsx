@@ -13,10 +13,14 @@ import { EMOJI_CONFIG } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import { flipAndSkewEmoji } from "~/contexts/ComicStudioState/actions";
+import {
+  flipAndSkewEmoji,
+  moveEmoji,
+} from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getEmojiPosition,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -51,12 +55,9 @@ const FlipAndSkewMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
 
-  const [state, setState] = React.useState<{
-    localSkew: { x: number; y: number };
-    localScale: { x: number; y: number };
-    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
-  } | null>(() => {
+  const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
       return null;
     }
@@ -69,7 +70,19 @@ const FlipAndSkewMenu: React.FC<{
       localScale: { x: activeEmoji.scaleX, y: activeEmoji.scaleY },
       localEmojiConfigs: clonedEmojiConfigs,
     };
+  };
+
+  const [state, setState] = React.useState<{
+    localSkew: { x: number; y: number };
+    localScale: { x: number; y: number };
+    localEmojiConfigs: Record<string, EmojiConfigSerialized>;
+  } | null>(() => {
+    return renderState();
   });
+
+  React.useEffect(() => {
+    setState(renderState());
+  }, [emojiPosition?.x, emojiPosition?.y]);
 
   const skewLocalEmoji = (
     newSkew: number,
@@ -149,6 +162,31 @@ const FlipAndSkewMenu: React.FC<{
     onBackButtonClick();
   };
 
+  const handleDragEnd = ({
+    xDiff,
+    yDiff,
+  }: {
+    xDiff: number;
+    yDiff: number;
+  }): void => {
+    dispatch(
+      flipAndSkewEmoji({
+        newSkew: state!.localSkew,
+        newScale: state!.localScale,
+        cellUrlId,
+      })
+    );
+    dispatch(
+      moveEmoji({
+        diff: {
+          x: xDiff,
+          y: yDiff,
+        },
+        cellUrlId,
+      })
+    );
+  };
+
   return (
     <>
       {cellStudioState && state && (
@@ -156,7 +194,8 @@ const FlipAndSkewMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
-          isDraggable={false}
+          isDraggable
+          handleDragEnd={handleDragEnd}
         />
       )}
       <BackMenuButton onBackButtonClick={saveAndGoBack} />
