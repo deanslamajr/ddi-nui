@@ -1,11 +1,10 @@
 import React from "react";
-import { TfiPencilAlt } from "react-icons/tfi";
-import { MdLibraryAdd } from "react-icons/md";
 import type { LinksFunction } from "@remix-run/node";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 import { HydratedComic, getDirtyComics } from "~/utils/clientCache/comic";
+import AddComicNavButton from "./AddComicNavButton";
 
 import DraftsModal, {
   links as draftsModalStylesUrl,
@@ -38,15 +37,7 @@ export default function CreateNavButton({}: Props) {
 
   return (
     <>
-      <div
-        className="nav-button bottom-right accented large-icon"
-        onClick={onClick}
-      >
-        <div className="add-comic-nav-button">
-          <TfiPencilAlt className="create-icon" />
-          <MdLibraryAdd className="add-icon" size="1.5rem" />
-        </div>
-      </div>
+      <AddComicNavButton location="bottom-right" onClick={onClick} />
       {showDraftsModal && (
         <DraftsModal
           draftComics={draftComics}

@@ -32,56 +32,52 @@ const defaultCellWidth = `${(1 - SIDE_BUTTONS_SPACER) * theme.layout.width}px`;
 const CellPreview: React.FC<{
   cellUrlId: string;
   cellWidth?: string;
-  isButtonIcon?: boolean;
+  onAddCellClick: () => void;
   onCellClick?: (cell: CellFromClientCache) => void;
+  showAddCellButton: boolean;
 }> = ({
   cellUrlId,
   cellWidth = defaultCellWidth,
-  isButtonIcon,
+  onAddCellClick,
   onCellClick,
+  showAddCellButton,
 }) => {
   const [comicStudioState] = useComicStudioState();
   const cell = getCellState(comicStudioState, cellUrlId);
 
   const { imageUrl } = useCellImageGenerator(cell?.studioState || null);
 
-  return cell && imageUrl ? (
-    isButtonIcon ? (
-      <Cell
-        clickable
-        className="cell-preview-as-icon"
-        imageUrl={imageUrl}
-        isImageUrlAbsolute
-        schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-        cellWidth={cellWidth}
-        containerWidth={cellWidth}
-      />
-    ) : (
-      <>
-        <div
-          className="cell-preview-container"
-          onClick={() => onCellClick && onCellClick(cell)}
-        >
-          {cell.isDirty && (
-            <div className="unpublished-changes">Unpublished Changes</div>
-          )}
-          <Cell
-            clickable
-            cellUrlId={cell.urlId}
-            className="cell-preview-as-studio-cell"
-            imageUrl={imageUrl}
-            isCaptionEditable
-            isImageUrlAbsolute
-            schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
-            caption={cell.studioState?.caption || ""}
-            cellWidth={cellWidth}
-            containerWidth={cellWidth}
-          />
-        </div>
-      </>
-    )
-  ) : isButtonIcon ? null : (
-    <CellWithLoadSpinner />
+  return (
+    <>
+      {cell && imageUrl ? (
+        <>
+          <div
+            className="cell-preview-container"
+            onClick={() => onCellClick && onCellClick(cell)}
+          >
+            {cell.isDirty && (
+              <div className="unpublished-changes">Unpublished Changes</div>
+            )}
+            <Cell
+              clickable
+              cellUrlId={cell.urlId}
+              className="cell-preview-as-studio-cell"
+              imageUrl={imageUrl}
+              isCaptionEditable
+              isImageUrlAbsolute
+              schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+              caption={cell.studioState?.caption || ""}
+              cellWidth={cellWidth}
+              containerWidth={cellWidth}
+              showAddCellButton={showAddCellButton}
+              onAddCellClick={onAddCellClick}
+            />
+          </div>
+        </>
+      ) : (
+        <CellWithLoadSpinner />
+      )}
+    </>
   );
 };
 

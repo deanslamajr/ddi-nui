@@ -14,7 +14,6 @@ import { MAX_DIRTY_CELLS } from "~/utils/constants";
 import { isDraftId } from "~/utils/draftId";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 
-import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import UnstyledLink, {
   links as unstyledLinkStylesUrl,
 } from "~/components/UnstyledLink";
@@ -46,7 +45,6 @@ export const links: LinksFunction = () => {
     ...comicActionsModalStylesUrl(),
     ...publishPreviewModalStylesUrl(),
     ...reachedDirtyCellLimitModalStylesUrl(),
-    ...buttonStylesUrl(),
     { rel: "stylesheet", href: stylesUrl },
   ];
 };
@@ -182,31 +180,20 @@ export const ComicStudio: FC<{}> = ({}) => {
   const sortedCells = getCellsFromState();
 
   const renderedComicPreview = useMemo(() => {
-    return sortedCells.map((cell) => (
+    return sortedCells.map((cell, index) => (
       <CellPreview
         key={cell.urlId}
         cellUrlId={cell.urlId}
+        onAddCellClick={onAddCellClick}
         onCellClick={handleCellClick}
+        showAddCellButton={index === sortedCells.length - 1}
       />
     ));
   }, []);
 
   return (
     <>
-      <div className="outer-container">
-        <>
-          {renderedComicPreview}
-          {sortedCells.length > 0 && (
-            <MenuButton
-              accented={true}
-              className="add-cell-button"
-              onClick={() => onAddCellClick()}
-            >
-              +
-            </MenuButton>
-          )}
-        </>
-      </div>
+      <div className="outer-container">{renderedComicPreview}</div>
 
       {showAddCellModal && (
         <AddCellModal

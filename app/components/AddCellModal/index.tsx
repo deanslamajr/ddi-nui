@@ -37,11 +37,11 @@ const AddCellModal: React.FC<{
 }) => {
   return (
     <Modal
+      fullHeight
       className="add-cell-modal"
       header={<Message>{titleOverride || "Add a New Cell"}</Message>}
       footer={
         <>
-          <div className="description">choose a starter template</div>
           <CenteredContainer>
             <MenuButton onClick={onAddCellFromNewClick}>EMPTY</MenuButton>
           </CenteredContainer>
@@ -62,7 +62,9 @@ const AddCellModal: React.FC<{
         </>
       }
       onCancelClick={onCancelClick}
-    ></Modal>
+    >
+      <div className="description">choose a starter template</div>
+    </Modal>
   );
 };
 
