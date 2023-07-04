@@ -57,7 +57,7 @@ const ERR_MUST_BE_A_HEX_COLOR = "must be a valid hex color string";
 
 export function validateCaption(caption: any) {
   if (typeof caption !== "string") {
-    return DEFAULT_STUDIO_STATE.backgroundColor;
+    return DEFAULT_STUDIO_STATE.caption;
   }
 
   if (caption.length > MAX_CAPTION_LENGTH) {
