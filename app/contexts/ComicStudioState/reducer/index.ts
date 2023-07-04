@@ -42,11 +42,15 @@ const persistStateToClientCache = (comicStudioState: ComicStudioState) => {
   };
 
   const prevCache = getCache();
+
   const comics = prevCache.comics;
   comics[comic.urlId] = comic;
 
   const clientCache: ClientCache = {
-    cells,
+    cells: {
+      ...prevCache.cells,
+      ...cells,
+    },
     comics,
   };
 
