@@ -1,6 +1,6 @@
 @keyframes navPulse {
   0%,
-  85% {
+  92% {
     border: 1px solid var(--lightGray);
     background-color: var(--white);
     color: var(--black);
@@ -14,7 +14,7 @@
 
 @keyframes accentedNavPulse {
   0%,
-  85% {
+  92% {
     border: 1px solid var(--pink);
     background-color: var(--pink);
     color: var(--white);
@@ -30,7 +30,7 @@
   border: 1px solid var(--lightGray);
   background-color: var(--white);
   color: var(--black);
-  animation: navPulse ease-in 3s infinite;
+  animation: navPulse ease-in 6s infinite;
 
   cursor: pointer;
   z-index: var(--top);
@@ -70,7 +70,7 @@
   background-color: var(--pink);
   border: 1px solid var(--pink);
   color: var(--white);
-  animation: accentedNavPulse ease-in 2s infinite;
+  animation: accentedNavPulse ease-in 4s infinite;
 }
 
 .nav-button.accented:hover {

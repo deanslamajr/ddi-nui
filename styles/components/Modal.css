@@ -17,14 +17,13 @@
   /* always allow space for top and bottom navbutton, each w/ top & bottom margins */
   max-height: calc(100% - (2 * (var(--buttonDiameter) + (2 * 0.5rem))));
   margin-top: calc(var(--buttonDiameter) + (2 * 0.5rem));
-  width: 100%;
   overflow: auto;
   border-radius: 2px;
   z-index: var(--top);
 
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   background-color: transparent;
 
   &:last-of-type {
@@ -33,7 +32,6 @@
 }
 
 .modal-container.full-height {
-  height: 100%;
   max-height: calc(100% - (var(--buttonDiameter) + (2 * 0.5rem)));
   margin-bottom: 0;
 }
