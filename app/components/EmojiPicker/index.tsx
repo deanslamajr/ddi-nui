@@ -1,6 +1,7 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import type { LinksFunction } from "@remix-run/node";
 import baseEmojiData from "@emoji-mart/data";
+import { BsShuffle } from "react-icons/bs";
 // @ts-ignore
 import { init, SearchIndex } from "emoji-mart";
 
@@ -137,7 +138,9 @@ const EmojiPicker: FC<{
       </div>
 
       <div className="nav-button top-right">
-        <button onClick={() => shuffleEmojis()}>🔀</button>
+        <button onClick={() => shuffleEmojis()}>
+          <BsShuffle size="2rem" />
+        </button>
       </div>
     </>
   );

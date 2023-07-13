@@ -1,22 +1,6 @@
-/* .comic-view-modal {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  background-color: transparent;
-} */
-
 .comic-view-modal .modal-footer.empty {
   padding: 0;
 }
-
-/* .cell-container {
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-  margin: 1px;
-  width: 100%;
-} */
 
 .cell-container.not-selected {
   opacity: 0.5;

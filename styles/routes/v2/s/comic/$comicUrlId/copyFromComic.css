@@ -1,4 +1,6 @@
 .copy-from-comic-modal {
+  width: 100%;
+
   & .modal-header {
     position: fixed;
   }

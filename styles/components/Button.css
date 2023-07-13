@@ -14,7 +14,7 @@
 
 @keyframes buttonPulse {
   0%,
-  85% {
+  92% {
     background-color: var(--white);
     color: var(--black);
   }
@@ -26,7 +26,7 @@
 
 @keyframes secondaryButtonPulse {
   0%,
-  85% {
+  92% {
     background-color: var(--pinkWhite);
     color: var(--white);
   }
@@ -38,7 +38,7 @@
 
 @keyframes accentedButtonPulse {
   0%,
-  85% {
+  92% {
     background-color: var(--pink);
     color: var(--white);
   }
@@ -61,7 +61,7 @@
 
   background-color: var(--white);
   color: var(--black);
-  animation: buttonPulse ease-in 3s infinite;
+  animation: buttonPulse ease-in 6s infinite;
 
   &.clickable {
     cursor: pointer;
@@ -108,13 +108,13 @@
   &.accented {
     background-color: var(--pink);
     color: var(--white);
-    animation: accentedButtonPulse ease-in 3s infinite;
+    animation: accentedButtonPulse ease-in 6s infinite;
   }
 
   &.secondary {
     background-color: var(--pinkWhite);
     color: var(--white);
-    animation: secondaryButtonPulse ease-in 4s infinite;
+    animation: secondaryButtonPulse ease-in 7s infinite;
   }
 
   & .loading {
