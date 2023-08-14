@@ -133,6 +133,7 @@ const DraftsModal: React.FC<{
   return (
     <>
       <Modal
+        shouldRenderCloseButtonOutsideHeader
         header={<MessageContainer>Drafts</MessageContainer>}
         footer={null}
         onCancelClick={onCancelClick}

@@ -33,6 +33,7 @@ export const CellsContainer: React.FC<
 export type Props = React.PropsWithChildren<{
   className?: string;
   footer?: React.ReactNode;
+  shouldRenderCloseButtonOutsideHeader?: boolean;
   header?: React.ReactNode;
   onCancelClick?: () => void;
   fullHeight?: boolean;
@@ -45,6 +46,7 @@ const Modal: React.FC<Props> = ({
   fullHeight,
   header,
   onCancelClick,
+  shouldRenderCloseButtonOutsideHeader,
 }) => {
   useHotkeys("esc", () => {
     onCancelClick && onCancelClick();
@@ -57,6 +59,20 @@ const Modal: React.FC<Props> = ({
     return () => allowScroll();
   }, []);
 
+  const renderHeader = () =>
+    onCancelClick ? (
+      <div className="nav-button top-left close-button">
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            onCancelClick && onCancelClick();
+          }}
+        >
+          <IoMdClose size="2rem" />
+        </button>
+      </div>
+    ) : null;
+
   return (
     <div
       className="background-mask"
@@ -67,25 +83,19 @@ const Modal: React.FC<Props> = ({
           onCancelClick();
       }}
     >
-      {onCancelClick && (
-        <div className="nav-button top-left close-button">
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              onCancelClick && onCancelClick();
-            }}
-          >
-            <IoMdClose size="2rem" />
-          </button>
-        </div>
-      )}
       <div
         className={classNames(className, "modal-container", {
           ["full-height"]: fullHeight,
         })}
       >
+        {(shouldRenderCloseButtonOutsideHeader || !header) && renderHeader()}
         {header ? (
-          <div className="modal-header">{header}</div>
+          <div className="modal-header">
+            <>
+              {!shouldRenderCloseButtonOutsideHeader && renderHeader()}
+              {header}
+            </>
+          </div>
         ) : header !== null ? (
           <div className="modal-footer empty" />
         ) : null}

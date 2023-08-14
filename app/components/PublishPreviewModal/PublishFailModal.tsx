@@ -25,6 +25,7 @@ const PublishFailModal: React.FC<{
 
   return (
     <Modal
+      shouldRenderCloseButtonOutsideHeader
       header={
         message ? <MessageContainer>{message}</MessageContainer> : undefined
       }

@@ -74,6 +74,7 @@ export default function CopyFromComicRoute() {
 
   return (
     <Modal
+      shouldRenderCloseButtonOutsideHeader
       fullHeight
       className="copy-from-comic-modal"
       header={
