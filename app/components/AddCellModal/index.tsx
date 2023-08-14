@@ -38,6 +38,7 @@ const AddCellModal: React.FC<{
   return (
     <Modal
       fullHeight
+      shouldRenderCloseButtonOutsideHeader
       className="add-cell-modal"
       header={<Message>{titleOverride || "Add a New Cell"}</Message>}
       footer={

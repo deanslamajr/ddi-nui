@@ -31,6 +31,7 @@ const ComicActionsModal: React.FC<{
 
   return (
     <Modal
+      shouldRenderCloseButtonOutsideHeader
       header={
         currentView === "DELETE_WARNING" ? (
           <MessageContainer>

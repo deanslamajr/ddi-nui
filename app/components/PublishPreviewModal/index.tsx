@@ -163,6 +163,7 @@ const PublishPreviewModal: React.FC<{
   ) : (
     <>
       <Modal
+        shouldRenderCloseButtonOutsideHeader
         fullHeight
         header={
           isLoading ? undefined : (

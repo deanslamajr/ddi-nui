@@ -147,6 +147,7 @@ const GallerySearch: FC<{}> = ({}) => {
     <>
       {showGallerySearchModal && (
         <Modal
+          shouldRenderCloseButtonOutsideHeader
           className="emoji-picker-modal"
           fullHeight
           header={
