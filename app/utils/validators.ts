@@ -101,6 +101,28 @@ export function validateId(id: any, defaultValue: number, field: string) {
   return id;
 }
 
+export function validateCurrentId(
+  id: any,
+  defaultValue: number | undefined,
+  field: string
+) {
+  // must be a number
+  if (typeof id !== "number") {
+    console.warn(
+      `${STUDIO_STATE_VALIDATION_ERROR}${field} ${ERR_MUST_BE_A_NUMBER}`
+    );
+    return defaultValue;
+  }
+  // must be >= 0
+  if (id < 0) {
+    console.warn(
+      `${STUDIO_STATE_VALIDATION_ERROR}${field} ${ERR_CANNOT_BE_NEGATIVE}`
+    );
+    return defaultValue;
+  }
+  return id;
+}
+
 export function validateBackgroundColor(hex: any, field: string) {
   if (typeof hex !== "string") {
     return DEFAULT_STUDIO_STATE.backgroundColor;
@@ -388,18 +410,19 @@ export function validateStudioState(
   studioState?: AllStudioStateVersions | null
 ): StudioState {
   return {
-    activeEmojiId: validateId(
-      (studioState as StudioState | null)?.activeEmojiId,
-      DEFAULT_STUDIO_STATE.activeEmojiId!,
-      "activeEmojiId"
-    ),
+    activeEmojiId:
+      validateId(
+        (studioState as StudioState | null)?.activeEmojiId,
+        DEFAULT_STUDIO_STATE.activeEmojiId!,
+        "activeEmojiId"
+      ) || null,
     backgroundColor: validateBackgroundColor(
       (studioState as StudioState | null)?.backgroundColor,
       "backgroundColor"
     ),
-    currentEmojiId: validateId(
+    currentEmojiId: validateCurrentId(
       (studioState as StudioState | null)?.currentEmojiId,
-      DEFAULT_STUDIO_STATE.currentEmojiId,
+      undefined,
       "currentEmojiId"
     ),
     caption: validateCaption((studioState as StudioState | null)?.caption),
