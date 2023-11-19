@@ -11,7 +11,7 @@ export type AllStudioStateVersions =
 
 type StudioStateEditorState = {
   activeEmojiId: number | null;
-  currentEmojiId: number;
+  currentEmojiId?: number;
 };
 
 export type StudioStateImageData = {

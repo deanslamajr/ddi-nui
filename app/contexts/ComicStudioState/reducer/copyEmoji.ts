@@ -16,17 +16,22 @@ const copyEmojiConfigAndUpdateStudioState = (
   const clonedEmojis = clonedStudioState.emojis;
   const clonedEmojiToCopy = cloneDeep(clonedEmojis[emojiIdToCopy]);
 
+  let newEmojiId =
+    currentEmojiId ||
+    Number(Object.keys(clonedEmojis).sort((a, b) => Number(a) - Number(b))[0]) +
+      1;
+
   // cloned emoji shold have order set to that immediately above copied emoji
   // if collisions of emoji id, increment emoji id's
   const newEmojiOrder = clonedEmojiToCopy.order + 1;
   const newEmoji = createNewEmojiComponentState({
     emoji: clonedEmojiToCopy.emoji,
-    currentEmojiId,
+    currentEmojiId: newEmojiId,
     order: newEmojiOrder,
     emojiConfigTemplate: clonedEmojiToCopy,
   });
 
-  clonedEmojis[currentEmojiId] = newEmoji;
+  clonedEmojis[newEmojiId] = newEmoji;
   let nextEmoji = newEmoji;
   do {
     nextEmoji = Object.values(clonedEmojis).find(
@@ -38,7 +43,7 @@ const copyEmojiConfigAndUpdateStudioState = (
   } while (nextEmoji);
 
   clonedStudioState.activeEmojiId = newEmoji.id;
-  clonedStudioState.currentEmojiId = currentEmojiId + 1;
+  clonedStudioState.currentEmojiId = newEmojiId + 1;
 };
 
 const copyEmoji: ComicStudioStateReducer<CopyEmojiAction> = (state, action) => {
