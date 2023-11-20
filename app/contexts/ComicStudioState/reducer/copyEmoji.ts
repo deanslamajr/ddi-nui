@@ -6,32 +6,29 @@ import { StudioState } from "~/interfaces/studioState";
 import { createNewEmojiComponentState } from "~/models/emojiConfig";
 import { addNewCellChangeToHistory } from "~/models/cellChange";
 
-const correctEmojiCollisions = () => {};
-
 const copyEmojiConfigAndUpdateStudioState = (
   clonedStudioState: StudioState,
   emojiIdToCopy: number
 ): void => {
-  const currentEmojiId = clonedStudioState.currentEmojiId;
   const clonedEmojis = clonedStudioState.emojis;
   const clonedEmojiToCopy = cloneDeep(clonedEmojis[emojiIdToCopy]);
 
-  let newEmojiId =
-    currentEmojiId ||
-    Number(Object.keys(clonedEmojis).sort((a, b) => Number(a) - Number(b))[0]) +
-      1;
+  const newEmojiId = Object.keys(clonedEmojis).length
+    ? Math.max(...Object.keys(clonedEmojis).map((emojiId) => Number(emojiId))) +
+      1
+    : 1;
 
   // cloned emoji shold have order set to that immediately above copied emoji
   // if collisions of emoji id, increment emoji id's
   const newEmojiOrder = clonedEmojiToCopy.order + 1;
   const newEmoji = createNewEmojiComponentState({
     emoji: clonedEmojiToCopy.emoji,
-    currentEmojiId: newEmojiId,
+    id: newEmojiId,
     order: newEmojiOrder,
     emojiConfigTemplate: clonedEmojiToCopy,
   });
 
-  clonedEmojis[newEmojiId] = newEmoji;
+  clonedEmojis[newEmoji.id] = newEmoji;
   let nextEmoji = newEmoji;
   do {
     nextEmoji = Object.values(clonedEmojis).find(
@@ -43,7 +40,7 @@ const copyEmojiConfigAndUpdateStudioState = (
   } while (nextEmoji);
 
   clonedStudioState.activeEmojiId = newEmoji.id;
-  clonedStudioState.currentEmojiId = newEmojiId + 1;
+  clonedStudioState.currentEmojiId = newEmojiId;
 };
 
 const copyEmoji: ComicStudioStateReducer<CopyEmojiAction> = (state, action) => {

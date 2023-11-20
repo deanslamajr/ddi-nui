@@ -13,19 +13,19 @@ const createNewEmojiConfigAndUpdateStudioState = (
   const currentEmojiId = clonedStudioState.currentEmojiId;
   const clonedEmojis = clonedStudioState.emojis;
 
-  let newEmojiId =
-    currentEmojiId ||
-    Number(Object.keys(clonedEmojis).sort((a, b) => Number(a) - Number(b))[0]) +
-      1;
+  const newEmojiId = Object.keys(clonedEmojis).length
+    ? Math.max(...Object.keys(clonedEmojis).map((emojiId) => Number(emojiId))) +
+      1
+    : 1;
 
   const newEmoji = createNewEmojiComponentState({
     emoji: action.data.newEmoji,
-    currentEmojiId: newEmojiId,
+    id: newEmojiId,
   });
   clonedEmojis[newEmoji.id] = newEmoji;
 
   clonedStudioState.activeEmojiId = newEmoji.id;
-  clonedStudioState.currentEmojiId = newEmojiId + 1;
+  clonedStudioState.currentEmojiId = newEmojiId;
 };
 
 const addEmoji: ComicStudioStateReducer<AddEmojiAction> = (state, action) => {
