@@ -95,19 +95,19 @@ export const DEFAULT_EMOJI_CONFIG: EmojiConfigSerialized = {
 
 export function createNewEmojiComponentState({
   emoji,
-  currentEmojiId,
+  id,
   order,
   emojiConfigTemplate,
 }: {
   emoji: string;
-  currentEmojiId: number;
+  id: number;
   order?: number;
   emojiConfigTemplate?: EmojiConfigSerialized;
 }): EmojiConfigSerialized {
   return {
     ...(emojiConfigTemplate || DEFAULT_EMOJI_CONFIG),
     emoji,
-    id: currentEmojiId,
-    order: typeof order === "number" ? order : currentEmojiId,
+    id,
+    order: typeof order === "number" ? order : id,
   };
 }
