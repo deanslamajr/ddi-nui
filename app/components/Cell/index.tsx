@@ -121,6 +121,8 @@ const Cell: FC<
     showAddCellButton,
   } = props;
 
+  console.log("schemaVersion", schemaVersion);
+
   const [_comicStudioState, dispatch] = useComicStudioState();
 
   const [isEditingCaption, setIsEditingCaption] = useState(false);
