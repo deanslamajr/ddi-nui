@@ -9,7 +9,8 @@ import { hydrateFromNetwork as hydrateComicFromNetwork } from "~/data/client/com
 
 const hydrateComic = async (
   comicUrlId: string,
-  shouldUpdateCache?: boolean
+  shouldUpdateCache?: boolean,
+  isDebugProdCell?: boolean
 ): Promise<HydratedComic | null> => {
   let hydratedComic: HydratedComic | null = null;
 
@@ -33,7 +34,8 @@ const hydrateComic = async (
   } else {
     hydratedComic = await hydrateComicFromNetwork(
       comicUrlId,
-      shouldUpdateCache
+      shouldUpdateCache,
+      isDebugProdCell
     );
   }
 
@@ -48,10 +50,12 @@ const useHydrateComic = ({
   comicUrlId,
   onError,
   shouldUpdateCache = true,
+  isDebugProdCell,
 }: {
   comicUrlId: string;
   onError: () => void;
   shouldUpdateCache?: boolean;
+  isDebugProdCell?: boolean;
 }): {
   comic: HydratedComic | null;
   isHydrating: boolean;
@@ -62,7 +66,7 @@ const useHydrateComic = ({
   useEffect(() => {
     setIsHydrating(true);
 
-    hydrateComic(comicUrlId, shouldUpdateCache)
+    hydrateComic(comicUrlId, shouldUpdateCache, isDebugProdCell)
       .then((hydratedComic) => {
         if (!hydratedComic) {
           return null;

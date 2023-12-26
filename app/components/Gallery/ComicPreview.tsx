@@ -21,18 +21,18 @@ export const links: LinksFunction = () => {
   ];
 };
 
-type Props = {
+const ComicPreview: FC<{
   cellsCount: number;
   initialCell: ComicFromGalleryQueries["initialCell"];
   generateComicLink: (comicUrlId: string) => string;
   urlId: string;
-};
-
-const ComicPreview: FC<Props> = ({
+  isDebugProdCell?: boolean;
+}> = ({
   cellsCount,
   initialCell,
   generateComicLink,
   urlId,
+  isDebugProdCell,
 }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -50,7 +50,11 @@ const ComicPreview: FC<Props> = ({
       {isClicked ? (
         <CellWithLoadSpinner />
       ) : (
-        <CellsThumb cell={initialCell} cellsCount={cellsCount} />
+        <CellsThumb
+          cell={initialCell}
+          cellsCount={cellsCount}
+          isDebugProdCell={isDebugProdCell}
+        />
       )}
     </UnstyledLink>
   );

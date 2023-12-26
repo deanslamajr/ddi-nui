@@ -96,6 +96,7 @@ const Cell: FC<
     removeBorders?: boolean;
     schemaVersion: number;
     showAddCellButton?: boolean;
+    isDebugProdCell?: boolean;
   } & (
     | {
         imageUrl: string;
@@ -119,6 +120,7 @@ const Cell: FC<
     removeBorders,
     schemaVersion,
     showAddCellButton,
+    isDebugProdCell,
   } = props;
 
   console.log("schemaVersion", schemaVersion);
@@ -156,7 +158,7 @@ const Cell: FC<
     "isImageUrlAbsolute" in props
       ? props.isImageUrlAbsolute
         ? props.imageUrl
-        : getCellImageUrl(props.imageUrl, schemaVersion)
+        : getCellImageUrl(props.imageUrl, schemaVersion, isDebugProdCell)
       : null;
 
   const { imageUrl: cellUrlFromGenerator, isLoading } = useCellImageGenerator(

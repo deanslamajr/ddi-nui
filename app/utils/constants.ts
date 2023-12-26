@@ -13,6 +13,7 @@ export const SEARCH_PARAMS = {
   NEWER_OFFSET_QUERYSTRING: "no",
   CAPTION_FILTER_QUERYSTRING: "caption",
   EMOJI_FILTER_QUERYSTRING: "emoji",
+  DEBUG_PROD_CELL: "prod1",
 };
 
 export const EMOJI_CONFIG = {

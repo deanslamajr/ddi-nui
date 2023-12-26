@@ -65,12 +65,13 @@ const CellsThumb: FC<{
     schemaVersion: number;
   };
   cellsCount: number;
-}> = ({ cell, cellsCount }) => {
+  isDebugProdCell?: boolean;
+}> = ({ cell, cellsCount, isDebugProdCell }) => {
   if (cell) {
     const imageUrl =
       cell.schemaVersion === 1
         ? cell.imageUrl
-        : getCellImageUrl(cell.imageUrl, cell.schemaVersion);
+        : getCellImageUrl(cell.imageUrl, cell.schemaVersion, isDebugProdCell);
 
     return (
       <>

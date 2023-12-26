@@ -1,5 +1,5 @@
 import type { LinksFunction } from "@remix-run/node";
-import { useParams, useNavigate } from "@remix-run/react";
+import { useParams, useNavigate, useSearchParams } from "@remix-run/react";
 import React from "react";
 
 import Modal, {
@@ -11,7 +11,7 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { SCHEMA_VERSION } from "~/utils/constants";
+import { SEARCH_PARAMS, SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell } from "~/utils/clientCache/cell";
 import { theme } from "~/utils/stylesTheme";
 import { CellImageProvider } from "~/contexts/CellImageGenerator";
@@ -40,10 +40,16 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
+  const [searchParams] = useSearchParams();
+  const isDebugProdCell = Boolean(
+    searchParams.getAll(SEARCH_PARAMS.DEBUG_PROD_CELL).length
+  );
+
   const { comic, isHydrating: isLoadingComic } = useHydrateComic({
     comicUrlId: copiedComicUrlId,
     shouldUpdateCache: false,
     onError: () => console.log("There was an error loading this comic!"),
+    isDebugProdCell,
   });
 
   const getCellsFromState = () => {
@@ -122,6 +128,7 @@ export default function CopyFromComicRoute() {
                         {...sharedCellProps}
                         imageUrl={imageUrl || ""}
                         isImageUrlAbsolute={false}
+                        isDebugProdCell={isDebugProdCell}
                       />
                     ) : (
                       studioState && (

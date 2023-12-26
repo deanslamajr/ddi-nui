@@ -89,16 +89,16 @@ const KonvaEmoji: React.FC<{
       )}
       <Text
         {...konvaConfig}
-        // offsetX={stuff?.offsetX || 0}
-        // offsetY={stuff?.offsetY || 0}
+        offsetX={stuff?.offsetX || 0}
+        offsetY={stuff?.offsetY || 0}
         rotation={0}
         opacity={0}
         ref={nonRotatingEmojiCacheRef}
       />
       <Text
         {...konvaConfig}
-        // offsetX={stuff?.offsetX || 0}
-        // offsetY={stuff?.offsetY || 0}
+        offsetX={stuff?.offsetX || 0}
+        offsetY={stuff?.offsetY || 0}
         ref={emojiCacheRef}
         id={`${emojiConfig.id}`}
       />

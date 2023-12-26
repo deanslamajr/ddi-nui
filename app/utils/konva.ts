@@ -72,6 +72,8 @@ export const getKonvaConfigFromEmojiConfig = (
         : 1 /* backwards compatibility */,
     // offsetX,
     // offsetY,
+    offsetX: 0,
+    offsetY: 0,
   };
 };
 
@@ -121,8 +123,8 @@ export const generateCellImage = (
 
     const { offsetX, offsetY } = getOffsetsFromTextRef(emoji);
 
-    // emoji.offsetX(offsetX);
-    // emoji.offsetY(offsetY);
+    emoji.offsetX(offsetX);
+    emoji.offsetY(offsetY);
 
     emoji.cache({
       offset: 100, // to account for larger sized emojis

@@ -10,9 +10,10 @@ import { CellFromGetComicApiV4 } from "~/interfaces/comic";
 
 export const hydrateFromNetwork = async (
   comicUrlId: string,
-  shouldUpdateCache?: boolean
+  shouldUpdateCache?: boolean,
+  isDebugProdCell?: boolean
 ): Promise<HydratedComic | null> => {
-  let comicFromNetwork = await getComicFromNetwork(comicUrlId);
+  let comicFromNetwork = await getComicFromNetwork(comicUrlId, isDebugProdCell);
 
   if (!comicFromNetwork) {
     console.error(`Comic not found. comicUrlId:${comicUrlId}`);

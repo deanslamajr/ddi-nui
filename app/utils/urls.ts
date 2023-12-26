@@ -1,10 +1,16 @@
 import { getClientVariable } from "~/utils/environment-variables";
 import { SEARCH_PARAMS } from "~/utils/constants";
 
-export const getCellImageUrl = (imageUrl: string, schemaVersion: number) => {
+export const getCellImageUrl = (
+  imageUrl: string,
+  schemaVersion: number,
+  isDebugProdCell?: boolean
+) => {
   const cellUrl =
     schemaVersion >= 3
-      ? `https://${getClientVariable("CELL_IMAGES_URL")}/${imageUrl}`
+      ? `https://${getClientVariable(
+          isDebugProdCell ? "CELL_IMAGES_URL_PROD" : "CELL_IMAGES_URL"
+        )}/${imageUrl}`
       : imageUrl;
 
   return cellUrl;
@@ -27,22 +33,30 @@ export const DDI_API_ENDPOINTS = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/cell/${cellUrlId}`;
   },
-  getComic: (comicUrlId: string) => {
+  getComic: (comicUrlId: string, isDebugProdCell?: boolean) => {
     return `${getClientVariable(
-      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+      isDebugProdCell
+        ? "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL_PROD"
+        : "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/comic/${comicUrlId}`;
   },
   getComics: ({
     captionSearch,
     emojiFilter,
     offset,
+    isDebugProdCell,
   }: {
     captionSearch?: string;
     emojiFilter?: string;
     offset?: string;
+    isDebugProdCell?: boolean;
   }) => {
     const url = new URL(
-      `${getClientVariable("LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL")}/api/comics`
+      `${getClientVariable(
+        isDebugProdCell
+          ? "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL_PROD"
+          : "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+      )}/api/comics`
     );
     if (offset !== undefined) {
       url.searchParams.append("offset", offset);
@@ -55,9 +69,11 @@ export const DDI_API_ENDPOINTS = {
     }
     return url.toString();
   },
-  getPreviousComics: (offset: string) =>
+  getPreviousComics: (offset: string, isDebugProdCell?: boolean) =>
     `${getClientVariable(
-      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+      isDebugProdCell
+        ? "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL_PROD"
+        : "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/comics/latest?latestUpdatedAt=${offset}`,
   signComicCells: (comicUrlId: string) =>
     `${getClientVariable(
@@ -110,11 +126,14 @@ export const DDI_APP_PAGES = {
   },
   comicStudioCopyFromComicCell: (
     editedComicUrlId: string,
-    copiedComicUrlId: string
+    copiedComicUrlId: string,
+    isDebugProdCell?: boolean
   ) => {
     return `${getClientVariable(
       "APP_PATH_PREFIX"
-    )}/s/comic/${editedComicUrlId}/copyFromComic/${copiedComicUrlId}`;
+    )}/s/comic/${editedComicUrlId}/copyFromComic/${copiedComicUrlId}${
+      isDebugProdCell ? `?${SEARCH_PARAMS.DEBUG_PROD_CELL}` : ""
+    }`;
   },
   comicStudioCopyFromComic: (comicUrlId: string) => {
     return `${getClientVariable(

@@ -1,5 +1,6 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
+import https from "https";
 
 import { ComicFromGalleryQueries } from "~/interfaces/comic";
 
@@ -19,16 +20,19 @@ export type LoaderData = {
   older: ComicsPagination;
   newer: ComicsPagination;
   isSearch: boolean;
+  isDebugProdCell?: boolean;
 };
 
 const fetchNewerComics = async ({
   hasCursor,
   newerOffset,
   request,
+  isDebugProdCell,
 }: {
   hasCursor: boolean;
   newerOffset: string;
   request: Request;
+  isDebugProdCell?: boolean;
 }): Promise<LoaderData> => {
   let getNewerComicsResponse: {
     comics: ComicFromGalleryQueries[];
@@ -36,9 +40,19 @@ const fetchNewerComics = async ({
   } | null = null;
 
   try {
+    const altHttpsAgent = isDebugProdCell
+      ? {
+          agent: new https.Agent({
+            rejectUnauthorized: false,
+          }),
+        }
+      : undefined;
+
     const response: Response = await fetch(
-      DDI_API_ENDPOINTS.getPreviousComics(newerOffset),
-      getClientCookies(request)
+      DDI_API_ENDPOINTS.getPreviousComics(newerOffset, isDebugProdCell),
+      altHttpsAgent
+        ? (altHttpsAgent as unknown as any)
+        : getClientCookies(request)
     );
 
     if (!response.ok) {
@@ -72,6 +86,7 @@ const fetchNewerComics = async ({
         : null,
     },
     isSearch: false,
+    isDebugProdCell,
   };
 };
 
@@ -81,12 +96,14 @@ const fetchOlderComics = async ({
   hasCursor,
   offset,
   request,
+  isDebugProdCell,
 }: {
   captionSearch?: string;
   emojiFilter?: string;
   hasCursor: boolean;
   offset?: string;
   request: Request;
+  isDebugProdCell?: boolean;
 }): Promise<LoaderData> => {
   let getComicsResponse: {
     comics: ComicFromGalleryQueries[];
@@ -95,13 +112,24 @@ const fetchOlderComics = async ({
   } | null = null;
 
   try {
+    const altHttpsAgent = isDebugProdCell
+      ? {
+          agent: new https.Agent({
+            rejectUnauthorized: false,
+          }),
+        }
+      : undefined;
+
     const response: Response = await fetch(
       DDI_API_ENDPOINTS.getComics({
         captionSearch,
         emojiFilter,
         offset,
+        isDebugProdCell,
       }),
-      getClientCookies(request)
+      altHttpsAgent
+        ? (altHttpsAgent as unknown as any)
+        : getClientCookies(request)
     );
 
     if (!response.ok) {
@@ -135,6 +163,7 @@ const fetchOlderComics = async ({
       hasMore: true,
     },
     isSearch: Boolean(captionSearch || emojiFilter),
+    isDebugProdCell,
   };
 };
 
@@ -155,6 +184,10 @@ const loader: LoaderFunction = async ({ request }) => {
       SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
     )[0];
 
+    const isDebugProdCell = Boolean(
+      url.searchParams.getAll(SEARCH_PARAMS.DEBUG_PROD_CELL).length
+    );
+
     const hasCursor = Boolean(olderOffset || newerOffset);
 
     if (newerOffset) {
@@ -162,6 +195,7 @@ const loader: LoaderFunction = async ({ request }) => {
         hasCursor,
         newerOffset,
         request,
+        isDebugProdCell,
       });
 
       return json(newerComicsResponse);
@@ -173,6 +207,7 @@ const loader: LoaderFunction = async ({ request }) => {
       hasCursor,
       offset: olderOffset,
       request,
+      isDebugProdCell,
     });
 
     return json(olderComicsResponse);

@@ -6,7 +6,6 @@ const getClientCookiesForFetch = (
   credentials?: RequestCredentials;
   headers?: HeadersInit;
 } => {
-  let headersFromClient: Headers | null = null;
   if (isServerContext()) {
     if (request === undefined) {
       throw new Error(

@@ -79,7 +79,8 @@ export default function IndexRoute() {
           generateComicLink={(comicToCopyUrlId) =>
             DDI_APP_PAGES.comicStudioCopyFromComicCell(
               comicUrlId,
-              comicToCopyUrlId
+              comicToCopyUrlId,
+              data.isDebugProdCell
             )
           }
           shouldCollapseHeader
