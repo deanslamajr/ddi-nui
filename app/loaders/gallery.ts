@@ -3,7 +3,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import https from "https";
 
 import { ComicFromGalleryQueries } from "~/interfaces/comic";
-
+import { getIsDebugProdCell } from "~/contexts/DebuggerState";
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import sortComics from "~/utils/sortComics";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
@@ -184,9 +184,7 @@ const loader: LoaderFunction = async ({ request }) => {
       SEARCH_PARAMS.EMOJI_FILTER_QUERYSTRING
     )[0];
 
-    const isDebugProdCell = Boolean(
-      url.searchParams.getAll(SEARCH_PARAMS.DEBUG_PROD_CELL).length
-    );
+    const isDebugProdCell = getIsDebugProdCell(url.searchParams);
 
     const hasCursor = Boolean(olderOffset || newerOffset);
 

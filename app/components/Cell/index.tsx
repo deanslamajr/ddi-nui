@@ -19,6 +19,7 @@ import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import CellActions, { links as cellActionsStylesUrl } from "./CellActions";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
+import { useDebuggerState } from "~/contexts/DebuggerState";
 import { updateCellCaption } from "~/contexts/ComicStudioState/actions";
 import { StudioState } from "~/interfaces/studioState";
 import stylesUrl from "~/styles/components/Cell.css";
@@ -96,7 +97,6 @@ const Cell: FC<
     removeBorders?: boolean;
     schemaVersion: number;
     showAddCellButton?: boolean;
-    isDebugProdCell?: boolean;
   } & (
     | {
         imageUrl: string;
@@ -120,10 +120,13 @@ const Cell: FC<
     removeBorders,
     schemaVersion,
     showAddCellButton,
-    isDebugProdCell,
   } = props;
 
-  console.log("schemaVersion", schemaVersion);
+  console.log("Cell schemaVersion", schemaVersion);
+
+  const { isDebugProdCell } = useDebuggerState();
+
+  console.log("Cell isDebugProdCell", isDebugProdCell);
 
   const [_comicStudioState, dispatch] = useComicStudioState();
 

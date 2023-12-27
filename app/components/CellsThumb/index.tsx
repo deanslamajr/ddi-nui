@@ -4,7 +4,7 @@ import { useImage } from "react-image";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { getClientVariable } from "~/utils/environment-variables";
-
+import { useDebuggerState } from "~/contexts/DebuggerState";
 import DynamicTextContainer, {
   links as dynamicTextContainerStylesUrl,
 } from "~/components/DynamicTextContainer";
@@ -65,8 +65,8 @@ const CellsThumb: FC<{
     schemaVersion: number;
   };
   cellsCount: number;
-  isDebugProdCell?: boolean;
-}> = ({ cell, cellsCount, isDebugProdCell }) => {
+}> = ({ cell, cellsCount }) => {
+  const { isDebugProdCell } = useDebuggerState();
   if (cell) {
     const imageUrl =
       cell.schemaVersion === 1

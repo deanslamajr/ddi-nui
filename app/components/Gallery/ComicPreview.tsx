@@ -26,14 +26,7 @@ const ComicPreview: FC<{
   initialCell: ComicFromGalleryQueries["initialCell"];
   generateComicLink: (comicUrlId: string) => string;
   urlId: string;
-  isDebugProdCell?: boolean;
-}> = ({
-  cellsCount,
-  initialCell,
-  generateComicLink,
-  urlId,
-  isDebugProdCell,
-}) => {
+}> = ({ cellsCount, initialCell, generateComicLink, urlId }) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   return (
@@ -50,11 +43,7 @@ const ComicPreview: FC<{
       {isClicked ? (
         <CellWithLoadSpinner />
       ) : (
-        <CellsThumb
-          cell={initialCell}
-          cellsCount={cellsCount}
-          isDebugProdCell={isDebugProdCell}
-        />
+        <CellsThumb cell={initialCell} cellsCount={cellsCount} />
       )}
     </UnstyledLink>
   );

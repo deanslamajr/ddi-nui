@@ -22,6 +22,7 @@ import { theme } from "~/utils/stylesTheme";
 import { getClientVariable } from "~/utils/environment-variables";
 import { DEBUGGER_SEARCH_KEY } from "~/utils/constants";
 import { CellImageProvider } from "~/contexts/CellImageGenerator";
+import { DebuggerStateProvider } from "~/contexts/DebuggerState";
 import Debugger from "~/components/Debugger";
 import ConditionalScrollRestoration from "~/components/ConditionalScrollRestoration";
 import Modal, {
@@ -134,9 +135,11 @@ export default function App() {
       <body>
         {isDebuggerEnabled && <Debugger />}
         <ThemeProvider theme={theme}>
-          <CellImageProvider>
-            <Outlet />
-          </CellImageProvider>
+          <DebuggerStateProvider>
+            <CellImageProvider>
+              <Outlet />
+            </CellImageProvider>
+          </DebuggerStateProvider>
         </ThemeProvider>
         <ConditionalScrollRestoration />
         <script

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { useDebuggerState } from "~/contexts/DebuggerState";
 import { hydrateComicFromClientCache } from "~/utils/clientCache";
 import { HydratedComic } from "~/utils/clientCache/comic";
 import { doesComicUrlIdExist as doesComicExistInClientCache } from "~/utils/clientCache/comic";
@@ -9,8 +10,8 @@ import { hydrateFromNetwork as hydrateComicFromNetwork } from "~/data/client/com
 
 const hydrateComic = async (
   comicUrlId: string,
-  shouldUpdateCache?: boolean,
-  isDebugProdCell?: boolean
+  isDebugProdCell: boolean,
+  shouldUpdateCache?: boolean
 ): Promise<HydratedComic | null> => {
   let hydratedComic: HydratedComic | null = null;
 
@@ -50,23 +51,22 @@ const useHydrateComic = ({
   comicUrlId,
   onError,
   shouldUpdateCache = true,
-  isDebugProdCell,
 }: {
   comicUrlId: string;
   onError: () => void;
   shouldUpdateCache?: boolean;
-  isDebugProdCell?: boolean;
 }): {
   comic: HydratedComic | null;
   isHydrating: boolean;
 } => {
+  const { isDebugProdCell } = useDebuggerState();
   const [isHydrating, setIsHydrating] = useState(true);
   const [comic, setComic] = useState<HydratedComic | null>(null);
 
   useEffect(() => {
     setIsHydrating(true);
 
-    hydrateComic(comicUrlId, shouldUpdateCache, isDebugProdCell)
+    hydrateComic(comicUrlId, isDebugProdCell, shouldUpdateCache)
       .then((hydratedComic) => {
         if (!hydratedComic) {
           return null;

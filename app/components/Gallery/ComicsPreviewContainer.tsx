@@ -33,7 +33,6 @@ const ComicsPreviewContainer: FC<{
   olderCursor: string | null;
   shouldCollapseHeader?: boolean;
   urlPathForGalleryData?: string;
-  isDebugProdCell?: boolean;
 }> = ({
   comics,
   isInitializingData,
@@ -45,7 +44,6 @@ const ComicsPreviewContainer: FC<{
   olderCursor,
   shouldCollapseHeader,
   urlPathForGalleryData,
-  isDebugProdCell,
 }) => {
   const [width, setWidth] = useState<number>(0);
   const [urlIdToScrollTo, setUrlIdToScrollTo] = useState<string | null>(null);
@@ -124,7 +122,6 @@ const ComicsPreviewContainer: FC<{
               initialCell={initialCell}
               generateComicLink={generateComicLink}
               urlId={urlId}
-              isDebugProdCell={isDebugProdCell}
             />
           ))
         ) : (

@@ -16,6 +16,7 @@ import GallerySearchModal, {
   GallerySearchNavButton,
   links as searchModalStylesUrls,
 } from "~/components/GallerySearch";
+import { useDebuggerState } from "~/contexts/DebuggerState";
 
 import { DDI_APP_PAGES } from "~/utils/urls";
 
@@ -34,6 +35,7 @@ export const links: LinksFunction = () => {
 };
 
 export default function IndexRoute() {
+  const { isDebugProdCell } = useDebuggerState();
   const params = useParams();
   const comicUrlId = params.comicUrlId!;
 
@@ -80,7 +82,7 @@ export default function IndexRoute() {
             DDI_APP_PAGES.comicStudioCopyFromComicCell(
               comicUrlId,
               comicToCopyUrlId,
-              data.isDebugProdCell
+              isDebugProdCell
             )
           }
           shouldCollapseHeader

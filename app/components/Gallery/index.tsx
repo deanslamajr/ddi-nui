@@ -172,7 +172,6 @@ const Gallery: FC<{
       olderCursor={state.olderCursor}
       shouldCollapseHeader={shouldCollapseHeader}
       urlPathForGalleryData={urlPathForGalleryData}
-      isDebugProdCell={data.isDebugProdCell}
     />
   );
 };

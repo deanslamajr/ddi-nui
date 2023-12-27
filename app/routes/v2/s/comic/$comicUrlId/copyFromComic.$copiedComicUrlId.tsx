@@ -40,16 +40,10 @@ export default function CopyFromComicRoute() {
   const copiedComicUrlId = params.copiedComicUrlId!;
   const comicUrlId = params.comicUrlId!;
 
-  const [searchParams] = useSearchParams();
-  const isDebugProdCell = Boolean(
-    searchParams.getAll(SEARCH_PARAMS.DEBUG_PROD_CELL).length
-  );
-
   const { comic, isHydrating: isLoadingComic } = useHydrateComic({
     comicUrlId: copiedComicUrlId,
     shouldUpdateCache: false,
     onError: () => console.log("There was an error loading this comic!"),
-    isDebugProdCell,
   });
 
   const getCellsFromState = () => {
@@ -128,7 +122,6 @@ export default function CopyFromComicRoute() {
                         {...sharedCellProps}
                         imageUrl={imageUrl || ""}
                         isImageUrlAbsolute={false}
-                        isDebugProdCell={isDebugProdCell}
                       />
                     ) : (
                       studioState && (
