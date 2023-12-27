@@ -28,9 +28,11 @@ export const DDI_API_ENDPOINTS = {
       "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/comic/${comicUrlId}`;
   },
-  getCell: (cellUrlId: string) => {
+  getCell: (cellUrlId: string, isDebugProdCell?: boolean) => {
     return `${getClientVariable(
-      "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
+      isDebugProdCell
+        ? "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL_PROD"
+        : "LEGACY_DDI_BACKEND_URL_WITH_PROTOCOL"
     )}/api/cell/${cellUrlId}`;
   },
   getComic: (comicUrlId: string, isDebugProdCell?: boolean) => {
@@ -86,10 +88,12 @@ export const DDI_API_ENDPOINTS = {
 };
 
 export const DDI_APP_PAGES = {
-  cell: (comidUrlId: string, cellUrlId: string) => {
+  cell: (comidUrlId: string, cellUrlId: string, isDebugProdCell?: boolean) => {
     return `${getClientVariable(
       "APP_PATH_PREFIX"
-    )}/gallery/comic/${comidUrlId}/cell/${cellUrlId}`;
+    )}/gallery/comic/${comidUrlId}/cell/${cellUrlId}${
+      isDebugProdCell ? `?${SEARCH_PARAMS.DEBUG_PROD_CELL}` : ""
+    }`;
   },
   comic: (comidUrlId: string) => {
     return `${getClientVariable(

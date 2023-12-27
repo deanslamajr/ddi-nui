@@ -1,4 +1,5 @@
 import React from "react";
+import https from "https";
 import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -6,6 +7,8 @@ import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { createNewCell } from "~/utils/clientCache/cell";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
+import { getIsDebugProdCell, useDebuggerState } from "~/contexts/DebuggerState";
+import isServerContext from "~/utils/isServerContext";
 
 import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId/cell/$cellUrlId.css";
 
@@ -14,11 +17,25 @@ export const links: LinksFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
+  const url = new URL(request.url);
+  const isDebugProdCell = getIsDebugProdCell(url.searchParams);
+  const crossEnvOptions = isDebugProdCell
+    ? isServerContext()
+      ? {
+          agent: new https.Agent({
+            rejectUnauthorized: false,
+          }),
+        }
+      : { credentials: "omit" }
+    : undefined;
+
   const cellUrlId = params.cellUrlId;
 
   const cellDataResponse = await fetch(
-    DDI_API_ENDPOINTS.getCell(cellUrlId!),
-    getClientCookies(request)
+    DDI_API_ENDPOINTS.getCell(cellUrlId!, isDebugProdCell),
+    crossEnvOptions
+      ? (crossEnvOptions as unknown as any)
+      : getClientCookies(request)
   );
 
   if (!cellDataResponse.ok) {

@@ -1,4 +1,5 @@
 import React from "react";
+import https from "https";
 import type {
   ErrorBoundaryComponent,
   LinksFunction,
@@ -24,7 +25,8 @@ import {
   ComicStudioStateProvider,
   links as comicStudioStateProviderStylesUrl,
 } from "~/contexts/ComicStudioState";
-
+import { getIsDebugProdCell, useDebuggerState } from "~/contexts/DebuggerState";
+import isServerContext from "~/utils/isServerContext";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS, isUrlAbsolute } from "~/utils/urls";
 import { SCHEMA_VERSION } from "~/utils/constants";
 import { sortCellsFromGetComic } from "~/utils/sortCells";
@@ -50,11 +52,25 @@ const getSortedCells = (comic: ComicFromGetComicApi) => {
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
+  const url = new URL(request.url);
+  const isDebugProdCell = getIsDebugProdCell(url.searchParams);
+  const crossEnvOptions = isDebugProdCell
+    ? isServerContext()
+      ? {
+          agent: new https.Agent({
+            rejectUnauthorized: false,
+          }),
+        }
+      : { credentials: "omit" }
+    : undefined;
+
   const comicUrlId = params.comicUrlId;
 
   const comicDataResponse = await fetch(
-    DDI_API_ENDPOINTS.getComic(comicUrlId!),
-    getClientCookies(request)
+    DDI_API_ENDPOINTS.getComic(comicUrlId!, isDebugProdCell),
+    crossEnvOptions
+      ? (crossEnvOptions as unknown as any)
+      : getClientCookies(request)
   );
 
   if (!comicDataResponse.ok) {
@@ -117,6 +133,8 @@ export type ContextType = {
 };
 
 export default function ComicViewRoute() {
+  const { isDebugProdCell } = useDebuggerState();
+  console.log("isDebugProdCell", isDebugProdCell);
   const comic: ComicFromGetComicApi = useLoaderData<ComicFromGetComicApi>();
   const cells = getSortedCells(comic);
 
@@ -144,9 +162,12 @@ export default function ComicViewRoute() {
                 className="cell-container"
                 key={imageUrl}
                 onClick={() => {
-                  navigate(DDI_APP_PAGES.cell(comicUrlId, cellUrlId), {
-                    state: { scroll: false },
-                  });
+                  navigate(
+                    DDI_APP_PAGES.cell(comicUrlId, cellUrlId, isDebugProdCell),
+                    {
+                      state: { scroll: false },
+                    }
+                  );
                   const cellElement = document.getElementById(cellUrlId);
                   cellElement?.scrollIntoView();
                 }}

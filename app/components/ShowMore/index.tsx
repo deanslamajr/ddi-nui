@@ -2,6 +2,7 @@ import { Link, useTransition } from "@remix-run/react";
 import classnames from "classnames";
 import { useEffect, useState } from "react";
 
+import { useDebuggerState } from "~/contexts/DebuggerState";
 import { SEARCH_PARAMS } from "~/utils/constants";
 
 export default function ShowMore({
@@ -17,6 +18,7 @@ export default function ShowMore({
   onClick?: () => void;
   urlPathForGalleryData?: string;
 }) {
+  const { isDebugProdCell } = useDebuggerState();
   const [isLoading, setIsLoading] = useState(false);
   const transition = useTransition();
 
@@ -37,7 +39,9 @@ export default function ShowMore({
     const searchParamKey = isNewer
       ? SEARCH_PARAMS.NEWER_OFFSET_QUERYSTRING
       : SEARCH_PARAMS.OLDER_OFFSET_QUERYSTRING;
-    return `${urlPathForGalleryData}?${searchParamKey}=${offset}`;
+    return `${urlPathForGalleryData}?${searchParamKey}=${offset}${
+      isDebugProdCell ? `&${SEARCH_PARAMS.DEBUG_PROD_CELL}` : ""
+    }`;
   };
 
   return typeof offset === "string" ? (
