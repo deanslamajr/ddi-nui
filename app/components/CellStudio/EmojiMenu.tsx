@@ -32,6 +32,7 @@ import { useComicStudioState } from "~/contexts/ComicStudioState";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getSelectedEmojiIds,
 } from "~/contexts/ComicStudioState/selectors";
 import {
   setActiveEmoji,
@@ -55,7 +56,9 @@ const DraggableEmoji: React.FC<{
   activeEmojiId: number | null;
   emoji: EmojiConfigSerialized;
   onActiveEmojiSelect: (clickedEmojiId: number) => void;
-}> = ({ activeEmojiId, dragDropId, emoji, onActiveEmojiSelect }) => {
+  isActive: boolean;
+  onBulkSelect: (clickedEmojiId: number) => void;
+}> = ({ dragDropId, emoji, onActiveEmojiSelect, isActive, onBulkSelect }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: dragDropId,
   });
@@ -67,7 +70,7 @@ const DraggableEmoji: React.FC<{
     id: dragDropId,
   });
 
-  const isActive = emoji.id === activeEmojiId;
+  // const isActive = emoji.id === activeEmojiId;
 
   return (
     <div id={emoji.id.toString()} ref={setNodeRef}>
@@ -83,8 +86,9 @@ const DraggableEmoji: React.FC<{
         >
           <span
             onClick={(event) => {
-              // event.stopPropagation();
+              event.stopPropagation();
               console.log("circle clicked");
+              onBulkSelect(emoji.id);
             }}
             className={classNames("quarter-button", "selector", {
               active: isActive,
@@ -121,6 +125,7 @@ const EmojiMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const selectedEmojiIds = getSelectedEmojiIds(comicStudioState, cellUrlId);
 
   const [emojiBeingDragged, setEmojiBeingDragged] =
     React.useState<EmojiConfigSerialized | null>(null);
@@ -217,6 +222,16 @@ const EmojiMenu: React.FC<{
     );
   };
 
+  const updateBulkSelect = (clickedEmojiId: number) => {
+    dispatch(
+      setActiveEmoji({
+        cellUrlId,
+        newActiveEmojiId: clickedEmojiId,
+        isBulkSelect: true,
+      })
+    );
+  };
+
   const sortedEmojiArray = React.useMemo(() => {
     if (!cellStudioState) {
       return [];
@@ -237,6 +252,7 @@ const EmojiMenu: React.FC<{
           {sortedEmojiArray.map((emoji) => (
             <DraggableEmoji
               activeEmojiId={activeEmojiId}
+              isActive={Boolean(selectedEmojiIds?.includes(emoji.id))}
               emoji={emoji}
               key={`${emoji.emoji}-${emoji.id}-droppable`}
               dragDropId={emoji.id.toString()}
@@ -246,6 +262,9 @@ const EmojiMenu: React.FC<{
                 } else {
                   updateActiveEmoji(newActiveEmojiId);
                 }
+              }}
+              onBulkSelect={(clickedEmojiId) => {
+                updateBulkSelect(clickedEmojiId);
               }}
             />
           ))}

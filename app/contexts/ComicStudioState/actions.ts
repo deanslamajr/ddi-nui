@@ -216,14 +216,17 @@ export const updateEmojisOrder = ({
 export const setActiveEmoji = ({
   cellUrlId,
   newActiveEmojiId,
+  isBulkSelect,
 }: {
   cellUrlId: string;
   newActiveEmojiId: number;
+  isBulkSelect?: boolean;
 }): SetActiveEmojiAction => ({
   type: "SET_ACTIVE_EMOIJ",
   data: {
     cellUrlId,
     newActiveEmojiId,
+    isBulkSelect: Boolean(isBulkSelect),
   },
 });
 

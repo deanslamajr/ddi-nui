@@ -17,7 +17,46 @@ const setActiveEmoji: ComicStudioStateReducer<SetActiveEmojiAction> = (
       );
     }
 
-    cellState.studioState.activeEmojiId = action.data.newActiveEmojiId;
+    let nextSelectedEmojiIds = [] as number[];
+
+    if (action.data.isBulkSelect) {
+      if (
+        cellState.studioState.selectedEmojiIds?.includes(
+          action.data.newActiveEmojiId
+        )
+      ) {
+        nextSelectedEmojiIds = cellState.studioState.selectedEmojiIds.filter(
+          (prevSelectedId) => prevSelectedId !== action.data.newActiveEmojiId
+        );
+      } else {
+        nextSelectedEmojiIds = Array.from(
+          cellState.studioState.selectedEmojiIds || []
+        );
+        nextSelectedEmojiIds.push(action.data.newActiveEmojiId);
+      }
+    } else {
+      nextSelectedEmojiIds.push(action.data.newActiveEmojiId);
+      // @TODO - deprecate activeEmojiId if it is redundant AFTER implementation
+      //         of the selectedEmojiIds feature set (i.e. bulk select)
+      cellState.studioState.activeEmojiId = action.data.newActiveEmojiId;
+    }
+
+    cellState.studioState.selectedEmojiIds = nextSelectedEmojiIds;
+    // const prevSelectedEmojiIds = Array.from(
+    //   cellState.studioState.selectedEmojiIds || []
+    // );
+
+    // .reduce((acc, selectedId) => {
+    //   if (selectedId !== action.data.newActiveEmojiId) {
+    //     acc.push(selectedId);
+    //   }
+    //   return acc;
+    // }, [] as number[]);
+
+    console.log(
+      "setActiveEmoji cellState.studioState.selectedEmojiIds",
+      cellState.studioState.selectedEmojiIds
+    );
 
     return clonedState;
   } catch (e) {

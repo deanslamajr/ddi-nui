@@ -84,6 +84,14 @@ export const getActiveEmojiId = (
   return cellStudioState ? cellStudioState.activeEmojiId : null;
 };
 
+export const getSelectedEmojiIds = (
+  state: ComicStudioState,
+  cellUrlId: string
+) => {
+  const cellStudioState = getCellStudioState(state, cellUrlId);
+  return cellStudioState ? cellStudioState.selectedEmojiIds : null;
+};
+
 export const getPreviousCellChangeId = (
   state: ComicStudioState,
   cellUrlId: string

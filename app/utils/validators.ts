@@ -36,7 +36,7 @@ type RequiredNotNull<T> = {
 type RequiredProperty<T> = T & Required<RequiredNotNull<T>>;
 
 export const DEFAULT_STUDIO_STATE: RequiredProperty<
-  Omit<StudioState, "activeEmojiId">
+  Omit<StudioState, "activeEmojiId" | "selectedEmojiIds">
 > & { activeEmojiId: StudioState["activeEmojiId"] } = {
   activeEmojiId: null,
   backgroundColor: theme.colors.white,

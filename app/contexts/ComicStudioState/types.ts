@@ -123,6 +123,7 @@ export type SetActiveEmojiAction = {
   data: {
     cellUrlId: string;
     newActiveEmojiId: number;
+    isBulkSelect: boolean;
   };
 };
 
