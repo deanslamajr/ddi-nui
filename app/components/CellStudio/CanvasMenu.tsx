@@ -12,6 +12,7 @@ import { updateBackgroundColor } from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getCellSchemaVersion,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -40,6 +41,7 @@ const CanvasMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const schemaVersion = getCellSchemaVersion(comicStudioState, cellUrlId);
 
   const [localBackgroundColor, setLocalBackgroundColor] = React.useState<
     string | null
@@ -74,6 +76,7 @@ const CanvasMenu: React.FC<{
           activeEmojiId={activeEmojiId}
           backgroundColor={localBackgroundColor}
           emojiConfigs={cellStudioState.emojis}
+          schemaVersion={schemaVersion}
           isDraggable={false}
         />
       )}

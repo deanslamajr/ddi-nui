@@ -1,5 +1,5 @@
 import type { LinksFunction } from "@remix-run/node";
-import { useParams, useNavigate, useSearchParams } from "@remix-run/react";
+import { useParams, useNavigate } from "@remix-run/react";
 import React from "react";
 
 import Modal, {
@@ -11,8 +11,8 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { SEARCH_PARAMS, SCHEMA_VERSION } from "~/utils/constants";
-import { createNewCell } from "~/utils/clientCache/cell";
+import { SCHEMA_VERSION } from "~/utils/constants";
+import { createNewCell, CellFromClientCache } from "~/utils/clientCache/cell";
 import { theme } from "~/utils/stylesTheme";
 import { CellImageProvider } from "~/contexts/CellImageGenerator";
 import useHydrateComic from "~/hooks/useHydrateComic";
@@ -46,6 +46,8 @@ export default function CopyFromComicRoute() {
     onError: () => console.log("There was an error loading this comic!"),
   });
 
+  console.log("CopyFromComicRoute comic", comic);
+
   const getCellsFromState = () => {
     return Object.values(comic?.cells || {}) || [];
   };
@@ -58,10 +60,14 @@ export default function CopyFromComicRoute() {
     });
   };
 
-  const navigateToAddCellFromDuplicate = (studioState?: StudioState | null) => {
+  const navigateToAddCellFromDuplicate = (
+    studioState: StudioState | null,
+    schemaVersion: CellFromClientCache["schemaVersion"]
+  ) => {
     const newCell = createNewCell({
       comicUrlId: comicUrlId !== "new" ? comicUrlId : undefined,
       initialStudioState: studioState,
+      schemaVersion,
     });
 
     location.assign(
@@ -95,7 +101,7 @@ export default function CopyFromComicRoute() {
                 hasNewImage,
                 imageUrl,
                 schemaVersion,
-                studioState,
+                studioState = null,
                 urlId,
               }) => {
                 const sharedCellProps = {
@@ -114,7 +120,10 @@ export default function CopyFromComicRoute() {
                     key={urlId}
                     onClick={() => {
                       setSelectedCellUrlId(imageUrl || "");
-                      navigateToAddCellFromDuplicate(studioState);
+                      navigateToAddCellFromDuplicate(
+                        studioState,
+                        sharedCellProps.schemaVersion
+                      );
                     }}
                   >
                     {Boolean(imageUrl && !hasNewImage) ? (

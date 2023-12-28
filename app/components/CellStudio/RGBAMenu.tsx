@@ -16,6 +16,7 @@ import {
   getActiveEmojiId,
   getCellStudioState,
   getEmojiPosition,
+  getCellSchemaVersion,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -45,6 +46,7 @@ const RGBAMenu: React.FC<{
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
   const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
+  const schemaVersion = getCellSchemaVersion(comicStudioState, cellUrlId);
 
   const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
@@ -160,6 +162,7 @@ const RGBAMenu: React.FC<{
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
           isDraggable
+          schemaVersion={schemaVersion}
           handleDragEnd={handleDragEnd}
         />
       )}

@@ -15,6 +15,8 @@ export const hydrateFromNetwork = async (
 ): Promise<HydratedComic | null> => {
   let comicFromNetwork = await getComicFromNetwork(comicUrlId, isDebugProdCell);
 
+  console.log("hydrateFromNetwork comicFromNetwork", comicFromNetwork);
+
   if (!comicFromNetwork) {
     console.error(`Comic not found. comicUrlId:${comicUrlId}`);
     return null;

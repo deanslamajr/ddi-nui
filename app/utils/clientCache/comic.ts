@@ -131,6 +131,7 @@ export const createComicFromPublishedComic = ({
             ? sortedCellsToCopy[currentCellIndex - 1].urlId
             : null,
         imageUrl: currentCell.imageUrl,
+        schemaVersion: currentCell.schemaVersion,
       });
 
       if (cache) {
@@ -155,6 +156,7 @@ export const createComicFromPublishedComic = ({
         studioState: cell.studioState,
         previousCellUrlId,
         imageUrl: cell.imageUrl,
+        schemaVersion: cell.schemaVersion,
       });
 
       if (cache) {

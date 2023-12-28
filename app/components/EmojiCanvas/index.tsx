@@ -6,6 +6,7 @@ import Konva from "konva";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 import sortEmojis from "~/utils/sortEmoijs";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { DEFAULT_STUDIO_STATE } from "~/utils/validators";
 
 import KonvaEmoji from "~/components/KonvaEmoji";
@@ -29,6 +30,7 @@ type MainProps = {
   activeEmojiId?: number | null;
   backgroundColor?: string | null;
   emojiConfigs: Record<string, EmojiConfigSerialized> | EmojiConfigSerialized[];
+  schemaVersion: CellFromClientCache["schemaVersion"];
 };
 
 type PropsWithDragging = MainProps & {
@@ -41,8 +43,15 @@ type PropsWithoutDragging = MainProps & {
 };
 
 const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
-  const { activeEmojiId, backgroundColor, emojiConfigs, isDraggable } = props;
+  const {
+    activeEmojiId,
+    backgroundColor,
+    emojiConfigs,
+    isDraggable,
+    schemaVersion,
+  } = props;
 
+  console.log("EmojiCanvas schemaVersion", schemaVersion);
   const [localEmojiConfigs, setLocalEmojiConfigs] = useState<
     EmojiConfigSerialized[]
   >(() => {
@@ -178,6 +187,7 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               useCache
               emojiConfig={config}
               key={`${config.id}${config.emoji}`}
+              schemaVersion={schemaVersion}
             />
           ))}
 
@@ -186,6 +196,7 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               key="active-emoji-outline"
               emojiConfig={outlineConfig}
               useOutline
+              schemaVersion={schemaVersion}
             />
           )}
         </Layer>
@@ -210,6 +221,7 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
                 useCache
                 key="active-emoji-ghost"
                 emojiConfig={modifiedActiveEmojiConfig}
+                schemaVersion={schemaVersion}
               />
             )}
           </Group>

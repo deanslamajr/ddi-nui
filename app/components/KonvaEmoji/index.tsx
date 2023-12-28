@@ -2,6 +2,7 @@ import React from "react";
 import { Rect, Text } from "react-konva";
 
 import { EmojiConfigSerialized, EmojiRef } from "~/models/emojiConfig";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import {
   getKonvaConfigFromEmojiConfig,
   getOffsetsFromTextRef,
@@ -11,9 +12,10 @@ import { theme } from "~/utils/stylesTheme";
 
 const KonvaEmoji: React.FC<{
   emojiConfig: EmojiConfigSerialized;
+  schemaVersion: CellFromClientCache["schemaVersion"];
   useOutline?: boolean;
   useCache?: boolean;
-}> = ({ emojiConfig, useCache = false, useOutline = false }) => {
+}> = ({ emojiConfig, useCache = false, useOutline = false, schemaVersion }) => {
   const [isInitialRender, setIsInitialRender] = React.useState(true);
   const emojiCacheRef = React.useRef<EmojiRef>(null);
   const nonRotatingEmojiCacheRef = React.useRef<EmojiRef>(null);
@@ -67,7 +69,16 @@ const KonvaEmoji: React.FC<{
         });
       }
     }
-  }, [emojiConfig, setStuff]);
+  }, [emojiConfig, setStuff, isInitialRender]);
+
+  const offsetX =
+    typeof schemaVersion === "number" && schemaVersion >= 5
+      ? stuff?.offsetX || 0
+      : 0;
+  const offsetY =
+    typeof schemaVersion === "number" && schemaVersion >= 5
+      ? stuff?.offsetY || 0
+      : 0;
 
   return (
     <>
@@ -89,16 +100,20 @@ const KonvaEmoji: React.FC<{
       )}
       <Text
         {...konvaConfig}
-        // offsetX={stuff?.offsetX || 0}
-        // offsetY={stuff?.offsetY || 0}
+        // @TODO - what is the effect of commenting out? Does not seem to have an effect on >= v5 cells
+        // comment out for < v5
+        offsetX={offsetX}
+        offsetY={offsetY}
         rotation={0}
         opacity={0}
         ref={nonRotatingEmojiCacheRef}
       />
       <Text
         {...konvaConfig}
-        // offsetX={stuff?.offsetX || 0}
-        // offsetY={stuff?.offsetY || 0}
+        // @TODO - what is the effect of commenting out? Does not seem to have an effect on >= v5 cells
+        // comment out for < v5
+        offsetX={offsetX}
+        offsetY={offsetY}
         ref={emojiCacheRef}
         id={`${emojiConfig.id}`}
       />

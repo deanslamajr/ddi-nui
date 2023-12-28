@@ -70,10 +70,12 @@ export const getKonvaConfigFromEmojiConfig = (
       typeof emoji.opacity !== "undefined"
         ? emoji.opacity
         : 1 /* backwards compatibility */,
-    // offsetX,
-    // offsetY,
-    offsetX: 0,
-    offsetY: 0,
+    // @TODO - >= v5
+    offsetX,
+    offsetY,
+    // @TODO - < v5
+    // offsetX: 0,
+    // offsetY: 0,
   };
 };
 
@@ -123,6 +125,7 @@ export const generateCellImage = (
 
     const { offsetX, offsetY } = getOffsetsFromTextRef(emoji);
 
+    // @TODO - comment out < v5
     emoji.offsetX(offsetX);
     emoji.offsetY(offsetY);
 

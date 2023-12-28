@@ -8,15 +8,12 @@ import { EMOJI_CONFIG } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { useComicStudioState } from "~/contexts/ComicStudioState";
-import {
-  rotateEmoji,
-  resizeEmoji,
-  moveEmoji,
-} from "~/contexts/ComicStudioState/actions";
+import { rotateEmoji, moveEmoji } from "~/contexts/ComicStudioState/actions";
 import {
   getActiveEmojiId,
   getCellStudioState,
   getEmojiPosition,
+  getCellSchemaVersion,
 } from "~/contexts/ComicStudioState/selectors";
 
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
@@ -50,6 +47,7 @@ const RotationMenu: React.FC<{
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
   const emojiPosition = getEmojiPosition(comicStudioState, cellUrlId);
+  const schemaVersion = getCellSchemaVersion(comicStudioState, cellUrlId);
 
   const renderState = () => {
     if (!cellStudioState || !activeEmojiId) {
@@ -140,6 +138,7 @@ const RotationMenu: React.FC<{
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
           isDraggable
+          schemaVersion={schemaVersion}
           handleDragEnd={handleDragEnd}
         />
       )}

@@ -6,6 +6,7 @@ import { json } from "@remix-run/node";
 import { MenuButton, links as buttonStylesUrl } from "~/components/Button";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS } from "~/utils/urls";
 import { createNewCell } from "~/utils/clientCache/cell";
+import { StudioState } from "~/interfaces/studioState";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
 import { getIsDebugProdCell, useDebuggerState } from "~/contexts/DebuggerState";
 import isServerContext from "~/utils/isServerContext";
@@ -14,6 +15,14 @@ import stylesUrl from "~/styles/routes/v2/gallery/comic/$comicUrlId/cell/$cellUr
 
 export const links: LinksFunction = () => {
   return [...buttonStylesUrl(), { rel: "stylesheet", href: stylesUrl }];
+};
+
+type GetCellResponse = {
+  schemaVersion: number;
+  image_url: string;
+  studioState: StudioState;
+  caption: string;
+  comicUrlId: string;
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -47,11 +56,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const cellData = await cellDataResponse.json();
 
-  return json(cellData);
+  return json<GetCellResponse>(cellData);
 };
 
 export default function ComicViewRoute() {
-  const cellData = useLoaderData();
+  const cellData = useLoaderData<GetCellResponse>();
+  console.log("ComicViewRoute cellData", cellData);
   const navigate = useNavigate();
   const params = useParams();
   const cellUrlId = params.cellUrlId!;
@@ -60,6 +70,7 @@ export default function ComicViewRoute() {
   const navigateToAddCellFromDuplicate = () => {
     const newCell = createNewCell({
       initialStudioState: cellData.studioState,
+      schemaVersion: cellData.schemaVersion,
     });
 
     navigate(

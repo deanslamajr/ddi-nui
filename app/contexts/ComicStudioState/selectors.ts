@@ -1,4 +1,5 @@
 import { ComicStudioState } from "./types";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 
 export const getActiveEmoji = (state: ComicStudioState, cellUrlId: string) => {
   // get cell state
@@ -62,10 +63,21 @@ export const getEmojiSkew = (state: ComicStudioState, cellUrlId: string) => {
   };
 };
 
-export const getCellState = (state: ComicStudioState, cellUrlId: string) => {
+export const getCellState = (
+  state: ComicStudioState,
+  cellUrlId: string
+): CellFromClientCache | null => {
   return state.comicState.cells
     ? state.comicState.cells[cellUrlId] || null
     : null;
+};
+
+export const getCellSchemaVersion = (
+  state: ComicStudioState,
+  cellUrlId: string
+) => {
+  const cellState = getCellState(state, cellUrlId);
+  return cellState && cellState.schemaVersion ? cellState.schemaVersion : null;
 };
 
 export const getCellStudioState = (

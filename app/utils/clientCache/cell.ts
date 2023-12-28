@@ -62,6 +62,7 @@ export const getNewCell = ({
   previousCellUrlId,
   studioState,
   urlId,
+  schemaVersion,
 }: {
   comicUrlId: string;
   hasNewImage?: boolean;
@@ -74,6 +75,7 @@ export const getNewCell = ({
     | CellFromClientCache["studioState"]
     | AllCellsFromGetComicApi["studioState"];
   urlId?: CellFromClientCache["urlId"] | null;
+  schemaVersion?: CellFromClientCache["schemaVersion"];
 }): CellFromClientCache => {
   const initialStudioState = validateStudioState(studioState);
   return {
@@ -82,7 +84,7 @@ export const getNewCell = ({
     imageUrl: imageUrl || null,
     isDirty: isDirty || false,
     previousCellUrlId,
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: schemaVersion || SCHEMA_VERSION,
     studioState: initialStudioState,
     urlId: urlId || generateDraftUrlId(),
     changeHistory: initializeCellChangeHistory(initialStudioState),
@@ -97,12 +99,16 @@ export const getNewCell = ({
 export const createNewCell = ({
   comicUrlId,
   initialStudioState,
+  schemaVersion,
 }: {
   comicUrlId?: string;
   initialStudioState?: StudioState | null;
+  schemaVersion?: CellFromClientCache["schemaVersion"];
 }): CellFromClientCache => {
   let localCache = getCache();
   let comic: ComicFromClientCache;
+
+  console.log("createNewCell schemaVersion", schemaVersion);
 
   // conditionally: create new comic
   if (!comicUrlId || !doesComicUrlIdExist(comicUrlId, localCache)) {
@@ -138,6 +144,7 @@ export const createNewCell = ({
     isDirty: true,
     studioState: initialStudioState,
     previousCellUrlId,
+    schemaVersion,
   });
 
   localCache.cells[newCell.urlId!] = newCell;

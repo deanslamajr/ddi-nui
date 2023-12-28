@@ -9,6 +9,7 @@ import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import {
   getActiveEmojiId,
   getCellStudioState,
+  getCellSchemaVersion,
 } from "~/contexts/ComicStudioState/selectors";
 
 import DPad, { links as dPadStylesUrl } from "~/components/DPad";
@@ -30,6 +31,7 @@ const PositionMenu: React.FC<{
   const [comicStudioState, dispatch] = useComicStudioState();
   const cellStudioState = getCellStudioState(comicStudioState, cellUrlId);
   const activeEmojiId = getActiveEmojiId(comicStudioState, cellUrlId);
+  const schemaVersion = getCellSchemaVersion(comicStudioState, cellUrlId);
 
   const [state, setState] = React.useState<{
     localEmojiConfigs: Record<string, EmojiConfigSerialized>;
@@ -116,6 +118,7 @@ const PositionMenu: React.FC<{
           backgroundColor={cellStudioState.backgroundColor}
           emojiConfigs={state.localEmojiConfigs}
           isDraggable
+          schemaVersion={schemaVersion}
           handleDragEnd={handleDragEnd}
         />
       )}
