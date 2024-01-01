@@ -148,6 +148,7 @@ const CellStudio: React.FC<{}> = ({}) => {
                   emojiConfigs={cellState.studioState.emojis}
                   isDraggable
                   handleDragEnd={handleDragEnd}
+                  cellUrlId={cellUrlId}
                 />
               )}
               <div className="submenu-container">

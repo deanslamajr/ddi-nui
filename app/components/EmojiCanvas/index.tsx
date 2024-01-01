@@ -7,7 +7,8 @@ import { EmojiConfigSerialized } from "~/models/emojiConfig";
 import { theme } from "~/utils/stylesTheme";
 import sortEmojis from "~/utils/sortEmoijs";
 import { DEFAULT_STUDIO_STATE } from "~/utils/validators";
-
+import { useComicStudioState } from "~/contexts/ComicStudioState";
+import { getSelectedEmojiIds } from "~/contexts/ComicStudioState/selectors";
 import KonvaEmoji from "~/components/KonvaEmoji";
 
 import stylesUrl from "~/styles/components/EmojiCanvas.css";
@@ -29,6 +30,7 @@ type MainProps = {
   activeEmojiId?: number | null;
   backgroundColor?: string | null;
   emojiConfigs: Record<string, EmojiConfigSerialized> | EmojiConfigSerialized[];
+  cellUrlId: string;
 };
 
 type PropsWithDragging = MainProps & {
@@ -41,7 +43,16 @@ type PropsWithoutDragging = MainProps & {
 };
 
 const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
-  const { activeEmojiId, backgroundColor, emojiConfigs, isDraggable } = props;
+  const {
+    activeEmojiId,
+    backgroundColor,
+    emojiConfigs,
+    isDraggable,
+    cellUrlId,
+  } = props;
+
+  const [comicStudioState] = useComicStudioState();
+  const selectedEmojiIds = getSelectedEmojiIds(comicStudioState, cellUrlId);
 
   const [localEmojiConfigs, setLocalEmojiConfigs] = useState<
     EmojiConfigSerialized[]
@@ -92,47 +103,95 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
     }
   };
 
-  const activeEmojiConfig =
-    localEmojiConfigs.find((config) => config.id === activeEmojiId) || null;
+  // const activeEmojiConfig =
+  //   localEmojiConfigs.find((config) => config.id === activeEmojiId) || null;
 
-  const outlineConfig = useMemo(() => {
-    if (
-      typeof activeEmojiConfig?.x !== "number" ||
-      typeof activeEmojiConfig?.y !== "number" ||
-      typeof activeEmojiConfig?.scaleX !== "number" ||
-      typeof activeEmojiConfig?.scaleY !== "number" ||
-      typeof activeEmojiConfig?.rotation !== "number" ||
-      typeof activeEmojiConfig?.size !== "number"
-    ) {
-      return null;
-    }
+  // const outlineConfig = useMemo(() => {
+  //   if (
+  //     typeof activeEmojiConfig?.x !== "number" ||
+  //     typeof activeEmojiConfig?.y !== "number" ||
+  //     typeof activeEmojiConfig?.scaleX !== "number" ||
+  //     typeof activeEmojiConfig?.scaleY !== "number" ||
+  //     typeof activeEmojiConfig?.rotation !== "number" ||
+  //     typeof activeEmojiConfig?.size !== "number"
+  //   ) {
+  //     return null;
+  //   }
 
-    return {
-      x: activeEmojiConfig.x,
-      y: activeEmojiConfig.y,
-      scaleX: activeEmojiConfig.scaleX,
-      scaleY: activeEmojiConfig.scaleY,
-      rotation: activeEmojiConfig.rotation,
-      emoji: "    ",
-      size: activeEmojiConfig.size,
-    } as EmojiConfigSerialized;
-  }, [
-    activeEmojiConfig?.x,
-    activeEmojiConfig?.y,
-    activeEmojiConfig?.scaleX,
-    activeEmojiConfig?.scaleY,
-    activeEmojiConfig?.rotation,
-    activeEmojiConfig?.size,
-  ]);
+  //   return {
+  //     x: activeEmojiConfig.x,
+  //     y: activeEmojiConfig.y,
+  //     scaleX: activeEmojiConfig.scaleX,
+  //     scaleY: activeEmojiConfig.scaleY,
+  //     rotation: activeEmojiConfig.rotation,
+  //     emoji: "    ",
+  //     size: activeEmojiConfig.size,
+  //   } as EmojiConfigSerialized;
+  // }, [
+  //   activeEmojiConfig?.x,
+  //   activeEmojiConfig?.y,
+  //   activeEmojiConfig?.scaleX,
+  //   activeEmojiConfig?.scaleY,
+  //   activeEmojiConfig?.rotation,
+  //   activeEmojiConfig?.size,
+  // ]);
+  const activeEmojisConfigs = useMemo(() => {
+    return (
+      localEmojiConfigs.filter((config) => config.id === activeEmojiId) || null
+    );
+  }, localEmojiConfigs);
 
-  const modifiedActiveEmojiConfig = useMemo(() => {
-    return activeEmojiConfig
-      ? {
-          ...activeEmojiConfig,
-          opacity: 0.25,
+  const outlineConfigs: EmojiConfigSerialized[] = useMemo(() => {
+    return (activeEmojisConfigs || [])
+      .filter((activeEmojisConfig) => {
+        if (
+          typeof activeEmojisConfig?.x !== "number" ||
+          typeof activeEmojisConfig?.y !== "number" ||
+          typeof activeEmojisConfig?.scaleX !== "number" ||
+          typeof activeEmojisConfig?.scaleY !== "number" ||
+          typeof activeEmojisConfig?.rotation !== "number" ||
+          typeof activeEmojisConfig?.size !== "number"
+        ) {
+          return false;
+        } else {
+          return true;
         }
-      : null;
-  }, [activeEmojiConfig]);
+      })
+      .map((activeEmojisConfig) => {
+        return {
+          x: activeEmojisConfig.x,
+          y: activeEmojisConfig.y,
+          scaleX: activeEmojisConfig.scaleX,
+          scaleY: activeEmojisConfig.scaleY,
+          rotation: activeEmojisConfig.rotation,
+          emoji: "    ",
+          size: activeEmojisConfig.size,
+        } as EmojiConfigSerialized;
+      });
+  }, [activeEmojisConfigs]);
+
+  // const modifiedActiveEmojiConfig = useMemo(() => {
+  //   return activeEmojisConfigs
+  //     ? {
+  //         ...activeEmojisConfigs,
+  //         opacity: 0.25,
+  //       }
+  //     : null;
+  // }, [activeEmojisConfigs]);
+  const modifiedActiveEmojiConfigs = useMemo(() => {
+    if (state.isDragging) {
+      return activeEmojisConfigs
+        .filter((activeEmojisConfig) => Boolean(activeEmojisConfig))
+        .map((activeEmojisConfig) => {
+          return {
+            ...activeEmojisConfig,
+            opacity: 0.25,
+          };
+        });
+    } else {
+      return [];
+    }
+  }, [activeEmojisConfigs, state.isDragging]);
 
   return (
     <div className="emoji-canvas">
@@ -181,13 +240,21 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
             />
           ))}
 
-          {outlineConfig && (
+          {/* {outlineConfig && (
             <KonvaEmoji
               key="active-emoji-outline"
               emojiConfig={outlineConfig}
               useOutline
             />
-          )}
+          )} */}
+
+          {outlineConfigs.map((outlineConfig) => (
+            <KonvaEmoji
+              key={`active-emoji-outline-${outlineConfig.id}`}
+              emojiConfig={outlineConfig}
+              useOutline
+            />
+          ))}
         </Layer>
         {/* Draggable layer */}
         <Layer listening={isDraggable}>
@@ -205,13 +272,20 @@ const EmojiCanvas: FC<PropsWithDragging | PropsWithoutDragging> = (props) => {
               x={state.prevX}
               y={state.prevX}
             />
-            {modifiedActiveEmojiConfig && state.isDragging && (
+            {/* {modifiedActiveEmojiConfig && state.isDragging && (
               <KonvaEmoji
                 useCache
                 key="active-emoji-ghost"
                 emojiConfig={modifiedActiveEmojiConfig}
               />
-            )}
+            )} */}
+            {modifiedActiveEmojiConfigs.map((modifiedActiveEmojiConfig) => (
+              <KonvaEmoji
+                useCache
+                key="active-emoji-ghost"
+                emojiConfig={modifiedActiveEmojiConfig}
+              />
+            ))}
           </Group>
         </Layer>
       </Stage>
