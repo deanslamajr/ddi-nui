@@ -1,17 +1,18 @@
 import { getClientVariable } from "~/utils/environment-variables";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { SEARCH_PARAMS } from "~/utils/constants";
 
 export const getCellImageUrl = (
   imageUrl: string,
-  schemaVersion: number,
+  schemaVersion?: CellFromClientCache["schemaVersion"],
   isDebugProdCell?: boolean
 ) => {
   const cellUrl =
-    schemaVersion >= 3
-      ? `https://${getClientVariable(
+    typeof schemaVersion === "number" && schemaVersion < 3
+      ? imageUrl
+      : `https://${getClientVariable(
           isDebugProdCell ? "CELL_IMAGES_URL_PROD" : "CELL_IMAGES_URL"
-        )}/${imageUrl}`
-      : imageUrl;
+        )}/${imageUrl}`;
 
   return cellUrl;
 };

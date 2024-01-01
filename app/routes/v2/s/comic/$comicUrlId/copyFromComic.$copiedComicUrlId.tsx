@@ -11,7 +11,6 @@ import CellWithLoadSpinner, {
   links as cellWithLoadSpinnerStylesUrl,
 } from "~/components/CellWithLoadSpinner";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { createNewCell, CellFromClientCache } from "~/utils/clientCache/cell";
 import { theme } from "~/utils/stylesTheme";
 import { CellImageProvider } from "~/contexts/CellImageGenerator";
@@ -105,7 +104,7 @@ export default function CopyFromComicRoute() {
                 urlId,
               }) => {
                 const sharedCellProps = {
-                  schemaVersion: schemaVersion ?? SCHEMA_VERSION,
+                  schemaVersion: schemaVersion,
                   caption: studioState?.caption || "",
                   cellWidth: theme.cell.width,
                   clickable: true,

@@ -8,6 +8,7 @@ import { ImUndo2 } from "react-icons/im";
 
 import { getCellImageUrl } from "~/utils/urls";
 import { theme } from "~/utils/stylesTheme";
+import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { tabletMax } from "~/components/breakpoints";
 import DynamicTextContainer, {
   links as dynamicTextContainerStylesUrl,
@@ -95,7 +96,7 @@ const Cell: FC<
     onAddCellClick?: () => void;
     onClick?: () => void;
     removeBorders?: boolean;
-    schemaVersion: number;
+    schemaVersion?: CellFromClientCache["schemaVersion"];
     showAddCellButton?: boolean;
   } & (
     | {

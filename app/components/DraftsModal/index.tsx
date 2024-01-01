@@ -20,7 +20,6 @@ import useHydrateComic from "~/hooks/useHydrateComic";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { HydratedComic } from "~/utils/clientCache/comic";
 import { DDI_APP_PAGES } from "~/utils/urls";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 import { getClientVariable } from "~/utils/environment-variables";
 
@@ -55,7 +54,7 @@ const DraftComicPreviewCell: React.FC<{ cell: CellFromClientCache }> = ({
     <Cell
       imageUrl={imageUrl}
       isImageUrlAbsolute={Boolean(cell.hasNewImage)}
-      schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+      schemaVersion={cell.schemaVersion}
       caption={cell.studioState?.caption || ""}
       cellWidth={theme.cell.width}
       clickable

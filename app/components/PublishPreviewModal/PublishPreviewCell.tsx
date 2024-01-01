@@ -3,7 +3,6 @@ import styled from "styled-components";
 import type { LinksFunction } from "@remix-run/node";
 
 import { theme } from "~/utils/stylesTheme";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { CellFromClientCache } from "~/utils/clientCache/cell";
 import { useCellImageGenerator } from "~/contexts/CellImageGenerator";
 import { getClientVariable } from "~/utils/environment-variables";
@@ -42,7 +41,7 @@ const PublishPreviewCell: React.FC<{ cell: CellFromClientCache }> = ({
           cellWidth={theme.cell.width}
           imageUrl={imageUrl}
           isImageUrlAbsolute={Boolean(cell.hasNewImage)}
-          schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+          schemaVersion={cell.schemaVersion}
           caption={cell.studioState?.caption}
           widthOverride={theme.layout.width}
           removeBorders

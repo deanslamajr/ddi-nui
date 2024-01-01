@@ -28,7 +28,6 @@ import {
 import { getIsDebugProdCell, useDebuggerState } from "~/contexts/DebuggerState";
 import isServerContext from "~/utils/isServerContext";
 import { DDI_APP_PAGES, DDI_API_ENDPOINTS, isUrlAbsolute } from "~/utils/urls";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { sortCellsFromGetComic } from "~/utils/sortCells";
 import { theme } from "~/utils/stylesTheme";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
@@ -175,7 +174,7 @@ export default function ComicViewRoute() {
                 <Cell
                   imageUrl={imageUrl || ""}
                   isImageUrlAbsolute={isUrlAbsolute(imageUrl || "")}
-                  schemaVersion={schemaVersion ?? SCHEMA_VERSION}
+                  schemaVersion={schemaVersion}
                   caption={caption || ""}
                   cellWidth={theme.cell.width}
                   clickable

@@ -1,7 +1,6 @@
 import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 
 import { getCellState } from "~/contexts/ComicStudioState/selectors";
@@ -34,7 +33,7 @@ const CellButtonIcon: React.FC<{
       className="cell-preview-as-icon"
       imageUrl={imageUrl}
       isImageUrlAbsolute
-      schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+      schemaVersion={cell.schemaVersion}
       cellWidth={cellWidth}
       containerWidth={cellWidth}
     />

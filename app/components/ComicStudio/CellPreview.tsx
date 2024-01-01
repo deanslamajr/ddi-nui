@@ -2,7 +2,6 @@ import React from "react";
 import type { LinksFunction } from "@remix-run/node";
 
 import { CellFromClientCache } from "~/utils/clientCache/cell";
-import { SCHEMA_VERSION } from "~/utils/constants";
 import { theme } from "~/utils/stylesTheme";
 
 import { getCellState } from "~/contexts/ComicStudioState/selectors";
@@ -65,7 +64,7 @@ const CellPreview: React.FC<{
               imageUrl={imageUrl}
               isCaptionEditable
               isImageUrlAbsolute
-              schemaVersion={cell.schemaVersion || SCHEMA_VERSION}
+              schemaVersion={cell.schemaVersion}
               caption={cell.studioState?.caption || ""}
               cellWidth={cellWidth}
               containerWidth={cellWidth}

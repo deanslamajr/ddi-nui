@@ -2,7 +2,6 @@ import { validateStudioState } from "../validators";
 import { StudioState } from "~/interfaces/studioState";
 import { AllCellsFromGetComicApi } from "~/interfaces/comic";
 import { sortCellsV4 } from "~/utils/sortCells";
-import { SCHEMA_VERSION } from "~/utils/constants";
 
 import {
   CellChangeHistory,
@@ -84,7 +83,7 @@ export const getNewCell = ({
     imageUrl: imageUrl || null,
     isDirty: isDirty || false,
     previousCellUrlId,
-    schemaVersion: schemaVersion || SCHEMA_VERSION,
+    schemaVersion: schemaVersion,
     studioState: initialStudioState,
     urlId: urlId || generateDraftUrlId(),
     changeHistory: initializeCellChangeHistory(initialStudioState),

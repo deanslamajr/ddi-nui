@@ -1,7 +1,6 @@
 import type { CellFromClientCache } from "~/utils/clientCache/cell";
 import type { HydratedComic } from "~/utils/clientCache/comic";
 import { isDraftId } from "~/utils/draftId";
-import { SCHEMA_VERSION } from "~/utils/constants";
 
 import { hydrateFromNetwork } from "~/data/client/comic";
 
@@ -12,7 +11,6 @@ type CellForApiUpdate = {
   caption?: string;
   order?: null;
   previousCellUrlId?: string | null;
-  schemaVersion?: typeof SCHEMA_VERSION;
   studioState?: StudioState;
   updateImageUrl?: boolean;
   urlId: string;
@@ -54,11 +52,6 @@ function transformCellFromClientStateForApiUpdate(
     // set order to null
     if (!publishedCell.schemaVersion || publishedCell.schemaVersion < 4) {
       transformedCell.order = null;
-    }
-
-    // set schemaVersion to current schemaVersion
-    if (publishedCell.schemaVersion !== SCHEMA_VERSION) {
-      transformedCell.schemaVersion = SCHEMA_VERSION;
     }
   }
 
