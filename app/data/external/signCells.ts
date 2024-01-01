@@ -1,6 +1,6 @@
 import { DDI_API_ENDPOINTS } from "~/utils/urls";
 import getClientCookies from "~/utils/getClientCookiesForFetch";
-
+import { SCHEMA_VERSION } from "~/utils/constants";
 import { SignedCells } from "~/interfaces/signedCells";
 
 const signCells = async ({
@@ -24,9 +24,13 @@ const signCells = async ({
 > => {
   const signData: {
     newCells: string[]; // strings are draftIds e.g. 'draft--someId', 'draft--anotherId'
+    schemaVersion: number;
     v2Token?: string;
     v3Token?: string;
-  } = { newCells: cellUrlIdsThatRequireImageUploads };
+  } = {
+    newCells: cellUrlIdsThatRequireImageUploads,
+    schemaVersion: SCHEMA_VERSION,
+  };
 
   if (v2CaptchaToken) {
     signData.v2Token = v2CaptchaToken;

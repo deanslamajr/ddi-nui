@@ -1,9 +1,8 @@
 import type { CellFromClientCache } from "~/utils/clientCache/cell";
 import type { HydratedComic } from "~/utils/clientCache/comic";
 import { isDraftId } from "~/utils/draftId";
-
+import { SCHEMA_VERSION } from "~/utils/constants";
 import { hydrateFromNetwork } from "~/data/client/comic";
-
 import { SignedCells } from "~/interfaces/signedCells";
 import { StudioState } from "~/interfaces/studioState";
 
@@ -11,6 +10,7 @@ type CellForApiUpdate = {
   caption?: string;
   order?: null;
   previousCellUrlId?: string | null;
+  schemaVersion?: CellFromClientCache["schemaVersion"];
   studioState?: StudioState;
   updateImageUrl?: boolean;
   urlId: string;
@@ -23,6 +23,7 @@ function transformCellFromClientStateForApiUpdate(
 ) {
   const transformedCell: CellForApiUpdate = {
     urlId: getUrlId(cellFromState, signedCells),
+    schemaVersion: SCHEMA_VERSION,
   };
 
   const caption = getCaption(cellFromState, publishedComic);
